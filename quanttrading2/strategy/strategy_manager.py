@@ -82,8 +82,8 @@ _logger = logging.getLogger(__name__)
 #         pass
 #
 #     def on_order_status(self, os):
-#         if os.client_order_id in self._oid_sid_dict:
-#             self._strategies_dict[os.client_order_id].on_order_status(os)
+#         if os.order_id in self._oid_sid_dict:
+#             self._strategies_dict[os.order_id].on_order_status(os)
 #         else:
 #             _logger.info('strategy manager doesnt hold the oid, possibly from outside of the system')
 #

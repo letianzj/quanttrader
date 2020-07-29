@@ -3,6 +3,7 @@
 from pandas import Timestamp
 from enum import Enum
 
+
 class EventType(Enum):
     TICK = 0
     BAR = 1
@@ -36,8 +37,3 @@ class GeneralEvent(Event):
         self.event_type = EventType.GENERAL
         self.timestamp = ""
         self.content = ""
-
-    def deserialize(self, msg):
-        v = msg.split('|')
-        self.content = v[-2]
-        self.timestamp = v[-1]

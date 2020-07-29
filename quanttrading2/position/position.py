@@ -1,6 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from ..util.util_func import retrieve_multiplier_from_full_symbol
+import logging
+
+_logger = logging.getLogger(__name__)
+
 
 class Position(object):
     def __init__(self, full_symbol, average_price, size, realized_pnl=0):
@@ -30,7 +34,7 @@ class Position(object):
         adjust average_price and size according to new fill/trade/transaction
         """
         if self.full_symbol != fill_event.full_symbol:
-            print(
+            _logger.error(
                 "Position symbol %s and fill event symbol %s do not match. "
                 % (self.full_symbol, fill_event.full_symbol)
             )

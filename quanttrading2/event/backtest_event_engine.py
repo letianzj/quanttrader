@@ -3,7 +3,10 @@
 from queue import Queue, Empty
 from ..event.event import EventType
 from threading import Thread
+import logging
 from collections import defaultdict
+
+_logger = logging.getLogger(__name__)
 
 
 class BacktestEventEngine(object):
@@ -35,7 +38,7 @@ class BacktestEventEngine(object):
         """
         run backtest
         """
-        print("Running Backtest...")
+        _logger.info("Running Backtest...")
         while (self._active):
             try:
                 event = self._queue.get(False)
@@ -55,7 +58,7 @@ class BacktestEventEngine(object):
                     if self._generalHandlers:
                         [handler(event) for handler in self._generalHandlers]
                 except Exception as e:
-                    print("Error {0}".format(str(e.args[0])).encode("utf-8"))
+                    logging.error("Error {0}".format(str(e.args[0])).encode("utf-8"))
 
 
     def put(self, event):

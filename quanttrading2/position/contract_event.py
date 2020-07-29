@@ -13,9 +13,3 @@ class ContractEvent(Event):
         self.full_symbol = ''
         self.local_name = ''
         self.mininum_tick = ''
-
-    def deserialize(self, msg):
-        v = msg.split('|')
-        self.full_symbol = v[1]
-        self.local_name = v[2]
-        self.mininum_tick = v[3]

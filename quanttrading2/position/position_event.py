@@ -23,19 +23,6 @@ class PositionEvent(Event):
         self.api = ''
         self.timestamp = ''
 
-    def deserialize(self, msg):
-        v = msg.split('|')
-        self.full_symbol = v[1]
-        self.average_cost = float(v[2])
-        self.size = int(v[3])
-        self.pre_size = int(v[4])
-        self.freezed_size = int(v[5])
-        self.realized_pnl = float(v[6])
-        self.unrealized_pnl = float(v[7])
-        self.account = v[8]
-        self.api = v[9]
-        self.timestamp = v[10]
-
     def to_position(self):
         pos = Position(self.full_symbol, self.average_cost, self.size)
         pos.realized_pnl = self.realized_pnl

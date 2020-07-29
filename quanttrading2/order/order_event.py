@@ -15,9 +15,7 @@ class OrderEvent(Event):
         Initialises order
         """
         self.event_type = EventType.ORDER
-        self.server_order_id = -1
-        self.client_order_id = -1
-        self.broker_order_id = -1
+        self.order_id = -1
         self.order_type = OrderType.MARKET
         self.order_flag = OrderFlag.OPEN
         self.order_status = OrderStatus.UNKNOWN
@@ -33,14 +31,3 @@ class OrderEvent(Event):
         self.account = ''
         self.source = -1              # sid
         self.timestamp = ''
-
-    def serialize(self):
-        msg = ''
-        if self.order_type == OrderType.MARKET:
-            msg = 'o' + '|' + self.account + '|'+ str(self.source) + '|' + str(self.client_order_id) + '|' \
-                  + 'MKT' + '|' + self.full_symbol + '|' + str(self.order_size) + '|' + str(self.order_flag.value)
-        else:
-            msg = 'o' + '|' + self.account + '|' + str(self.source) + '|' + str(self.client_order_id) + '|' \
-                  + 'LMT'+ '|' + self.full_symbol + '|' + str(self.order_size) + '|' + str(self.limit_price) + '|' \
-                  + str(self.order_flag.value)
-        return msg

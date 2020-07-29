@@ -33,7 +33,7 @@ class BacktestBrokerage(BrokerageBase):
         elif 'CASH' in full_symbol:
             commission = max(0.000002 * abs(fill_price * fill_size), 2)
         else:
-            commission = 0
+            commission = 0.0001 * abs(fill_price * fill_size)       # assume 1bps for all other types
 
         return commission
 
@@ -51,9 +51,6 @@ class BacktestBrokerage(BrokerageBase):
     def reset(self):
         self._active_orders.clear()
 
-    def on_bar(self):
-        pass
-
     def on_tick(self):
         pass
 
@@ -65,10 +62,8 @@ class BacktestBrokerage(BrokerageBase):
         order_event.order_status = OrderStatus.FILLED
 
         fill = FillEvent()
-        fill.client_order_id = order_event.client_order_id
-        fill.server_order_id = order_event.client_order_id
-        fill.broker_order_id = order_event.client_order_id
-        fill.broker_fill_id = order_event.client_order_id
+        fill.order_id = order_event.order_id
+        fill.fill_id = order_event.order_id
         fill.fill_time = self._data_board.get_last_timestamp(order_event.full_symbol)
         fill.full_symbol = order_event.full_symbol
         fill.fill_size = order_event.order_size

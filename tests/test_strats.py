@@ -17,28 +17,31 @@ class BuyAndHoldStrategy(StrategyBase):
         super(BuyAndHoldStrategy, self).__init__()
         self.invested = False
 
-    def on_bar(self, event):
-        print(event.bar_start_time)
+    def on_tick(self, event):
+        print(event.timestamp)
         symbol = self.symbols[0]
-        if event.full_symbol == symbol:
-            if not self.invested:
-                target_size = int(self.cash / event.close_price)
-                self.adjust_position(symbol, size_from=0, size_to=target_size)
-                self.invested = True
+        if not self.invested:
+            df_hist = self._data_board.get_hist_price(symbol, event.timestamp)
+            close = df_hist.iloc[-1].Close
+            target_size = int(self.cash / close)
+            self.adjust_position(symbol, size_from=0, size_to=target_size)
+            self.invested = True
 
 class TestBuyHold:
     def test_buyhold(self):
         df = read_ohlcv_csv('test_data/TEST.csv')
+        init_capital = 100_000.0
         strategy = BuyAndHoldStrategy()
+        strategy.set_capital(init_capital)
+        strategy.set_symbols(['TTT'])
+        strategy.set_params(None)
 
         backtest_engine = BacktestEngine()
+        backtest_engine.set_capital(init_capital)        # capital or portfolio >= capital for one strategy
         backtest_engine.add_data('TTT', df)
         backtest_engine.set_strategy(strategy)
-        results, results_dd, monthly_ret_table, ann_ret_df = backtest_engine.run()
-        if results is None:
+        equity, df_positions, df_trades = backtest_engine.run()
+        if df_trades is None:
             print('Empty Strategy')
         else:
-            print(results)
-            print(results_dd)
-            print(monthly_ret_table)
-            print(ann_ret_df)
+            print(equity)

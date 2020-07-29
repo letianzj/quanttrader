@@ -18,9 +18,7 @@ class OrderStatusEvent(Event):
         upon reconnect, open order event info will be received to recreate an order
         """
         self.event_type = EventType.ORDERSTATUS
-        self.server_order_id = -1
-        self.client_order_id = -1
-        self.broker_order_id = -1
+        self.order_id = -1
         self.order_flag = OrderFlag.OPEN
         self.order_status = OrderStatus.UNKNOWN
         self.full_symbol = ''
@@ -36,30 +34,9 @@ class OrderStatusEvent(Event):
         self.api = ''
         self.timestamp = ''
 
-    def deserialize(self, msg):
-        v = msg.split('|')
-        self.server_order_id = int(v[1])
-        self.client_order_id = int(v[2])
-        self.broker_order_id = int(v[3])
-        self.full_symbol = v[4]
-        self.order_size = int(v[5])
-        self.order_flag = OrderFlag((int(v[6])))
-        self.limit_price = float(v[7])
-        self.stop_price = float(v[8])
-        self.fill_size = int(v[9])
-        self.fill_price = float(v[10])
-        self.create_time = v[11]
-        self.cancel_time = v[12]
-        self.account = v[13]
-        self.api = v[14]
-        self.order_status = OrderStatus(int(v[15]))
-        self.timestamp = v[16]
-
     def to_order(self):
         o = OrderEvent()
-        o.server_order_id = self.server_order_id
-        o.client_order_id = self.client_order_id
-        o.broker_order_id = self.broker_order_id
+        o.order_id = self.order_id
         o.full_symbol = self.full_symbol
         o.order_type = OrderType.LIMIT
         o.order_flag = self.order_flag

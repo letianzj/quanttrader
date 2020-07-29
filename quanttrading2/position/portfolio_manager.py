@@ -2,31 +2,43 @@
 # -*- coding: utf-8 -*-
 import re
 from .position import Position
+import logging
+
+_logger = logging.getLogger(__name__)
 
 
 class PortfolioManager(object):
-    def __init__(self, initial_cash, fvp=None):
+    def __init__(self, ):
         """
         PortfolioManager is one component of PortfolioManager
         """
-        self.cash = initial_cash
+        self.initial_capital = 0
+        self.cash = 0
         # current total value after market to market, before trades from strategy.
         # After-trades calculated in performanace manager
-        self.current_total_capital = initial_cash
+        self.current_total_capital = 0
         self.contracts = {}            # symbol ==> contract
         self.positions = {}
-        self._df_fvp = fvp
+        self._df_fvp = None
+
+    def set_capital(self, initial_capital):
+        self.initial_capital = initial_capital
+
+    def set_dvp(self, df_fvp=None):
+        self._df_fvp = df_fvp
 
     def reset(self):
+        self.cash = self.initial_capital
+        self.current_total_capital = self.initial_capital
         self.contracts.clear()
         self.positions.clear()
 
     def on_contract(self, contract):
         if contract.full_symbol not in self.contracts:
             self.contracts[contract.full_symbol] = contract
-            print("Contract %s information received. " % contract.full_symbol)
+            _logger.info("Contract %s information received. " % contract.full_symbol)
         else:
-            print("Contract %s information already exists " % contract.full_symbol)
+            _logger.info("Contract %s information already exists " % contract.full_symbol)
 
     def on_position(self, pos_event):
         """get initial position"""
@@ -36,8 +48,7 @@ class PortfolioManager(object):
         if pos.full_symbol not in self.positions:
             self.positions[pos.full_symbol] = pos
         else:
-
-            print("Symbol %s already exists in the portfolio " % pos.full_symbol)
+            _logger.error("Symbol %s already exists in the portfolio " % pos.full_symbol)
 
     def on_fill(self, fill_event):
         """
@@ -45,43 +56,31 @@ class PortfolioManager(object):
         TODO: consider margin
         """
         # sell will get cash back
-        m = 1
-        if self._df_fvp is not None:
-            try:
-                sym = fill_event.full_symbol
-                if '|' in sym:
-                    ss = sym.split('|')
-                    match = re.match(r"([a-z ]+)([0-9]+)?", ss[0], re.I)
-                    sym = match.groups()[0]
+        sym = fill_event.full_symbol
+        multiplier = 1
+        try:
+            multiplier = self._df_fvp.loc[sym, 'dvp']
+        except:
+            pass
 
-                m = self._df_fvp.loc[sym, 'FVP']
-            except:
-                m = 1
-        self.cash -= (fill_event.fill_size * fill_event.fill_price)*m + fill_event.commission
+        self.cash -= (fill_event.fill_size * fill_event.fill_price)*multiplier + fill_event.commission
         self.current_total_capital -= fill_event.commission                   # commission is a cost
 
         if fill_event.full_symbol in self.positions:      # adjust existing position
-            self.positions[fill_event.full_symbol].on_fill(fill_event, m)
+            self.positions[fill_event.full_symbol].on_fill(fill_event, multiplier)
         else:
             self.positions[fill_event.full_symbol] = fill_event.to_position()
 
     def mark_to_market(self, current_time, symbol, last_price, data_board):
         #for sym, pos in self.positions.items():
-        m = 1
         sym = symbol
-        if self._df_fvp is not None:
-            try:
-                sym = symbol
-                if '|' in sym:
-                    ss = sym.split('|')
-                    match = re.match(r"([a-z ]+)([0-9]+)?", ss[0], re.I)
-                    sym = match.groups()[0]
-
-                m = self._df_fvp.loc[sym, 'FVP']
-            except:
-                m = 1
+        multiplier = 1
+        try:
+            multiplier = self._df_fvp.loc[sym, 'dvp']
+        except:
+            pass
         if symbol in self.positions:
             # TODO: for place holder case, nothing updated
-            self.positions[symbol].mark_to_market(last_price, m)
+            self.positions[symbol].mark_to_market(last_price, multiplier)
             # data board not updated yet
-            self.current_total_capital += self.positions[symbol].size * (last_price - data_board.get_last_price(sym)) * m
+            self.current_total_capital += self.positions[symbol].size * (last_price - data_board.get_last_price(sym)) * multiplier

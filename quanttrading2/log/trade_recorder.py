@@ -3,6 +3,9 @@
 import datetime
 import os
 import csv
+import logging
+
+_logger = logging.getLogger(__name__)
 
 from .trade_recorder_base import AbstractTradeRecorder
 
@@ -31,7 +34,7 @@ class ExampleTradeRecorder(AbstractTradeRecorder):
             fname = os.path.expanduser(os.path.join(self.output_dir, self.csv_filename))
             os.remove(fname)
         except (IOError, OSError):
-            print("No tradelog files to clean.")
+            _logger.error("No tradelog files to clean.")
 
         # Write new file header
         fieldnames = [

@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 from queue import Queue, Empty
 from threading import Thread
-from nanomsg import Socket, PAIR, SUB, SUB_SUBSCRIBE, AF_SP
 from source.data.tick_event import TickEvent, TickType
 from source.order.order_status_event import OrderStatusEvent
 from source.order.fill_event import FillEvent

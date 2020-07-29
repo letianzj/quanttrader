@@ -33,18 +33,18 @@ class StrategyBase(metaclass=ABCMeta):
     def set_symbols(self, symbols):
         self.symbols = symbols
 
-    def on_init(self, events_engine, data_board=None, params_dict=None):
-        self._events_engine = events_engine
-        self._data_board = data_board
-        self.initialized = True
-
-        # set params
+    def set_params(self, params_dict=None):
         if params_dict is not None:
             for key, value in params_dict.items():
                 try:
                     self.__setattr__(key, value)
                 except:
                     pass
+
+    def on_init(self, events_engine, data_board=None, params_dict=None):
+        self._events_engine = events_engine
+        self._data_board = data_board
+        self.initialized = True
 
     def on_start(self):
         self.active = True
@@ -55,12 +55,6 @@ class StrategyBase(metaclass=ABCMeta):
     def on_tick(self, event):
         """
         Respond to tick
-        """
-        pass
-
-    def on_bar(self, event):
-        """
-        Respond to bar
         """
         pass
 

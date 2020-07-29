@@ -21,15 +21,3 @@ class AccountEvent(Event):
         self.brokerage = ''
         self.api = ''
         self.timestamp = ''
-
-    def deserialize(self, msg):
-        v = msg.split('|')
-        self.account_id = v[1]
-        self.preday_balance = float(v[2])
-        self.balance = float(v[3])
-        self.available = float(v[4])
-        self.commission = float(v[5])
-        self.margin = float(v[6])
-        self.closed_pnl = float(v[7])
-        self.open_pnl = float(v[8])
-        self.timestamp = v[9]

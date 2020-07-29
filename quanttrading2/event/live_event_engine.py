@@ -4,6 +4,7 @@ from queue import Queue, Empty
 from threading import Thread
 from collections import defaultdict
 
+
 class LiveEventEngine(object):
     """
     Event queue + a thread to dispatch events
