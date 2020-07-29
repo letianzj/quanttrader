@@ -9,20 +9,20 @@ class StrategyBase(metaclass=ABCMeta):
     """
     Base strategy class
     """
-    def __init__(self, events_engine, data_board=None):
+    def __init__(self):
         """
         initialize trategy
         :param symbols:
         :param events_engine:backtest_event_engine or live_event engine that provides queue_.put()
         """
         self.symbols = []
-        self._events_engine = events_engine
-        self._data_board = data_board
         self.id = -1
         self.name = ''
         self.author = ''
         self.capital = 0.0
         self.cash = 0.0
+        self._events_engine = None
+        self._data_board = None
         self.initialized = False
         self.active = False
 
@@ -33,7 +33,9 @@ class StrategyBase(metaclass=ABCMeta):
     def set_symbols(self, symbols):
         self.symbols = symbols
 
-    def on_init(self, params_dict=None):
+    def on_init(self, events_engine, data_board=None, params_dict=None):
+        self._events_engine = events_engine
+        self._data_board = data_board
         self.initialized = True
 
         # set params

@@ -17,6 +17,7 @@ class EventType(Enum):
     TIMER = 10
     GENERAL = 11
 
+
 class Event(object):
     """
     Base Event class for event-driven system
@@ -25,9 +26,11 @@ class Event(object):
     def typename(self):
         return self.type.name
 
+
 class GeneralEvent(Event):
     """
-    General event: TODO seperate ErrorEvent
+    General event:
+    TODO seperate ErrorEvent
     """
     def __init__(self):
         self.event_type = EventType.GENERAL

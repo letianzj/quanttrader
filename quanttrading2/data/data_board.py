@@ -8,25 +8,15 @@ import re
 class DataBoard(object):
     """
     Data tracker that holds current market data info
-    TODO: jsut store last tick and last bar
     """
-    def __init__(self, hist_dir=None, syms=None):
-        self._hist_dir = hist_dir
+    def __init__(self):
         self._hist_data = {}
-        self._symbols = syms
         self._symbol_tick_dict = {}
         self._symbol_bar_dict = {}
         self._PLACEHOLDER = 'PLACEHOLDER'
 
-        if (hist_dir):
-            self.load_hist_data()
-
-    def load_hist_data(self):
-        for symbol in self._symbols:
-            hist_file = os.path.join(self._hist_dir, "%s.csv" % symbol)
-            data = pd.read_csv(hist_file, header=0, parse_dates=True, sep=',', index_col=0)
-            data.rename(columns={'Adj Close': 'AdjClose'}, inplace=True)
-            self._hist_data[symbol] = data
+    def initialize_hist_data(self, data_key, data):
+        self._hist_data[data_key] = data
 
     def on_tick(self, tick):
         if tick.full_symbol not in self._symbol_tick_dict:
@@ -97,9 +87,9 @@ class DataBoard(object):
             # date slice is <= inclusive; slice by datetime not present is allowed
             return self._hist_data[symbol][:timestamp]            # up to timestamp inclusive
 
-    def get_hist_date_index(self, symbol):
+    def get_hist_time_index(self, symbol):
         """
-        retrieve historical backtest calendar;
+        retrieve historical calendar
         this is not look forwward
         :param symbol:
         :return:

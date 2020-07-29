@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 import empyrical as ep
 import pyfolio as pf
 
+
 class PerformanceManager(object):
     """
     Record equity, positions, and trades in accordance to pyfolio format
