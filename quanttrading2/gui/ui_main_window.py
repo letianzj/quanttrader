@@ -72,10 +72,12 @@ class MainWindow(QtWidgets.QMainWindow):
         self._ui_events_engine.register_handler(EventType.ACCOUNT, self.account_window.account_signal.emit)
         self._ui_events_engine.register_handler(EventType.CONTRACT, self._contract_event_handler)
         self._ui_events_engine.register_handler(EventType.HISTORICAL, self._historical_event_handler)
-        self._ui_events_engine.register_handler(EventType.GENERAL, self.log_window.msg_signal.emit)
+        self._ui_events_engine.register_handler(EventType.LOG, self.log_window.msg_signal.emit)
 
         ## start
         self._ui_events_engine.start()
+
+        self.connect_to_broker()
 
     #################################################################################################
     # -------------------------------- Event Handler   --------------------------------------------#
@@ -100,6 +102,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def closeEvent(self, a0: QtGui.QCloseEvent):
         print('closing main window')
+        self.disconnect_from_broker()
         self._ui_events_engine.stop()
 
     def _tick_event_handler(self, tick_event):
@@ -122,20 +125,17 @@ class MainWindow(QtWidgets.QMainWindow):
                                               self._order_manager.retrieve_order(fill_event.client_order_id).order_status)
 
     def _position_event_handler(self, position_event):
-        self.portfolio_manager.on_position(position_event)       # position received
+        self._position_manager.on_position(position_event)       # position received
         self.position_window.position_signal.emit(position_event)     # display
 
     def _account_event_handler(self, account_event):
         pass
 
     def _contract_event_handler(self, contract_event):
-        self.portfolio_manager.on_contract(contract_event)
+        self._position_manager.on_contract(contract_event)
 
     def _historical_event_handler(self, historical_event):
         print(historical_event)
-
-    def _general_event_handler(self, general_event):
-        pass
 
     def _outgoing_order_request_handler(self, o):
         """
@@ -158,7 +158,7 @@ class MainWindow(QtWidgets.QMainWindow):
         print('send msg: ' + msg)
         self._outgoing_queue.put(msg)
 
-    def _outgoing_general_msg_request_handler(self, g):
+    def _outgoing_log_msg_request_handler(self, g):
         self.log_window.update_table(g)           # append to log window
     #################################################################################################
     # ------------------------------ Event Handler Ends --------------------------------------------#
@@ -171,17 +171,17 @@ class MainWindow(QtWidgets.QMainWindow):
         menubar = self.menuBar()
 
         sysMenu = menubar.addMenu('Menu')
-        sys_connectAction = QtWidgets.QAction('Connect', self)
-        sys_connectAction.setStatusTip('Connect to IB')
-        sys_connectAction.triggered.connect(self.connect_to_broker)
-        sysMenu.addAction(sys_connectAction)
-
-        sys_connectAction = QtWidgets.QAction('Disonnect', self)
-        sys_connectAction.setStatusTip('Disconnect from IB')
-        sys_connectAction.triggered.connect(self.disconnect_from_broker)
-        sysMenu.addAction(sys_connectAction)
-
-        sysMenu.addSeparator()
+        # sys_connectAction = QtWidgets.QAction('Connect', self)
+        # sys_connectAction.setStatusTip('Connect to IB')
+        # sys_connectAction.triggered.connect(self.connect_to_broker)
+        # sysMenu.addAction(sys_connectAction)
+        #
+        # sys_connectAction = QtWidgets.QAction('Disonnect', self)
+        # sys_connectAction.setStatusTip('Disconnect from IB')
+        # sys_connectAction.triggered.connect(self.disconnect_from_broker)
+        # sysMenu.addAction(sys_connectAction)
+        #
+        # sysMenu.addSeparator()
 
         # sys|exit
         sys_exitAction = QtWidgets.QAction('Exit', self)

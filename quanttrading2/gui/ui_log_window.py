@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from PyQt5 import QtCore, QtWidgets, QtGui
-from ..event.event import GeneralEvent
+from ..event.event import LogEvent
 
 class LogWindow(QtWidgets.QTableWidget):
-    msg_signal = QtCore.pyqtSignal(type(GeneralEvent()))
+    msg_signal = QtCore.pyqtSignal(type(LogEvent()))
 
     def __init__(self, parent=None):
         super(LogWindow, self).__init__(parent)

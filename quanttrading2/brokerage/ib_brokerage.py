@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from .brokerage_base import BrokerageBase
-from ..event.event import EventType
+from ..event.event import LogEvent
 from ..account import AccountEvent
 from ..data import TickEvent, TickType, BarEvent
 from ..order.order_type import OrderType
@@ -36,11 +36,11 @@ _logger = logging.getLogger(__name__)
 
 
 class InteractiveBrokers(BrokerageBase):
-    def __init__(self, events_engine, account: str):
+    def __init__(self, event_engine, account: str):
         """
         Initialises the handler, setting the event queue
         """
-        self.events_engine = events_engine          # save events to event queue
+        self.event_engine = event_engine          # save events to event queue
         self.api = IBApi(self)
         self.account = account
         self.contract_detail_request_contract_dict = {}
@@ -54,7 +54,7 @@ class InteractiveBrokers(BrokerageBase):
         self.hist_data_request_dict = {}
         self.order_dict = {}
         self.account_summary_reqid = -1
-        self.account = AccountEvent()
+        self.account_summary = AccountEvent()
         self.clientid = 0
         self.reqid = 0
         self.orderid = 0
@@ -220,6 +220,13 @@ class InteractiveBrokers(BrokerageBase):
     def setServerLogLevel(self, level=1):
         self.api.setServerLogLevel(level)
 
+    def log(self, msg):
+        timestamp = datetime.now().strftime("%H:%M:%S")
+        log_event = LogEvent()
+        log_event.timestamp = timestamp
+        log_event.content = msg
+        self.event_engine.put(log_event)
+
     @staticmethod
     def symbol_to_contract(symbol):
         """
@@ -254,7 +261,7 @@ class InteractiveBrokers(BrokerageBase):
     def contract_to_symbol(ib_contract):
         full_symbol = ''
         if ib_contract.secType == 'STK':
-            full_symbol = ' '.join([ib_contract.LocalSymbol, 'STK', 'SMART'])    # or ib_contract.exchange
+            full_symbol = ' '.join([ib_contract.localSymbol, 'STK', 'SMART'])    # or ib_contract.primaryExchange?
         elif ib_contract.secType == 'CASH':
             full_symbol = ' '.join([ib_contract.symol+ib_contract.currency, 'CASH', ib_contract.exchange])
         elif ib_contract.secType == 'FUT':
@@ -360,7 +367,9 @@ class IBApi(EWrapper, EClient):
 
     def error(self, reqId: TickerId, errorCode: int, errorString: str):
         super().error(reqId, errorCode, errorString)
-        _logger.error("Error. Id:", reqId, "Code:", errorCode, "Msg:", errorString)
+        msg = f'Error. id: {reqId}, Code: {errorCode}, Msg: {errorString}'
+        _logger.error(msg)
+        self.broker.log(msg)
 
     def winError(self, text: str, lastError: int):
         super().winError(text, lastError)
@@ -426,10 +435,12 @@ class IBApi(EWrapper, EClient):
 
     def managedAccounts(self, accountsList: str):
         super().managedAccounts(accountsList)
-        _logger.info("Account list:", accountsList)
+        msg = f'Account list:, {accountsList}'
+        _logger.info(msg)
+        self.broker.log(msg)
 
         self.broker.account = accountsList.split(",")[0]
-        self.broker.reqAccountUpdates(True, self.broker.account)
+        self.reqAccountUpdates(True, self.broker.account)
 
     def accountSummary(self, reqId: int, account: str, tag: str, value: str,
                        currency: str):
@@ -444,19 +455,19 @@ class IBApi(EWrapper, EClient):
     def updateAccountValue(self, key: str, val: str, currency: str,
                            accountName: str):
         super().updateAccountValue(key, val, currency, accountName)
-        _logger.info("UpdateAccountValue. Key:", key, "Value:", val,
-              "Currency:", currency, "AccountName:", accountName)
+        msg = f'UpdateAccountValue. Key: {key}, Value: {val},  Currency: {currency}, AccountName: {accountName}'
+        _logger.info(msg)
 
         if key == 'NetLiquidationByCurrency':
-            self.broker.account.balance = float(val)
+            self.broker.account_summary.balance = float(val)
         elif key == 'NetLiquidation':
-            self.broker.account.balance = float(val)
+            self.broker.account_summary.balance = float(val)
         elif key == 'AvailableFunds':
-            self.broker.account.available = float(val)
+            self.broker.account_summary.available = float(val)
         elif key == 'UnrealizedPnL':
-            self.broker.account.open_pnl = float(val)
+            self.broker.account_summary.open_pnl = float(val)
         elif key == 'MaintMarginReq':
-            self.broker.account.margin = float(val)
+            self.broker.account_summary.margin = float(val)
 
     def updatePortfolio(self, contract: Contract, position: float,
                         marketPrice: float, marketValue: float,
@@ -464,13 +475,12 @@ class IBApi(EWrapper, EClient):
                         realizedPNL: float, accountName: str):
         super().updatePortfolio(contract, position, marketPrice, marketValue,
                                 averageCost, unrealizedPNL, realizedPNL, accountName)
-        _logger.info("UpdatePortfolio.", "Symbol:", contract.symbol, "SecType:", contract.secType, "Exchange:",
-              contract.exchange, "Position:", position, "MarketPrice:", marketPrice,
-              "MarketValue:", marketValue, "AverageCost:", averageCost,
-              "UnrealizedPNL:", unrealizedPNL, "RealizedPNL:", realizedPNL,
-              "AccountName:", accountName)
+        msg = f'UpdatePortfolio. Symbol: {contract.symbol}, SecType: {contract.secType}, Exchange: {contract.exchange}, ' \
+              f'Position: {position}, MarketPrice: {marketPrice}, MarketValue: {marketValue}, AverageCost: {averageCost}, ' \
+              f'UnrealizedPNL: {unrealizedPNL}, RealizedPNL: {realizedPNL}, AccountName: {accountName}'
+        _logger.info(msg)
 
-        position_event = PositionEvent
+        position_event = PositionEvent()
         position_event.full_symbol = InteractiveBrokers.contract_to_symbol(contract)
         position_event.size = position
         try:
@@ -484,12 +494,14 @@ class IBApi(EWrapper, EClient):
 
     def updateAccountTime(self, timeStamp: str):
         super().updateAccountTime(timeStamp)
-        _logger.info("UpdateAccountTime. Time:", timeStamp)
+        msg = f'UpdateAccountTime. Time: {timeStamp}'
+        _logger.info(msg)
         self.broker.event_engine.put(self.broker.account)
 
     def accountDownloadEnd(self, accountName: str):
         super().accountDownloadEnd(accountName)
-        _logger.info("AccountDownloadEnd. Account:", accountName)
+        msg = f'AccountDownloadEnd. Account: {accountName}'
+        _logger.info(msg)
 
     def position(self, account: str, contract: Contract, position: float,
                  avgCost: float):
@@ -849,7 +861,9 @@ class IBApi(EWrapper, EClient):
 
     def currentTime(self, time: int):
         super().currentTime(time)
-        _logger.info("CurrentTime:", datetime.fromtimestamp(time).strftime("%Y%m%d %H:%M:%S"))
+        msg = f'CurrentTime: {datetime.fromtimestamp(time).strftime("%Y%m%d %H:%M:%S")}'
+        _logger.info(msg)
+        self.broker.log(msg)
 
     def execDetails(self, reqId: int, contract: Contract, execution: Execution):
         super().execDetails(reqId, contract, execution)

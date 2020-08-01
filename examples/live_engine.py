@@ -10,9 +10,11 @@ import atexit
 from signal import signal, SIGINT, SIG_DFL
 from os import kill
 from multiprocessing import Process
+import logging
 
 # https://stackoverflow.com/questions/4938723/what-is-the-correct-way-to-make-my-pyqt-application-quit-when-killed-from-the-co
 signal(SIGINT, SIG_DFL)
+
 
 def main(config_file):
     config = None
@@ -24,6 +26,15 @@ def main(config_file):
             config = yaml.safe_load(fd)
     except IOError:
         print("config.yaml is missing")
+
+    _logger = logging.getLogger('quanttrading2')
+    _logger.setLevel(logging.DEBUG)
+
+    handler = logging.StreamHandler(sys.stdout)
+    handler.setLevel(logging.DEBUG)
+    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    handler.setFormatter(formatter)
+    _logger.addHandler(handler)
 
     i = 1
     for s, v in config['strategy'].items():

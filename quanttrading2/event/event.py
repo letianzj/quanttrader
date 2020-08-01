@@ -16,7 +16,7 @@ class EventType(Enum):
     CONTRACT = 8
     HISTORICAL = 9
     TIMER = 10
-    GENERAL = 11
+    LOG = 11
 
 
 class Event(object):
@@ -28,12 +28,12 @@ class Event(object):
         return self.type.name
 
 
-class GeneralEvent(Event):
+class LogEvent(Event):
     """
-    General event:
+    Log event:
     TODO seperate ErrorEvent
     """
     def __init__(self):
-        self.event_type = EventType.GENERAL
+        self.event_type = EventType.LOG
         self.timestamp = ""
         self.content = ""

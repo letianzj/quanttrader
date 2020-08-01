@@ -29,9 +29,9 @@ class BacktestDataFeed(DataFeedBase):
     def subscribe_market_data(self, symbols=None):
         if self._start_date:
             if self._end_date:
-                self._data_stream = self._data_stream[self._start_date:self._end_date]
+                self._data_stream = self._data_stream[(self._data_stream >= self._start_date) & (self._data_stream <= self._end_date)]
             else:
-                self._data_stream = self._data_stream[self._start_date:]
+                self._data_stream = self._data_stream[self._data_stream >= self._start_date]
 
         self._data_stream_iter = self._data_stream.__iter__()
 

@@ -1,7 +1,7 @@
 account: LU1832
 theme: dark           # white, dark
 host: '127.0.0.1'
-port: '7497'
+port: 7497
 client_id: 0
 #-------------- active strategies -------------#
 strategy:
