@@ -27,6 +27,7 @@ from .ui_position_window import PositionWindow
 from .ui_account_window import AccountWindow
 from .ui_strategy_window import StrategyWindow
 from .ui_log_window import LogWindow
+from .ui_trade_menu import TradeMenu
 
 
 class MainWindow(QtWidgets.QMainWindow):
@@ -54,6 +55,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self._strategy_manager = StrategyManager(self._config, strat_dict, self._broker, self._order_manager, self._position_manager, self._data_board)
 
+        self.widgets = dict()
         self._schedule_timer = QtCore.QTimer()                  # task scheduler; TODO produce result_packet
 
         # set up gui windows
@@ -87,6 +89,13 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def disconnect_from_broker(self):
         self._broker.disconnect()
+
+    def open_trade_widget(self):
+        widget = self.widgets.get('trade_menu', None)
+        if not widget:
+            widget = TradeMenu(self._broker, self._ui_events_engine)
+            self.widgets['trade_menu'] = widget
+        widget.show()
 
     def update_status_bar(self, message):
         self.statusBar().showMessage(message)
@@ -171,17 +180,12 @@ class MainWindow(QtWidgets.QMainWindow):
         menubar = self.menuBar()
 
         sysMenu = menubar.addMenu('Menu')
-        # sys_connectAction = QtWidgets.QAction('Connect', self)
-        # sys_connectAction.setStatusTip('Connect to IB')
-        # sys_connectAction.triggered.connect(self.connect_to_broker)
-        # sysMenu.addAction(sys_connectAction)
-        #
-        # sys_connectAction = QtWidgets.QAction('Disonnect', self)
-        # sys_connectAction.setStatusTip('Disconnect from IB')
-        # sys_connectAction.triggered.connect(self.disconnect_from_broker)
-        # sysMenu.addAction(sys_connectAction)
-        #
-        # sysMenu.addSeparator()
+        sys_tradeAction = QtWidgets.QAction('Trade', self)
+        sys_tradeAction.setStatusTip('Manual Trade')
+        sys_tradeAction.triggered.connect(self.open_trade_widget)
+        sysMenu.addAction(sys_tradeAction)
+
+        sysMenu.addSeparator()
 
         # sys|exit
         sys_exitAction = QtWidgets.QAction('Exit', self)
