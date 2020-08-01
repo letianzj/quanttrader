@@ -5,20 +5,18 @@ from .account_event import AccountEvent
 
 
 class AccountManager(object):
-    def __init__(self, config_server):
-        self._config_server = config_server
+    def __init__(self, account_id):
+        self._account_id = account_id
         self._account_dict = {}            # account id ==> account
         self.reset()
 
     def reset(self):
         self._account_dict.clear()
         # initialize accounts from server_config.yaml
-        for a in self._config_server['accounts']:
-            account = AccountEvent()
-            account.account_id = a
-            account.brokerage = self._config_server[a]['broker']
-            account.api = self._config_server[a]['api']
-            self._account_dict[a] = account
+        account = AccountEvent()
+        account.account_id = self._account_id
+        account.brokerage = 'ib'
+        self._account_dict[self._account_id] = account
 
     def on_account(self, account_event):
         if account_event.account_id in self._account_dict:

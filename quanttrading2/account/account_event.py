@@ -19,5 +19,4 @@ class AccountEvent(Event):
         self.closed_pnl = 0.0
         self.open_pnl = 0.0
         self.brokerage = ''
-        self.api = ''
         self.timestamp = ''

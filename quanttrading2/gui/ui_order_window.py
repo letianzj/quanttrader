@@ -10,7 +10,7 @@ class OrderWindow(QtWidgets.QTableWidget):
     '''
     order_status_signal = QtCore.pyqtSignal(type(OrderStatusEvent()))
 
-    def __init__(self, order_manager, outgoing_queue, parent=None):
+    def __init__(self, order_manager, broker, parent=None):
         super(OrderWindow, self).__init__(parent)
 
         self.header = ['OrderID',
@@ -33,7 +33,7 @@ class OrderWindow(QtWidgets.QTableWidget):
 
         self._orderids = []
         self._order_manager = order_manager
-        self._outgoingqueue = outgoing_queue
+        self._broker = broker
         self.order_status_signal.connect(self.update_table)
 
     def init_table(self):
@@ -85,5 +85,5 @@ class OrderWindow(QtWidgets.QTableWidget):
     def cancel_order(self,mi):
         row = mi.row()
         order_id = self.item(row, 0).text()
-        self._outgoingqueue.put('c|' + order_id)
+        self._broker.cancel_order(order_id)
 

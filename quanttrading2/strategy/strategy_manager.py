@@ -6,9 +6,9 @@ _logger = logging.getLogger(__name__)
 
 
 class StrategyManager(object):
-    def __init__(self, config_client, outgoing_request_event_engine, order_manager, position_manager, data_board):
-        self._config_client = config_client
-        self._outgoing_request_event_engine = outgoing_request_event_engine
+    def __init__(self, config, broker, order_manager, position_manager, data_board):
+        self._config = config
+        self._broker = broker
         self._order_manager = order_manager    # get sid from
         self._position_manager = position_manager
         self._data_board = data_board
@@ -25,17 +25,18 @@ class StrategyManager(object):
         self.sid_oid_dict.clear()
 
     def load_strategy(self):
-        for s in self._config_client['strategy']:
-            strategyClass = strategy_list.get(s, None)
+        for s in self._config['strategy']:
+            continue
+            strategyClass = None
             if not strategyClass:
                 _logger.error(u'can not find strategy：%s' % s)
             else:
-                strategy = strategyClass(self._outgoing_request_event_engine, self._data_board)
+                strategy = None
                 strategy.id = self._strategy_id
                 strategy.name = s          # assign class name to the strategy
 
                 # init strategy
-                strategy.on_init(self._config_client['strategy'][s])
+                strategy.on_init(self._config['strategy'][s])
                 for sym in strategy.symbols:
                     if sym in self._tick_strategy_dict:
                         self._tick_strategy_dict[sym].append(self._strategy_id)

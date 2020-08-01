@@ -50,9 +50,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self._order_manager = OrderManager()
         self._data_board = DataBoard()
         self.risk_manager = PassThroughRiskManager()
-        self.account_manager = AccountManager(self._config_server)
+        self.account_manager = AccountManager(self._config['account'])
 
-        self._strategy_manager = StrategyManager(self._config, self._outgoing_request_events_engine,self._order_manager,self.portfolio_manager, self._data_board)
+        self._strategy_manager = StrategyManager(self._config, self._broker, self._order_manager, self._position_manager, self._data_board)
         self._strategy_manager.load_strategy()
 
         self._schedule_timer = QtCore.QTimer()                  # task scheduler; TODO produce result_packet
@@ -179,15 +179,15 @@ class MainWindow(QtWidgets.QMainWindow):
 
         sys_connectAction = QtWidgets.QAction('Disonnect', self)
         sys_connectAction.setStatusTip('Disconnect from IB')
-        sys_connectAction.triggered.connect(self.disconnect_from_broker())
+        sys_connectAction.triggered.connect(self.disconnect_from_broker)
         sysMenu.addAction(sys_connectAction)
 
         sysMenu.addSeparator()
 
         # sys|exit
-        sys_exitAction = QtWidgets.QAction(self._lang_dict['Exit'], self)
+        sys_exitAction = QtWidgets.QAction('Exit', self)
         sys_exitAction.setShortcut('Ctrl+Q')
-        sys_exitAction.setStatusTip(self._lang_dict['Exit_App'])
+        sys_exitAction.setStatusTip('Exit_App')
         sys_exitAction.triggered.connect(self.close)
         sysMenu.addAction(sys_exitAction)
 
@@ -205,13 +205,13 @@ class MainWindow(QtWidgets.QMainWindow):
         top = QtWidgets.QFrame()
         top.setFrameShape(QtWidgets.QFrame.StyledPanel)
         control_layout = QtWidgets.QHBoxLayout()
-        self.btn_strat_start = QtWidgets.QPushButton(self._lang_dict['Start_Strat'])
+        self.btn_strat_start = QtWidgets.QPushButton('Start_Strat')
         self.btn_strat_start.clicked.connect(self.start_strategy)
-        self.btn_strat_pause = QtWidgets.QPushButton(self._lang_dict['Pause_Strat'])
+        self.btn_strat_pause = QtWidgets.QPushButton('Pause_Strat')
         self.btn_strat_pause.clicked.connect(self.pause_strategy)
-        self.btn_strat_stop = QtWidgets.QPushButton(self._lang_dict['Stop_Strat'])
+        self.btn_strat_stop = QtWidgets.QPushButton('Stop_Strat')
         self.btn_strat_stop.clicked.connect(self.stop_strategy)
-        self.btn_strat_liquidate = QtWidgets.QPushButton(self._lang_dict['Liquidate_Strat'])
+        self.btn_strat_liquidate = QtWidgets.QPushButton('Liquidate_Strat')
         control_layout.addWidget(self.btn_strat_start)
         control_layout.addWidget(self.btn_strat_pause)
         control_layout.addWidget(self.btn_strat_stop)
@@ -233,12 +233,12 @@ class MainWindow(QtWidgets.QMainWindow):
         bottom.addTab(tab5, 'Account')
         bottom.addTab(tab6, 'Log')
 
-        self.strategy_window = StrategyWindow(self._lang_dict, self._strategy_manager)
+        self.strategy_window = StrategyWindow(self._strategy_manager)
         tab6_layout = QtWidgets.QVBoxLayout()
         tab6_layout.addWidget(self.strategy_window)
         tab6.setLayout(tab6_layout)
 
-        self.order_window = OrderWindow(self._order_manager,self._outgoing_queue)       # cancel_order outgoing nessage
+        self.order_window = OrderWindow(self._order_manager, self._broker)       # cancel_order outgoing nessage
         tab2_layout = QtWidgets.QVBoxLayout()
         tab2_layout.addWidget(self.order_window)
         tab2.setLayout(tab2_layout)
@@ -267,7 +267,7 @@ class MainWindow(QtWidgets.QMainWindow):
         splitter1 = QtWidgets.QSplitter(QtCore.Qt.Vertical)
         splitter1.addWidget(top)
         splitter1.addWidget(bottom)
-        splitter1.setSizes([400, 100])
+        # splitter1.setSizes([10, 100])
 
         hbox.addWidget(splitter1)
         self.central_widget.setLayout(hbox)

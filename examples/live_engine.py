@@ -5,7 +5,7 @@ import os
 import argparse
 import yaml
 from PyQt5 import QtCore, QtWidgets, QtGui
-from .gui.ui_main_window import MainWindow
+from quanttrading2.gui.ui_main_window import MainWindow
 import atexit
 from signal import signal, SIGINT, SIG_DFL
 from os import kill
@@ -19,8 +19,8 @@ def main(config_file):
     try:
         # path = os.path.abspath(os.path.dirname(__file__))
         # config_file = os.path.join(path, 'config.yaml')
-        with open(os.path.expanduser(config_file), encoding='utf8') as fd:
-            config = yaml.load(fd)
+        with open(config_file, encoding='utf8') as fd:
+            config = yaml.safe_load(fd)
     except IOError:
         print("config.yaml is missing")
 
@@ -31,13 +31,13 @@ def main(config_file):
         import qdarkstyle
         app.setStyleSheet(qdarkstyle.load_stylesheet_pyqt5())
 
-    mainWindow.showMaximized()
+    mainWindow.show()      # .showMaximized()
     sys.exit(app.exec_())
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Live Engine')
-    parser.add_argument('-f', '--config_file', dest = 'config_file', help='config yaml file')
+    parser.add_argument('-f', '--config_file', dest = 'config_file', default='./config_live.yaml', help='config yaml file')
     args = parser.parse_args()
 
     main(args.config_file)

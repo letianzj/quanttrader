@@ -35,7 +35,8 @@ setup(
         'scipy>=1.4.1',
         'scikit-learn>=0.22.1',
         'seaborn>=0.10.1',
-        'pytest>=5.3.5'
+        'pytest>=5.3.5',
+        'PyQt5>=5.15.0'
     ],
     keywords='quanttrading2 backtest live trading'
 )
