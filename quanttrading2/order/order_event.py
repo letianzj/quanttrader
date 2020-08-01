@@ -12,7 +12,7 @@ class OrderEvent(Event):
     """
     def __init__(self):
         """
-        Initialises order
+        order and order status
         """
         self.event_type = EventType.ORDER
         self.order_id = -1
@@ -29,5 +29,5 @@ class OrderEvent(Event):
         self.fill_time = None
         self.cancel_time = None
         self.account = ''
-        self.source = -1              # sid
+        self.source = 0              # sid
         self.timestamp = ''

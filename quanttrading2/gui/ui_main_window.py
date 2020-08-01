@@ -30,7 +30,7 @@ from .ui_log_window import LogWindow
 
 
 class MainWindow(QtWidgets.QMainWindow):
-    def __init__(self, config):
+    def __init__(self, config, strat_dict):
         super(MainWindow, self).__init__()
 
         ## member variables
@@ -52,8 +52,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.risk_manager = PassThroughRiskManager()
         self.account_manager = AccountManager(self._config['account'])
 
-        self._strategy_manager = StrategyManager(self._config, self._broker, self._order_manager, self._position_manager, self._data_board)
-        self._strategy_manager.load_strategy()
+        self._strategy_manager = StrategyManager(self._config, strat_dict, self._broker, self._order_manager, self._position_manager, self._data_board)
 
         self._schedule_timer = QtCore.QTimer()                  # task scheduler; TODO produce result_packet
 
@@ -67,7 +66,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         ## wire up event handlers
         self._ui_events_engine.register_handler(EventType.TICK, self._tick_event_handler)
-        self._ui_events_engine.register_handler(EventType.ORDERSTATUS, self.order_window.order_status_signal.emit)
+        self._ui_events_engine.register_handler(EventType.ORDER, self.order_window.order_status_signal.emit)
         self._ui_events_engine.register_handler(EventType.FILL, self._fill_event_handler)
         self._ui_events_engine.register_handler(EventType.POSITION, self._position_event_handler)
         self._ui_events_engine.register_handler(EventType.ACCOUNT, self.account_window.account_signal.emit)
@@ -143,7 +142,7 @@ class MainWindow(QtWidgets.QMainWindow):
          process o, check against risk manager and compliance manager
         """
         self.risk_manager.order_in_compliance(o)  # order pointer; modify order directly
-        self._order_manager.on_order(o)
+        self._order_manager.on_order_status(o)
 
         msg = o.serialize()
         print('send msg: ' + msg)
@@ -234,9 +233,9 @@ class MainWindow(QtWidgets.QMainWindow):
         bottom.addTab(tab6, 'Log')
 
         self.strategy_window = StrategyWindow(self._strategy_manager)
-        tab6_layout = QtWidgets.QVBoxLayout()
-        tab6_layout.addWidget(self.strategy_window)
-        tab6.setLayout(tab6_layout)
+        tab1_layout = QtWidgets.QVBoxLayout()
+        tab1_layout.addWidget(self.strategy_window)
+        tab1.setLayout(tab1_layout)
 
         self.order_window = OrderWindow(self._order_manager, self._broker)       # cancel_order outgoing nessage
         tab2_layout = QtWidgets.QVBoxLayout()

@@ -2,13 +2,12 @@
 # -*- coding: utf-8 -*-
 from PyQt5 import QtCore, QtWidgets, QtGui
 from ..order.order_event import OrderEvent
-from ..order.order_status_event import OrderStatusEvent
 
 class OrderWindow(QtWidgets.QTableWidget):
     '''
     Order Monitor
     '''
-    order_status_signal = QtCore.pyqtSignal(type(OrderStatusEvent()))
+    order_status_signal = QtCore.pyqtSignal(type(OrderEvent()))
 
     def __init__(self, order_manager, broker, parent=None):
         super(OrderWindow, self).__init__(parent)

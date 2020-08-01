@@ -13,7 +13,6 @@ class OrderManager(object):
     Manage/track all the orders
     '''
     def __init__(self):
-        self.order_id = 0         # unique internal_order id
         self.order_dict = {}              # order_id ==> order
         self.fill_dict = {}                # fill_id ==> fill
         self._standing_order_list = []  # order_id of stnading orders for convenience
@@ -31,43 +30,37 @@ class OrderManager(object):
         """
         pass
 
-    def on_order(self, o):
-        """
-        on order placed by trader
-        """
-        if o.order_id < 0:         # order_id not yet assigned
-            o.order_id = self.order_id
-            o.order_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')
-            o.order_status = OrderStatus.NEWBORN
-            self.order_id = self.order_id + 1
-            self.order_dict[o.order_id] = o
-
-    def on_order_status(self, order_status_event):
+    def on_order_status(self, order_event):
         """
         on order status change from broker
         including canceled status
         """
-        if order_status_event.order_id in self.order_dict:
-            if (order_status_event.full_symbol != self.order_dict[order_status_event.order_id].full_symbol):
+        if not order_event.order_id in self.sid_oid_dict[sid]:
+            self.sid_oid_dict[sid].append(order_event.order_id)
+
+        if order_event.order_id < 0:  #
+            order_event.order_id = self.order_id
+            order_event.order_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')
+            order_event.order_status = OrderStatus.NEWBORN
+            self.order_id = self.order_id + 1
+            self.order_dict[order_event.order_id] = order_event
+
+        if order_event.order_id in self.order_dict:
+            if (order_event.full_symbol != self.order_dict[order_event.order_id].full_symbol):
                 _logger.error("Error: orders dont match")
                 return False
             # only change status when it is logical
-            elif self.order_dict[order_status_event.order_id].order_status.value <= order_status_event.order_status.value:
-                self.order_dict[order_status_event.order_id].order_status = order_status_event.order_status
+            elif self.order_dict[order_event.order_id].order_status.value <= order_event.order_status.value:
+                self.order_dict[order_event.order_id].order_status = order_event.order_status
                 return True
             else:  # no need to change status
                 return False
-        elif order_status_event.order_id < 0:   # open order at connection
-            order_status_event.order_id = self.order_id
-            self.order_id = self.order_id + 1
-
-            o = order_status_event.to_order()
-            o.order_status = OrderStatus.ACKNOWLEDGED
-            self.order_dict[order_status_event.order_id] = o
+        # order_id not yet assigned, open order at connection or placed by trader?
+        else:
+            order_event.order_status = OrderStatus.ACKNOWLEDGED
+            self.order_dict[order_event.order_id] = order_event
 
             return True
-        else:
-            return False
 
     def on_cancel(self, o):
         """

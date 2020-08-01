@@ -21,7 +21,7 @@ class StrategyBase(metaclass=ABCMeta):
         self.author = ''
         self.capital = 0.0
         self.cash = 0.0
-        self._events_engine = None
+        self.broker = None
         self._data_board = None
         self.initialized = False
         self.active = False
@@ -41,8 +41,8 @@ class StrategyBase(metaclass=ABCMeta):
                 except:
                     pass
 
-    def on_init(self, events_engine, data_board=None, params_dict=None):
-        self._events_engine = events_engine
+    def on_init(self, broker, data_board=None):
+        self.broker = broker
         self._data_board = data_board
         self.initialized = True
 
@@ -63,7 +63,7 @@ class StrategyBase(metaclass=ABCMeta):
         on order acknowledged
         :return:
         """
-        #raise NotImplementedError("Should implement on_order()")
+        #raise NotImplementedError("Should implement on_order_status()")
         pass
 
     def on_cancel(self):
@@ -81,17 +81,35 @@ class StrategyBase(metaclass=ABCMeta):
         pass
 
     def place_order(self, o):
+        """
+        For live trading; It will be consistent with backtest
+        if we use an outbound queue to send order to live broker
+        Currently it calls simply the ib.placeOrder method
+        Because order is placed directly; all subsequent on_order messages are order status updates
+        :param o:
+        :return:
+        """
         o.source = self.id         # identify source
         o.create_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')
         if (self.active):
-            self._events_engine.put(o)
+            self.broker.place_order(o)
 
     def adjust_position(self, sym, size_from, size_to):
+        """
+        for backtest; it puts order into an outbound events_engine to broker
+        :param sym:
+        :param size_from:
+        :param size_to:
+        :return:
+        """
         o = OrderEvent()
         o.full_symbol = sym
         o.order_type = OrderType.MARKET
         o.order_size = size_to - size_from
-        self.place_order(o)
+        o.source = self.id  # identify source
+        o.create_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')
+        if (self.active):
+            self.broker.put(o)
 
     def cancel_order(self, oid):
         pass
@@ -102,6 +120,7 @@ class StrategyBase(metaclass=ABCMeta):
         :return:
         """
         pass
+
 
 class Strategies(StrategyBase):
     """

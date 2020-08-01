@@ -5,5 +5,4 @@ from .order_type import *
 from .order_flag import *
 from .order_manager import *
 from .order_status import *
-from .order_status_event import *
 from .order_type import *

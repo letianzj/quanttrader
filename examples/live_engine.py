@@ -16,6 +16,7 @@ signal(SIGINT, SIG_DFL)
 
 def main(config_file):
     config = None
+    strategy_dict = {}
     try:
         # path = os.path.abspath(os.path.dirname(__file__))
         # config_file = os.path.join(path, 'config.yaml')
@@ -24,8 +25,18 @@ def main(config_file):
     except IOError:
         print("config.yaml is missing")
 
+    i = 1
+    for s, v in config['strategy'].items():
+        try:
+            exec(open(v['path']).read(), locals())
+            exec(f'strat_{i}=locals()["{s}"]()')
+            exec(f'strategy_dict["{s}"]=strat_{i}')
+            i += 1
+        except:
+            pass
+
     app = QtWidgets.QApplication(sys.argv)
-    mainWindow = MainWindow(config)
+    mainWindow = MainWindow(config, strategy_dict)
 
     if config['theme'] == 'dark':
         import qdarkstyle
