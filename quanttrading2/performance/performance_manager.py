@@ -4,8 +4,6 @@ import numpy as np
 import pandas as pd
 import re
 import matplotlib.pyplot as plt
-import empyrical as ep
-import pyfolio as pf
 
 
 class PerformanceManager(object):

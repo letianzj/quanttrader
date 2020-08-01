@@ -18,7 +18,6 @@ class AccountWindow(QtWidgets.QTableWidget):
                        'Closed_PnL',
                        'Open_PnL',
                        'Brokerage',
-                       'API',
                        'Time']
 
         self.init_table()
@@ -41,6 +40,7 @@ class AccountWindow(QtWidgets.QTableWidget):
         Only add row
         '''
         self._account_manager.on_account(account_event)
+        print(account_event.account_id)
 
         if account_event.account_id in self._account_ids:
             row = self._account_ids.index(account_event.account_id)
@@ -51,9 +51,8 @@ class AccountWindow(QtWidgets.QTableWidget):
             self.setItem(row, 5, QtWidgets.QTableWidgetItem(str(account_event.margin)))
             self.setItem(row, 6, QtWidgets.QTableWidgetItem(str(account_event.closed_pnl)))
             self.setItem(row, 7, QtWidgets.QTableWidgetItem(str(account_event.open_pnl)))
-            self.setItem(row, 8, QtWidgets.QTableWidgetItem(self._account_manager._account_dict[account_event.account_id].brokerage))
-            self.setItem(row, 9, QtWidgets.QTableWidgetItem(self._account_manager._account_dict[account_event.account_id].api))
-            self.setItem(row, 10, QtWidgets.QTableWidgetItem(account_event.timestamp))
+            self.setItem(row, 8, QtWidgets.QTableWidgetItem(account_event.brokerage))
+            self.setItem(row, 9, QtWidgets.QTableWidgetItem(account_event.timestamp))
 
         else:
             self._account_ids.insert(0, account_event.account_id)
@@ -66,7 +65,6 @@ class AccountWindow(QtWidgets.QTableWidget):
             self.setItem(0, 5, QtWidgets.QTableWidgetItem(str(account_event.margin)))
             self.setItem(0, 6, QtWidgets.QTableWidgetItem(str(account_event.closed_pnl)))
             self.setItem(0, 7, QtWidgets.QTableWidgetItem(str(account_event.open_pnl)))
-            self.setItem(0, 8, QtWidgets.QTableWidgetItem(self._account_manager._account_dict[account_event.account_id].brokerage))
-            self.setItem(0, 9, QtWidgets.QTableWidgetItem(self._account_manager._account_dict[account_event.account_id].api))
-            self.setItem(0, 10, QtWidgets.QTableWidgetItem(account_event.timestamp))
+            self.setItem(0, 8, QtWidgets.QTableWidgetItem(account_event.brokerage))
+            self.setItem(0, 9, QtWidgets.QTableWidgetItem(account_event.timestamp))
 

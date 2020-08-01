@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from ..util.util_func import retrieve_multiplier_from_full_symbol
 import logging
 
 _logger = logging.getLogger(__name__)
@@ -18,7 +17,6 @@ class Position(object):
         self.size = size
         self.realized_pnl = 0
         self.unrealized_pnl = 0
-        self.api = ''
         self.account = ''
 
     def mark_to_market(self, last_price, multiplier):

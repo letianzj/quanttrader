@@ -13,6 +13,7 @@ class PositionEvent(Event):
         """
         self.event_type = EventType.POSITION
         self.full_symbol = ''
+        self_sec_type = ''
         self.average_cost = 0.0
         self.size = 0
         self.pre_size = 0
@@ -20,7 +21,6 @@ class PositionEvent(Event):
         self.realized_pnl = 0.0
         self.unrealized_pnl = 0.0
         self.account = ''
-        self.api = ''
         self.timestamp = ''
 
     def to_position(self):
@@ -28,6 +28,5 @@ class PositionEvent(Event):
         pos.realized_pnl = self.realized_pnl
         pos.unrealized_pnl = self.unrealized_pnl
         pos.account = self.account
-        pos.api = self.api
 
         return pos
