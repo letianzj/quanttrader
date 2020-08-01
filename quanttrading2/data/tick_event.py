@@ -27,7 +27,6 @@ class TickEvent(Event):
         self.price = 0.0
         self.size = 0
         self.depth = 1
-
         self.bid_price_L1 = 0.0
         self.bid_size_L1 = 0
         self.ask_price_L1 = 0.0

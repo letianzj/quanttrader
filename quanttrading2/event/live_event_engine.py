@@ -25,9 +25,6 @@ class LiveEventEngine(object):
         # event handlers list, specific event --> handler dict
         self._handlers = defaultdict(list)
 
-        # handler for all events
-        self._generalHandlers = []
-
     #------------------------------- private functions ---------------------------#
     def _run(self):
         """
@@ -40,8 +37,6 @@ class LiveEventEngine(object):
                 if event.event_type in self._handlers:
                     [handler(event) for handler in self._handlers[event.event_type]]
 
-                if self._generalHandlers:
-                    [handler(event) for handler in self._generalHandlers]
             except Empty:
                 pass
                 #print('Empty event queue')
@@ -91,19 +86,5 @@ class LiveEventEngine(object):
 
         if not handlerList:
             del self._handlers[type_]
-
-    def register_general_handler(self, handler):
-        """
-        register general handler
-        """
-        if handler not in self._generalHandlers:
-            self._generalHandlers.append(handler)
-
-    def unregister_general_handler(self, handler):
-        """
-        unregister general handler
-        """
-        if handler in self._generalHandlers:
-            self._generalHandlers.remove(handler)
 
     # -------------------------------- end of public functions -----------------------------#

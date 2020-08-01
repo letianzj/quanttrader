@@ -2,10 +2,11 @@
 # -*- coding: utf-8 -*-
 from enum import Enum
 
-# OrderType.MKT.name == 'MKT'  OderType.MKT.value == 0
+# OrderType.MKT.name == 'MKT'  OderType.MKT.value == 1
 class OrderType(Enum):
-    MARKET = 0
-    LIMIT = 1
-    STOP = 5
-    STOP_LIMIT = 6
-    TRAIING_STOP = 7
+    UNKNOWN = 0
+    MARKET = 1
+    LIMIT = 2
+    STOP = 3
+    STOP_LIMIT = 4
+    TRAIING_STOP = 5

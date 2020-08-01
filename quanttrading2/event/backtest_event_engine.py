@@ -30,9 +30,6 @@ class BacktestEventEngine(object):
         # event handlers list, dict: specific event key --> handler value
         self._handlers = defaultdict(list)
 
-        # handler for all events
-        self._generalHandlers = []
-
     # ------------------------------------ public functions -----------------------------#
     def run(self):
         """
@@ -55,8 +52,6 @@ class BacktestEventEngine(object):
                     if event.event_type in self._handlers:
                         [handler(event) for handler in self._handlers[event.event_type]]
 
-                    if self._generalHandlers:
-                        [handler(event) for handler in self._generalHandlers]
                 except Exception as e:
                     logging.error("Error {0}".format(str(e.args[0])).encode("utf-8"))
 
@@ -87,19 +82,5 @@ class BacktestEventEngine(object):
 
         if not handlerList:
             del self._handlers[type_]
-
-    def register_general_handler(self, handler):
-        """
-        register general handler
-        """
-        if handler not in self._generalHandlers:
-            self._generalHandlers.append(handler)
-
-    def unregister_general_handler(self, handler):
-        """
-        unregister general handler
-        """
-        if handler in self._generalHandlers:
-            self._generalHandlers.remove(handler)
 
     # -------------------------------- end of public functions -----------------------------#

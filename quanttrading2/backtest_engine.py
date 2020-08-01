@@ -11,7 +11,7 @@ from .event.backtest_event_engine import BacktestEventEngine
 from .data.backtest_data_feed import BacktestDataFeed
 from .data.data_board import DataBoard
 from .brokerage.backtest_brokerage import BacktestBrokerage
-from .position.portfolio_manager import PortfolioManager
+from .position.position_manager import PositionManager
 from .performance.performance_manager import PerformanceManager
 from .risk.risk_manager import PassThroughRiskManager
 from .strategy import StrategyBase
@@ -31,19 +31,19 @@ class BacktestEngine(object):
         self._data_feed = BacktestDataFeed(self._start_date, self._end_date)
         self._data_board = DataBoard()
         self._performance_manager = PerformanceManager()
-        self._portfolio_manager = PortfolioManager()
+        self._position_manager = PositionManager()
         self._risk_manager = PassThroughRiskManager()
         self._strategy = None
 
     def set_capital(self, capital):
-        self._portfolio_manager.set_capital(capital)
+        self._position_manager.set_capital(capital)
 
     def set_strategy(self, strategy):
         self._strategy = strategy
 
     def set_dvp(self, df_dvp):
         self._performance_manager.set_dvp(df_dvp)
-        self._portfolio_manager.set_dvp(df_dvp)
+        self._position_manager.set_dvp(df_dvp)
 
     def add_data(self, data_key, data_source, watch=True):
         """
@@ -76,7 +76,7 @@ class BacktestEngine(object):
 
         ## 5. performance manager and portfolio manager
         self._performance_manager.reset()
-        self._portfolio_manager.reset()
+        self._position_manager.reset()
 
         ## 5. trade recorder
         #self._trade_recorder = ExampleTradeRecorder(output_dir)
@@ -91,8 +91,8 @@ class BacktestEngine(object):
         self._current_time = tick_event.timestamp
 
         # performance update goes before position updates because it updates previous day performance
-        self._performance_manager.update_performance(self._current_time, self._portfolio_manager, self._data_board)
-        self._portfolio_manager.mark_to_market(self._current_time, tick_event.full_symbol, tick_event.price, self._data_board)
+        self._performance_manager.update_performance(self._current_time, self._position_manager, self._data_board)
+        self._position_manager.mark_to_market(self._current_time, tick_event.full_symbol, tick_event.price, self._data_board)
         self._data_board.on_tick(tick_event)
         self._strategy.on_tick(tick_event)
 
@@ -100,7 +100,7 @@ class BacktestEngine(object):
         self._backtest_brokerage.place_order(order_event)
 
     def _fill_event_handler(self, fill_event):
-        self._portfolio_manager.on_fill(fill_event)
+        self._position_manager.on_fill(fill_event)
         self._performance_manager.on_fill(fill_event)
 
     # -------------------------------- end of private functions -----------------------------#
@@ -113,7 +113,7 @@ class BacktestEngine(object):
         self._setup()
         self._events_engine.run()
         # explicitly update last day/time
-        self._performance_manager.update_performance(self._current_time, self._portfolio_manager, self._data_board)
+        self._performance_manager.update_performance(self._current_time, self._position_manager, self._data_board)
 
         return self._performance_manager._equity, self._performance_manager._df_positions, self._performance_manager._df_trades
 

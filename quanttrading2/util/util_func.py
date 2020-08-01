@@ -23,25 +23,27 @@ def read_ohlcv_csv(filepath, adjust=True):
     df = df[['Open', 'High', 'Low', 'Close', 'Volume']]
     return df
 
-def save_one_run_results(output_dir, df_positions, df_trades, batch_tag=None):
+
+def save_one_run_results(output_dir, equity, df_positions, df_trades, batch_tag=None):
     df_positions.to_csv('{}{}{}{}'.format(output_dir, '/positions_', batch_tag if batch_tag else '', '.csv'))
     df_trades.to_csv('{}{}{}{}'.format(output_dir, '/trades_', batch_tag if batch_tag else '', '.csv'))
+    equity.to_csv('{}{}{}{}'.format(output_dir, '/equity_', batch_tag if batch_tag else '', '.csv'))
 
 
 def caculate_performance(df_equity, df_trades, df_positions, df_benchmark, tearsheet=False):
     # to daily
     try:
-        rets = self._equity.resample('D').last().dropna().pct_change()
+        rets = df_equity.resample('D').last().dropna().pct_change()
     except:
-        rets = self._equity.pct_change()
+        rets = df_equity.pct_change()
 
     rets = rets[1:]
 
     #rets.index = rets.index.tz_localize('UTC')
     #self._df_positions.index = self._df_positions.index.tz_localize('UTC')
     perf_stats_all = None
-    if not self._df_trades.index.empty:
-        if self._benchmark is not None:
+    if not df_trades.index.empty:
+        if benchmark is not None:
             # self._df_trades.index = self._df_trades.index.tz_localize('UTC')
             # pf.create_full_tear_sheet(rets, self._df_positions, self._df_trades)
             rets.index = pd.to_datetime(rets.index)
@@ -64,7 +66,7 @@ def caculate_performance(df_equity, df_trades, df_positions, df_benchmark, tears
 
             # somehow the tearsheet is too crowded.
             fig, ax = plt.subplots(nrows=1, ncols=2)
-            if self._benchmark is not None:
+            if benchmark is not None:
                 pf.plot_rolling_returns(rets, factor_returns=b_rets, ax=ax[0])
                 ax[0].set_title('Cumulative returns')
                 ax[1].text(5.0, 9.5, 'Strategy', fontsize=8, fontweight='bold', horizontalalignment='left')

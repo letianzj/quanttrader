@@ -1,16 +1,15 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import re
-from .position import Position
+from ..position import Position
 import logging
 
 _logger = logging.getLogger(__name__)
 
 
-class PortfolioManager(object):
-    def __init__(self, ):
+class PositionManager(object):
+    def __init__(self):
         """
-        PortfolioManager is one component of PortfolioManager
         """
         self.initial_capital = 0
         self.cash = 0
@@ -18,7 +17,8 @@ class PortfolioManager(object):
         # After-trades calculated in performanace manager
         self.current_total_capital = 0
         self.contracts = {}            # symbol ==> contract
-        self.positions = {}
+        self.positions = {}            # symbol ==> positions
+        self.orders = {}               # order id ==> orders and order status; partially fill
         self._df_fvp = None
 
     def set_capital(self, initial_capital):
@@ -32,6 +32,7 @@ class PortfolioManager(object):
         self.current_total_capital = self.initial_capital
         self.contracts.clear()
         self.positions.clear()
+        self.orders.clear()
 
     def on_contract(self, contract):
         if contract.full_symbol not in self.contracts:
