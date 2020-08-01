@@ -65,7 +65,7 @@ class OrderWindow(QtWidgets.QTableWidget):
                 self.setItem(0, 1, QtWidgets.QTableWidgetItem(order_status_event.full_symbol))
                 self.setItem(0, 2, QtWidgets.QTableWidgetItem(""))
                 self.setItem(0, 3, QtWidgets.QTableWidgetItem(""))
-                self.setItem(0, 4, QtWidgets.QTableWidgetItem(str(self._lang_dict['Long'] if self._order_manager.order_dict[order_status_event.client_order_id].order_size > 0 else self._lang_dict['Short'])))
+                self.setItem(0, 4, QtWidgets.QTableWidgetItem('Long' if self._order_manager.order_dict[order_status_event.client_order_id].order_size > 0 else 'Short'))
                 self.setItem(0, 5, QtWidgets.QTableWidgetItem(self._order_manager.order_dict[order_status_event.client_order_id].order_flag.name))
                 self.setItem(0, 6, QtWidgets.QTableWidgetItem(str(self._order_manager.order_dict[order_status_event.client_order_id].limit_price)))
                 self.setItem(0, 7, QtWidgets.QTableWidgetItem(str(self._order_manager.order_dict[order_status_event.client_order_id].order_size)))

@@ -41,7 +41,7 @@ class PositionWindow(QtWidgets.QTableWidget):
     def update_table(self,position_event):
         if position_event.full_symbol in self._symbols:
             row = self._symbols.index(position_event.full_symbol)
-            self.setItem(row, 3, QtWidgets.QTableWidgetItem(str(self._lang_dict['Long'] if position_event.size > 0 else self._lang_dict['Short'])))
+            self.setItem(row, 3, QtWidgets.QTableWidgetItem('Long' if position_event.size > 0 else 'Short'))
             self.setItem(row, 4, QtWidgets.QTableWidgetItem(str(abs(position_event.size))))
             self.setItem(row, 5, QtWidgets.QTableWidgetItem(str(position_event.pre_size)))
             self.setItem(row, 6, QtWidgets.QTableWidgetItem(str(position_event.freezed_size)))
@@ -55,7 +55,7 @@ class PositionWindow(QtWidgets.QTableWidget):
             self._symbols.insert(0, str(position_event.full_symbol))
             self.insertRow(0)
             self.setItem(0, 0, QtWidgets.QTableWidgetItem(position_event.full_symbol))
-            self.setItem(0, 3, QtWidgets.QTableWidgetItem(str(self._lang_dict['Long'] if position_event.size > 0 else self._lang_dict['Short'])))
+            self.setItem(0, 3, QtWidgets.QTableWidgetItem('Long' if position_event.size > 0 else 'Short'))
             self.setItem(0, 4, QtWidgets.QTableWidgetItem(str(abs(position_event.size))))
             self.setItem(0, 5, QtWidgets.QTableWidgetItem(str(position_event.pre_size)))
             self.setItem(0, 6, QtWidgets.QTableWidgetItem(str(position_event.freezed_size)))

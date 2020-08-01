@@ -361,8 +361,9 @@ class IBApi(EWrapper, EClient):
 
     def nextValidId(self, orderId: int):
         super().nextValidId(orderId)
-
-        _logger.info("setting nextValidOrderId: %d", orderId)
+        msg = f"nextValidOrderId: {orderId}"
+        _logger.info(msg)
+        self.broker.log(msg)
         self.broker.orderid = orderId
 
     def error(self, reqId: TickerId, errorCode: int, errorString: str):
@@ -373,15 +374,19 @@ class IBApi(EWrapper, EClient):
 
     def winError(self, text: str, lastError: int):
         super().winError(text, lastError)
-        _logger.error("Error Id:", lastError, "Msg:", text)
+        msg = f"Error Id: {lastError}, Msg: {text}"
+        _logger.error(msg)
+        self.broker.log(msg)
 
     def openOrder(self, orderId: OrderId, contract: Contract, order: Order, orderState: OrderState):
         super().openOrder(orderId, contract, order, orderState)
-        _logger.info("OpenOrder. PermId: ", order.permId, "ClientId:", order.clientId, " OrderId:", orderId,
-              "Account:", order.account, "Symbol:", contract.symbol, "SecType:", contract.secType,
-              "Exchange:", contract.exchange, "Action:", order.action, "OrderType:", order.orderType,
-              "TotalQty:", order.totalQuantity, "CashQty:", order.cashQty,
-              "LmtPrice:", order.lmtPrice, "AuxPrice:", order.auxPrice, "Status:", orderState.status)
+        msg = f"OpenOrder. PermId: {order.permId}, ClientId:  {order.clientId}, OrderId: {orderId}, " \
+              f"Account: {order.account}, Symbol: {contract.symbol}, SecType: {contract.secType}, " \
+              f"Exchange: {contract.exchange}, Action: {order.action}, OrderType: {order.orderType}, " \
+              f"TotalQty: {order.totalQuantity}, CashQty: {order.cashQty}, LmtPrice: {order.lmtPrice}, " \
+              f"AuxPrice: {order.auxPrice}, Status: {orderState.status}"
+        _logger.info(msg)
+        self.broker.log(msg)
 
         order_event = InteractiveBrokers.ib_order_to_order(order)
         order_event.order_id = orderId
@@ -405,7 +410,7 @@ class IBApi(EWrapper, EClient):
     def openOrderEnd(self):
         super().openOrderEnd()
         _logger.info("OpenOrderEnd")
-        _logger.info("Received %d openOrders", len(list(self.broker.order_dict.keys())))
+        _logger.info(f"Received %d openOrders {len(list(self.broker.order_dict.keys()))}")
 
     def orderStatus(self, orderId: OrderId, status: str, filled: float,
                     remaining: float, avgFillPrice: float, permId: int,
@@ -413,11 +418,11 @@ class IBApi(EWrapper, EClient):
                     whyHeld: str, mktCapPrice: float):
         super().orderStatus(orderId, status, filled, remaining,
                             avgFillPrice, permId, parentId, lastFillPrice, clientId, whyHeld, mktCapPrice)
-        _logger.info("OrderStatus. Id:", orderId, "Status:", status, "Filled:", filled,
-              "Remaining:", remaining, "AvgFillPrice:", avgFillPrice,
-              "PermId:", permId, "ParentId:", parentId, "LastFillPrice:",
-              lastFillPrice, "ClientId:", clientId, "WhyHeld:",
-              whyHeld, "MktCapPrice:", mktCapPrice)
+        msg = f"OrderStatus. Id: {orderId}, Status: {status}, Filled: {filled}, " \
+              f"Remaining: {remaining}, AvgFillPrice: {avgFillPrice}, PermId: {permId}, ParentId: {parentId}, " \
+              f"LastFillPrice: {lastFillPrice}, ClientId: {clientId}, WhyHeld: {whyHeld}, MktCapPrice: {mktCapPrice}"
+        _logger.info(msg)
+        self.broker.log(msg)
 
         order_event = self.broker.order_dict.get(OrderId, None)
         if not order_event is None:
@@ -445,12 +450,13 @@ class IBApi(EWrapper, EClient):
     def accountSummary(self, reqId: int, account: str, tag: str, value: str,
                        currency: str):
         super().accountSummary(reqId, account, tag, value, currency)
-        _logger.info("AccountSummary. ReqId:", reqId, "Account:", account,
-              "Tag: ", tag, "Value:", value, "Currency:", currency)
+        msg = f"AccountSummary. ReqId: {reqId}, Account: {account}, Tag: {tag}, Value: {value}, Currency: {currency}"
+        _logger.info(msg)
+        self.broker.log(msg)
 
     def accountSummaryEnd(self, reqId: int):
         super().accountSummaryEnd(reqId)
-        _logger.info("AccountSummaryEnd. ReqId:", reqId)
+        _logger.info(f"AccountSummaryEnd. ReqId: {reqId}")
 
     def updateAccountValue(self, key: str, val: str, currency: str,
                            accountName: str):
@@ -496,7 +502,7 @@ class IBApi(EWrapper, EClient):
         super().updateAccountTime(timeStamp)
         msg = f'UpdateAccountTime. Time: {timeStamp}'
         _logger.info(msg)
-        self.broker.event_engine.put(self.broker.account)
+        # self.broker.event_engine.put(self.broker.account)
 
     def accountDownloadEnd(self, accountName: str):
         super().accountDownloadEnd(accountName)
@@ -506,9 +512,9 @@ class IBApi(EWrapper, EClient):
     def position(self, account: str, contract: Contract, position: float,
                  avgCost: float):
         super().position(account, contract, position, avgCost)
-        _logger.info("Position.", "Account:", account, "Symbol:", contract.symbol, "SecType:",
-              contract.secType, "Currency:", contract.currency,
-              "Position:", position, "Avg cost:", avgCost)
+        msg = f"Position. Account: {account}, Symbol: {contract.symbol}, SecType: {contract.secType}, " \
+              f"Currency: {contract.currency}, Position: {position}, Avg cost: {avgCost}"
+        _logger.info(msg)
 
     def positionEnd(self):
         super().positionEnd()
@@ -517,46 +523,44 @@ class IBApi(EWrapper, EClient):
     def positionMulti(self, reqId: int, account: str, modelCode: str,
                       contract: Contract, pos: float, avgCost: float):
         super().positionMulti(reqId, account, modelCode, contract, pos, avgCost)
-        _logger.info("PositionMulti. RequestId:", reqId, "Account:", account,
-              "ModelCode:", modelCode, "Symbol:", contract.symbol, "SecType:",
-              contract.secType, "Currency:", contract.currency, ",Position:",
-              pos, "AvgCost:", avgCost)
+        msg = f"PositionMulti. RequestId: {reqId}, Account: {account}, ModelCode: {modelCode}, Symbol: {contract.symbol}, " \
+              f"SecType: {contract.secType}, Currency: {contract.currency}, Position: {pos}, AvgCost: {avgCost}"
+        _logger.info(msg)
 
     def positionMultiEnd(self, reqId: int):
         super().positionMultiEnd(reqId)
-        _logger.info("PositionMultiEnd. RequestId:", reqId)
-
+        _logger.info(f"PositionMultiEnd. RequestId: {reqId}")
 
     def accountUpdateMulti(self, reqId: int, account: str, modelCode: str,
                            key: str, value: str, currency: str):
         super().accountUpdateMulti(reqId, account, modelCode, key, value,
                                    currency)
-        _logger.info("AccountUpdateMulti. RequestId:", reqId, "Account:", account,
-              "ModelCode:", modelCode, "Key:", key, "Value:", value,
-              "Currency:", currency)
+        msg = f"AccountUpdateMulti. RequestId: {reqId}, Account: {account}, ModelCode: {modelCode}, Key: {key}, " \
+              f"Value: {value}, Currency: {currency}"
+        _logger.info(msg)
 
     def accountUpdateMultiEnd(self, reqId: int):
         super().accountUpdateMultiEnd(reqId)
-        _logger.info("AccountUpdateMultiEnd. RequestId:", reqId)
+        _logger.info(f"AccountUpdateMultiEnd. RequestId: {reqId}")
 
     def familyCodes(self, familyCodes: ListOfFamilyCode):
         super().familyCodes(familyCodes)
         _logger.info("Family Codes:")
         for familyCode in familyCodes:
-            _logger.info("FamilyCode.", familyCode)
+            _logger.info(f"FamilyCode. {familyCode}")
 
     def pnl(self, reqId: int, dailyPnL: float,
             unrealizedPnL: float, realizedPnL: float):
         super().pnl(reqId, dailyPnL, unrealizedPnL, realizedPnL)
-        _logger.info("Daily PnL. ReqId:", reqId, "DailyPnL:", dailyPnL,
-              "UnrealizedPnL:", unrealizedPnL, "RealizedPnL:", realizedPnL)
+        msg = f"Daily PnL. ReqId: {reqId}, DailyPnL: {dailyPnL}, UnrealizedPnL: {unrealizedPnL}, RealizedPnL: {realizedPnL}"
+        _logger.info(msg)
 
     def pnlSingle(self, reqId: int, pos: int, dailyPnL: float,
                   unrealizedPnL: float, realizedPnL: float, value: float):
         super().pnlSingle(reqId, pos, dailyPnL, unrealizedPnL, realizedPnL, value)
-        _logger.info("Daily PnL Single. ReqId:", reqId, "Position:", pos,
-              "DailyPnL:", dailyPnL, "UnrealizedPnL:", unrealizedPnL,
-              "RealizedPnL:", realizedPnL, "Value:", value)
+        msg = f"Daily PnL Single. ReqId: {reqId}, Position: {pos}, DailyPnL: {dailyPnL}, UnrealizedPnL: {unrealizedPnL}, " \
+              f"RealizedPnL: {realizedPnL}, Value: {value}"
+        _logger.info(msg)
 
     def marketDataType(self, reqId: TickerId, marketDataType: int):
         super().marketDataType(reqId, marketDataType)
@@ -611,21 +615,26 @@ class IBApi(EWrapper, EClient):
 
     def tickSnapshotEnd(self, reqId: int):
         super().tickSnapshotEnd(reqId)
-        print("TickSnapshotEnd. TickerId:", reqId)
+        msg = f'TickSnapshotEnd. TickerId: {reqId}'
+        _logger.info(msg)
 
     def rerouteMktDataReq(self, reqId: int, conId: int, exchange: str):
         super().rerouteMktDataReq(reqId, conId, exchange)
-        print("Re-route market data request. ReqId:", reqId, "ConId:", conId, "Exchange:", exchange)
+        msg = f"Re-route market data request. ReqId: {reqId}, ConId: {conId}, Exchange: {exchange}"
+        _logger.info(msg)
 
     def marketRule(self, marketRuleId: int, priceIncrements: ListOfPriceIncrements):
         super().marketRule(marketRuleId, priceIncrements)
-        print("Market Rule ID: ", marketRuleId)
+        msg = f"Market Rule ID: {marketRuleId}"
+        _logger.info(msg)
         for priceIncrement in priceIncrements:
-            print("Price Increment.", priceIncrement)
+            msg = f"Price Increment. {priceIncrement}"
+            _logger.info(msg)
 
     def orderBound(self, orderId: int, apiClientId: int, apiOrderId: int):
         super().orderBound(orderId, apiClientId, apiOrderId)
-        print("OrderBound.", "OrderId:", orderId, "ApiClientId:", apiClientId, "ApiOrderId:", apiOrderId)
+        msg = f"OrderBound. OrderId: {orderId}, ApiClientId: {apiClientId}, ApiOrderId: {apiOrderId}"
+        _logger.info(msg)
 
     def tickByTickAllLast(self, reqId: int, tickType: int, time: int, price: float,
                           size: int, tickAtrribLast: TickAttribLast, exchange: str,
@@ -633,14 +642,13 @@ class IBApi(EWrapper, EClient):
         super().tickByTickAllLast(reqId, tickType, time, price, size, tickAtrribLast,
                                   exchange, specialConditions)
         if tickType == 1:
-            print("Last.", end='')
+            _logger.info(f"Last.")
         else:
-            print("AllLast.", end='')
-        print(" ReqId:", reqId,
-              "Time:", datetime.datetime.fromtimestamp(time).strftime("%Y%m%d %H:%M:%S"),
-              "Price:", price, "Size:", size, "Exch:", exchange,
-              "Spec Cond:", specialConditions, "PastLimit:", tickAtrribLast.pastLimit, "Unreported:",
-              tickAtrribLast.unreported)
+            _logger.info("AllLast.")
+        msg = f'ReqId: {reqId}, Time: {datetime.fromtimestamp(time).strftime("%Y%m%d %H:%M:%S")}, ' \
+              f'Price: {price}, Size: {size}, Exch: {exchange}, Spec Cond: {specialConditions}, ' \
+              f'PastLimit: {tickAtrribLast.pastLimit}, Unreported: {tickAtrribLast.unreported}'
+        _logger.info(msg)
 
     def tickByTickBidAsk(self, reqId: int, time: int, bidPrice: float, askPrice: float,
                          bidSize: int, askSize: int, tickAttribBidAsk: TickAttribBidAsk):

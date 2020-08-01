@@ -55,7 +55,7 @@ class FillWindow(QtWidgets.QTableWidget):
                 self.setItem(0, 2, QtWidgets.QTableWidgetItem(fill_event.full_symbol))
                 self.setItem(0, 3, QtWidgets.QTableWidgetItem(""))
                 self.setItem(0, 4, QtWidgets.QTableWidgetItem(""))
-                self.setItem(0, 5, QtWidgets.QTableWidgetItem(str(self._lang_dict['Long'] if fill_event.fill_size > 0 else self._lang_dict['Short'])))
+                self.setItem(0, 5, QtWidgets.QTableWidgetItem('Long' if fill_event.fill_size > 0 else 'Short'))
                 self.setItem(0, 6, QtWidgets.QTableWidgetItem(self._order_manager.retrieve_order(fill_event.client_order_id).order_flag.name))
                 self.setItem(0, 7, QtWidgets.QTableWidgetItem(str(fill_event.fill_price)))
                 self.setItem(0, 8, QtWidgets.QTableWidgetItem(str(fill_event.fill_size)))
