@@ -24,8 +24,8 @@ def read_ohlcv_csv(filepath, adjust=True, tz='America/New_York'):
     df = df[['Open', 'High', 'Low', 'Close', 'Volume']]
     return df
 
-
 def save_one_run_results(output_dir, equity, df_positions, df_trades, batch_tag=None):
     df_positions.to_csv('{}{}{}{}'.format(output_dir, '/positions_', batch_tag if batch_tag else '', '.csv'))
     df_trades.to_csv('{}{}{}{}'.format(output_dir, '/trades_', batch_tag if batch_tag else '', '.csv'))
     equity.to_csv('{}{}{}{}'.format(output_dir, '/equity_', batch_tag if batch_tag else '', '.csv'))
+

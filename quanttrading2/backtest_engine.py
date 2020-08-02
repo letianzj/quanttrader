@@ -104,9 +104,7 @@ class BacktestEngine(object):
         self._performance_manager.on_fill(fill_event)
 
     # -------------------------------- end of private functions -----------------------------#
-
-    # -------------------------------------- public functions -------------------------------#
-    def run(self, tear_sheet=True):
+    def run(self):
         """
         Run backtest
         """
@@ -116,5 +114,3 @@ class BacktestEngine(object):
         self._performance_manager.update_performance(self._current_time, self._position_manager, self._data_board)
 
         return self._performance_manager._equity, self._performance_manager._df_positions, self._performance_manager._df_trades
-
-    # ------------------------------- end of public functions -----------------------------#
