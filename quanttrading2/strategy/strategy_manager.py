@@ -28,7 +28,7 @@ class StrategyManager(object):
 
             v.set_params(self._config['strategy'][v.name]['params'])        # dict
             v.set_symbols(self._config['strategy'][v.name]['symbols'])      # list
-            v.on_init(self._broker, self._data_board)
+            v.on_init(self._broker, self._data_board, self._position_manager)
             for sym in v.symbols:
                 if sym in self._tick_strategy_dict:
                     self._tick_strategy_dict[sym].append(v.id)

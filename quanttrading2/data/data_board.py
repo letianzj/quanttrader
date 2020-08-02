@@ -13,6 +13,7 @@ class DataBoard(object):
         self._current_data_dict = {}
         self._current_time = None
         self._PLACEHOLDER = 'PLACEHOLDER'
+        self._data_index = None
 
     def initialize_hist_data(self, data_key, data):
         self._hist_data_dict[data_key] = data
@@ -59,12 +60,10 @@ class DataBoard(object):
         else:
             return None
 
-    def get_hist_time_index(self, symbol):
+    def get_hist_sym_time_index(self, symbol):
         """
-        retrieve historical calendar
+        retrieve historical calendar for a symbol
         this is not look forwward
-        :param symbol:
-        :return:
         """
         if symbol in self._hist_data_dict.keys():
             return self._hist_data_dict[symbol].index
@@ -72,3 +71,17 @@ class DataBoard(object):
             return self._hist_data_dict[symbol[:2]].index
         else:
             return None
+
+    def get_hist_time_index(self):
+        """
+        retrieve historical calendar
+        this is not look forwward
+        """
+        if self._data_index is None:
+            for k, v in self._hist_data_dict.items():
+                if self._data_index is None:
+                    self._data_index = v.index
+                else:
+                    self._data_index_data_stream = self._data_index.join(v.index, how='outer', sort=True)
+
+        return self._data_index

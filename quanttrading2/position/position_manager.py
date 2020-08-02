@@ -17,7 +17,7 @@ class PositionManager(object):
         # After-trades calculated in performanace manager
         self.current_total_capital = 0
         self.contracts = {}            # symbol ==> contract
-        self.positions = {}            # symbol ==> positions
+        self.positions = {}        # symbol ==> positions
         self.orders = {}               # order id ==> orders and order status; partially fill
         self._df_fvp = None
 
@@ -33,6 +33,15 @@ class PositionManager(object):
         self.contracts.clear()
         self.positions.clear()
         self.orders.clear()
+
+    def get_position_size(self, symbol):
+        if symbol in self.positions.keys():
+            return self.positions[symbol].size
+        else:
+            return 0
+
+    def get_cash(self):
+        return self.cash
 
     def on_contract(self, contract):
         if contract.full_symbol not in self.contracts:

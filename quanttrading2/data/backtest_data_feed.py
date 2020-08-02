@@ -21,7 +21,7 @@ class BacktestDataFeed(DataFeedBase):
         self._data_stream_iter = None
 
     def set_data_source(self, data):
-        if not self._data_stream:
+        if self._data_stream is None:
             self._data_stream = data.index
         else:
             self._data_stream = self._data_stream.join(data.index, how='outer', sort=True)

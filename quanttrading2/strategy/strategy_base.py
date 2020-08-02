@@ -41,9 +41,10 @@ class StrategyBase(metaclass=ABCMeta):
                 except:
                     pass
 
-    def on_init(self, broker, data_board=None):
+    def on_init(self, broker, data_board=None, position_manager=None):
         self.broker = broker
         self._data_board = data_board
+        self._position_manager = position_manager
         self.initialized = True
 
     def on_start(self):

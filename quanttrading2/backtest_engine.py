@@ -71,7 +71,7 @@ class BacktestEngine(object):
         )
 
         ## 4. set strategy
-        self._strategy.on_init(self._events_engine, self._data_board)
+        self._strategy.on_init(self._events_engine, self._data_board, self._position_manager)
         self._strategy.on_start()
 
         ## 5. performance manager and portfolio manager
