@@ -4,6 +4,8 @@ Backtest and live trading in 100% pure Python.
 
 [Backtests examples](https://github.com/letianzj/QuantResearch/tree/master/backtest)
 
+[Param search example](https://github.com/letianzj/QuantResearch/blob/master/backtest/ma_double_cross.py)
+
 ```python
 # install ib and ib api
 download and install IB TWS or IB Gateway
