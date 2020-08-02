@@ -39,11 +39,12 @@ class PerformanceManager(object):
 
         self._df_positions = pd.DataFrame(columns=self._symbols + ['cash'])
         self._df_trades = pd.DataFrame(columns=['amount', 'price', 'symbol'])
+        self._df_trades.amount = self._df_trades.amount.astype(int)     # pyfolio transactions
 
     def on_fill(self, fill_event):
         # self._df_trades.loc[fill_event.timestamp] = [fill_event.fill_size, fill_event.fill_price, fill_event.full_symbol]
         self._df_trades = self._df_trades.append(pd.DataFrame(
-            {'amount': [fill_event.fill_size], 'price': [fill_event.fill_price], 'symbol': [fill_event.full_symbol]},
+            {'amount': [int(fill_event.fill_size)], 'price': [fill_event.fill_price], 'symbol': [fill_event.full_symbol]},
             index=[fill_event.fill_time]))
 
     def update_performance(self, current_time, position_manager, data_board):
