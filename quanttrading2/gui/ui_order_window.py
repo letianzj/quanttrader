@@ -47,38 +47,38 @@ class OrderWindow(QtWidgets.QTableWidget):
 
         self.itemDoubleClicked.connect(self.cancel_order)
 
-    def update_table(self, order_status_event):
+    def update_table(self, order_event):
         '''
         If order id exist, update status
         else append one row
         '''
-        update = self._order_manager.on_order_status(order_status_event)
+        update = self._order_manager.on_order_status(order_event)
 
         if (update):
-            if order_status_event.client_order_id in self._orderids:
-                row = self._orderids.index(order_status_event.client_order_id)
-                self.item(row, 9).setText(order_status_event.order_status.name)
+            if order_event.order_id in self._orderids:
+                row = self._orderids.index(order_event.order_id)
+                self.item(row, 9).setText(order_event.order_status.name)
             else:  # including empty
-                self._orderids.insert(0, order_status_event.client_order_id)
+                self._orderids.insert(0, order_event.order_id)
                 self.insertRow(0)
-                self.setItem(0, 0, QtWidgets.QTableWidgetItem(str(order_status_event.client_order_id)))
-                self.setItem(0, 1, QtWidgets.QTableWidgetItem(order_status_event.full_symbol))
+                self.setItem(0, 0, QtWidgets.QTableWidgetItem(str(order_event.order_id)))
+                self.setItem(0, 1, QtWidgets.QTableWidgetItem(order_event.full_symbol))
                 self.setItem(0, 2, QtWidgets.QTableWidgetItem(""))
                 self.setItem(0, 3, QtWidgets.QTableWidgetItem(""))
-                self.setItem(0, 4, QtWidgets.QTableWidgetItem('Long' if self._order_manager.order_dict[order_status_event.client_order_id].order_size > 0 else 'Short'))
-                self.setItem(0, 5, QtWidgets.QTableWidgetItem(self._order_manager.order_dict[order_status_event.client_order_id].order_flag.name))
-                self.setItem(0, 6, QtWidgets.QTableWidgetItem(str(self._order_manager.order_dict[order_status_event.client_order_id].limit_price)))
-                self.setItem(0, 7, QtWidgets.QTableWidgetItem(str(self._order_manager.order_dict[order_status_event.client_order_id].order_size)))
-                self.setItem(0, 8, QtWidgets.QTableWidgetItem(str(self._order_manager.order_dict[order_status_event.client_order_id].fill_size)))
-                self.setItem(0, 9, QtWidgets.QTableWidgetItem(self._order_manager.order_dict[order_status_event.client_order_id].order_status.name))
-                self.setItem(0, 10, QtWidgets.QTableWidgetItem(self._order_manager.order_dict[order_status_event.client_order_id].create_time))
-                self.setItem(0, 11, QtWidgets.QTableWidgetItem(self._order_manager.order_dict[order_status_event.client_order_id].cancel_time))
+                self.setItem(0, 4, QtWidgets.QTableWidgetItem('Long' if self._order_manager.order_dict[order_event.order_id].order_size > 0 else 'Short'))
+                self.setItem(0, 5, QtWidgets.QTableWidgetItem(self._order_manager.order_dict[order_event.order_id].order_flag.name))
+                self.setItem(0, 6, QtWidgets.QTableWidgetItem(str(self._order_manager.order_dict[order_event.order_id].limit_price)))
+                self.setItem(0, 7, QtWidgets.QTableWidgetItem(str(self._order_manager.order_dict[order_event.order_id].order_size)))
+                self.setItem(0, 8, QtWidgets.QTableWidgetItem(str(self._order_manager.order_dict[order_event.order_id].fill_size)))
+                self.setItem(0, 9, QtWidgets.QTableWidgetItem(self._order_manager.order_dict[order_event.order_id].order_status.name))
+                self.setItem(0, 10, QtWidgets.QTableWidgetItem(self._order_manager.order_dict[order_event.order_id].create_time))
+                self.setItem(0, 11, QtWidgets.QTableWidgetItem(self._order_manager.order_dict[order_event.order_id].cancel_time))
                 self.setItem(0, 12, QtWidgets.QTableWidgetItem(''))
-                self.setItem(0, 13, QtWidgets.QTableWidgetItem(self._order_manager.order_dict[order_status_event.client_order_id].account))
-                self.setItem(0, 14, QtWidgets.QTableWidgetItem(self._order_manager.order_dict[order_status_event.client_order_id].source))
+                self.setItem(0, 13, QtWidgets.QTableWidgetItem(self._order_manager.order_dict[order_event.order_id].account))
+                self.setItem(0, 14, QtWidgets.QTableWidgetItem(self._order_manager.order_dict[order_event.order_id].source))
 
-    def update_order_status(self, client_order_id, order_status):
-        row = self._orderids.index(client_order_id)
+    def update_order_status(self, order_id, order_status):
+        row = self._orderids.index(order_id)
         self.item(row, 9).setText(order_status.name)
 
     def cancel_order(self,mi):

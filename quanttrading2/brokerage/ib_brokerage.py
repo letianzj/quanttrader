@@ -244,7 +244,7 @@ class InteractiveBrokers(BrokerageBase):
         ib_contract = Contract()
 
         if symbol_fields[1] == 'STK':
-            ib_contract.symbol = symbol_fields[0]
+            ib_contract.localSymbol = symbol_fields[0]
             ib_contract.secType = symbol_fields[1]
             ib_contract.currency = 'USD'
             ib_contract.exchange = symbol_fields[2]
@@ -347,11 +347,6 @@ class IBApi(EWrapper, EClient):
         else:
             _logger.info("Finishing test")
 
-    def nextOrderId(self):
-        oid = self.nextValidOrderId
-        self.nextValidOrderId += 1
-        return oid
-
     def stop(self):
         _logger.info("Executing cancels")
         _logger.info("Executing cancels ... finished")
@@ -406,7 +401,7 @@ class IBApi(EWrapper, EClient):
             order_event.order_status = OrderStatus.UNKNOWN
 
         if orderId in self.broker.order_dict.keys():
-            order_event.full_symbol = self.broker.order_dict[orderId]
+            order_event.full_symbol = self.broker.order_dict[orderId].full_symbol
         else:     # not placed by algo
             order_event.full_symbol = InteractiveBrokers.contract_to_symbol(contract)
             self.broker.order_dict[orderId] = order_event.full_symbol

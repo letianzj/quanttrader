@@ -35,9 +35,6 @@ class OrderManager(object):
         on order status change from broker
         including canceled status
         """
-        if not order_event.order_id in self.sid_oid_dict[sid]:
-            self.sid_oid_dict[sid].append(order_event.order_id)
-
         if order_event.order_id < 0:  #
             order_event.order_id = self.order_id
             order_event.order_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')
@@ -57,7 +54,6 @@ class OrderManager(object):
                 return False
         # order_id not yet assigned, open order at connection or placed by trader?
         else:
-            order_event.order_status = OrderStatus.ACKNOWLEDGED
             self.order_dict[order_event.order_id] = order_event
 
             return True
