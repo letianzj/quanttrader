@@ -2,9 +2,15 @@
 
 Backtest and live trading in 100% pure Python.
 
+### Backtest
+
+[Backtests Blog](https://letianzj.github.io/quanttrading-backtest.html)
+
 [Backtests examples](https://github.com/letianzj/QuantResearch/tree/master/backtest)
 
 [Param search example](https://github.com/letianzj/QuantResearch/blob/master/backtest/ma_double_cross.py)
+
+### Live trading
 
 ```python
 # install ib and ib api
