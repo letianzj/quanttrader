@@ -29,5 +29,5 @@ class OrderEvent(Event):
         self.fill_time = None
         self.cancel_time = None
         self.account = ''
-        self.source = 0              # sid
+        self.source = -1              # sid
         self.timestamp = ''

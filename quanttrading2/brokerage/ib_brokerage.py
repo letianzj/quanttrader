@@ -107,7 +107,7 @@ class InteractiveBrokers(BrokerageBase):
 
         order_event.order_id = self.orderid
         order_event.account = self.account
-        order_event.timestamp = datetime.now().strftime("%H:%M:%S")
+        order_event.timestamp = datetime.now().strftime("%H:%M:%S.%f")
         self.api.placeOrder(self.orderid, ib_contract, ib_order)
         self.order_dict[self.orderid] = order_event
         self.orderid += 1
@@ -118,8 +118,9 @@ class InteractiveBrokers(BrokerageBase):
 
         if not order_id in self.order_dict.keys():
             _logger.error(f'Order to cancel not found. order id {order_id}')
+            return
 
-        self.order_dict[order_id].cancel_time = datetime.now().strftime("%H:%M:%S")
+        self.order_dict[order_id].cancel_time = datetime.now().strftime("%H:%M:%S.%f")
 
         self.api.cancelOrder(order_id)
 
@@ -234,7 +235,7 @@ class InteractiveBrokers(BrokerageBase):
         self.api.setServerLogLevel(level)
 
     def log(self, msg):
-        timestamp = datetime.now().strftime("%H:%M:%S")
+        timestamp = datetime.now().strftime("%H:%M:%S.%f")
         log_event = LogEvent()
         log_event.timestamp = timestamp
         log_event.content = msg
@@ -453,7 +454,7 @@ class IBApi(EWrapper, EClient):
         elif status == 'Cancelled':
             order_event.order_status = OrderStatus.CANCELED
             order_event.fill_size = filled         # remaining = order_size - fill_size
-            order_event.cancel_time = datetime.now().strftime("%H:%M:%S")
+            order_event.cancel_time = datetime.now().strftime("%H:%M:%S.%f")
         else:
             order_event.order_status = OrderStatus.UNKNOWN
         order_event.fill_size = filled
@@ -486,7 +487,7 @@ class IBApi(EWrapper, EClient):
         msg = f'UpdateAccountValue. Key: {key}, Value: {val},  Currency: {currency}, AccountName: {accountName}'
         _logger.info(msg)
 
-        self.broker .account_summary.timestamp = datetime.now().strftime("%H:%M:%S")
+        self.broker .account_summary.timestamp = datetime.now().strftime("%H:%M:%S.%f")
 
         if key == 'NetLiquidationByCurrency' and currency == 'USD':
             self.broker.account_summary.balance = float(val)
@@ -526,7 +527,7 @@ class IBApi(EWrapper, EClient):
         position_event.average_cost = averageCost / multiplier
         position_event.realized_pnl = realizedPNL
         position_event.unrealized_pnl = unrealizedPNL
-        position_event.timestamp = datetime.now().strftime("%H:%M:%S")
+        position_event.timestamp = datetime.now().strftime("%H:%M:%S.%f")
         self.broker.event_engine.put(position_event)
 
     def updateAccountTime(self, timeStamp: str):
@@ -906,7 +907,7 @@ class IBApi(EWrapper, EClient):
 
     def currentTime(self, time: int):
         super().currentTime(time)
-        msg = f'CurrentTime: {datetime.fromtimestamp(time).strftime("%Y%m%d %H:%M:%S")}'
+        msg = f'CurrentTime: {datetime.fromtimestamp(time).strftime("%H:%M:%S.%f")}'
         _logger.info(msg)
         self.broker.log(msg)
 

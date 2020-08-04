@@ -37,7 +37,7 @@ class OrderManager(object):
         """
         if order_event.order_id < 0:  #
             order_event.order_id = self.order_id
-            order_event.order_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')
+            order_event.order_time = datetime.now().strftime('%H:%M:%S.%f')
             order_event.order_status = OrderStatus.NEWBORN
             self.order_id = self.order_id + 1
             self.order_dict[order_event.order_id] = order_event

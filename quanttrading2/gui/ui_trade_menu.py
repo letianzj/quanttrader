@@ -68,7 +68,8 @@ class TradeMenu(QtWidgets.QWidget):
             o = OrderEvent()
             o.full_symbol = s
             o.order_size = int(q) if (n == 0) else -1 * int(q)
-            o.create_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')
+            o.create_time = datetime.now().strftime('%H:%M:%S.%f')
+            o.source = 0              # discretionary
 
             if (t == 0):
                 o.order_type = OrderType.MARKET
@@ -82,6 +83,6 @@ class TradeMenu(QtWidgets.QWidget):
         except:
             _logger.error('discretionary order error')
             msg = LogEvent()
-            msg.timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')
+            msg.timestamp = datetime.now().strftime('%H:%M:%S.%f')
             msg.content = 'discretionary order error'
             self.event_engine.put(msg)

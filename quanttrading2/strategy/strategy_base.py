@@ -91,7 +91,7 @@ class StrategyBase(metaclass=ABCMeta):
         :return:
         """
         o.source = self.id         # identify source
-        o.create_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')
+        o.create_time = datetime.now().strftime('%H:%M:%S.%f')
         if (self.active):
             self.broker.place_order(o)
 
