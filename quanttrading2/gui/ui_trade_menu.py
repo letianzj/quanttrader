@@ -21,6 +21,7 @@ class TradeMenu(QtWidgets.QWidget):
 
     def init_ui(self):
         self.setWindowTitle('Discretionary Trade')
+        self.setWindowIcon(QtGui.QIcon("gui/image/logo.ico"))
         self.resize(800, 500)
         place_order_layout = QtWidgets.QFormLayout()
         self.sym = QtWidgets.QLineEdit()
