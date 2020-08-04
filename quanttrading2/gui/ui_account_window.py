@@ -10,10 +10,8 @@ class AccountWindow(QtWidgets.QTableWidget):
         super(AccountWindow, self).__init__(parent)
 
         self.header = ['AccountID',
-                       'Yesterday_Net',
                        'Net',
                        'Available',
-                       'Commission',
                        'Margin',
                        'Closed_PnL',
                        'Open_PnL',
@@ -44,27 +42,23 @@ class AccountWindow(QtWidgets.QTableWidget):
 
         if account_event.account_id in self._account_ids:
             row = self._account_ids.index(account_event.account_id)
-            self.setItem(row, 1, QtWidgets.QTableWidgetItem(str(account_event.preday_balance)))
-            self.setItem(row, 2, QtWidgets.QTableWidgetItem(str(account_event.balance)))
-            self.setItem(row, 3, QtWidgets.QTableWidgetItem(str(account_event.available)))
-            self.setItem(row, 4, QtWidgets.QTableWidgetItem(str(account_event.commission)))
-            self.setItem(row, 5, QtWidgets.QTableWidgetItem(str(account_event.margin)))
-            self.setItem(row, 6, QtWidgets.QTableWidgetItem(str(account_event.closed_pnl)))
-            self.setItem(row, 7, QtWidgets.QTableWidgetItem(str(account_event.open_pnl)))
-            self.setItem(row, 8, QtWidgets.QTableWidgetItem(account_event.brokerage))
-            self.setItem(row, 9, QtWidgets.QTableWidgetItem(account_event.timestamp))
+            self.setItem(row, 1, QtWidgets.QTableWidgetItem(str(account_event.balance)))
+            self.setItem(row, 2, QtWidgets.QTableWidgetItem(str(account_event.available)))
+            self.setItem(row, 3, QtWidgets.QTableWidgetItem(str(account_event.margin)))
+            self.setItem(row, 4, QtWidgets.QTableWidgetItem(str(account_event.closed_pnl)))
+            self.setItem(row, 5, QtWidgets.QTableWidgetItem(str(account_event.open_pnl)))
+            self.setItem(row, 6, QtWidgets.QTableWidgetItem(account_event.brokerage))
+            self.setItem(row, 7, QtWidgets.QTableWidgetItem(account_event.timestamp))
 
         else:
             self._account_ids.insert(0, account_event.account_id)
             self.insertRow(0)
             self.setItem(0, 0, QtWidgets.QTableWidgetItem(account_event.account_id))
-            self.setItem(0, 1, QtWidgets.QTableWidgetItem(str(account_event.preday_balance)))
-            self.setItem(0, 2, QtWidgets.QTableWidgetItem(str(account_event.balance)))
-            self.setItem(0, 3, QtWidgets.QTableWidgetItem(str(account_event.available)))
-            self.setItem(0, 4, QtWidgets.QTableWidgetItem(str(account_event.commission)))
-            self.setItem(0, 5, QtWidgets.QTableWidgetItem(str(account_event.margin)))
-            self.setItem(0, 6, QtWidgets.QTableWidgetItem(str(account_event.closed_pnl)))
-            self.setItem(0, 7, QtWidgets.QTableWidgetItem(str(account_event.open_pnl)))
-            self.setItem(0, 8, QtWidgets.QTableWidgetItem(account_event.brokerage))
-            self.setItem(0, 9, QtWidgets.QTableWidgetItem(account_event.timestamp))
+            self.setItem(0, 1, QtWidgets.QTableWidgetItem(str(account_event.balance)))
+            self.setItem(0, 2, QtWidgets.QTableWidgetItem(str(account_event.available)))
+            self.setItem(0, 3, QtWidgets.QTableWidgetItem(str(account_event.margin)))
+            self.setItem(0, 4, QtWidgets.QTableWidgetItem(str(account_event.closed_pnl)))
+            self.setItem(0, 5, QtWidgets.QTableWidgetItem(str(account_event.open_pnl)))
+            self.setItem(0, 6, QtWidgets.QTableWidgetItem(account_event.brokerage))
+            self.setItem(0, 7, QtWidgets.QTableWidgetItem(account_event.timestamp))
 

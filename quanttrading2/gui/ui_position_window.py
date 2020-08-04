@@ -13,8 +13,6 @@ class PositionWindow(QtWidgets.QTableWidget):
         self.header = ['Symbol',
                        'Security_Type',
                        'Quantity',
-                       'Yesterday_Quantity',
-                       'Freezed',
                        'Average_Price',
                        'Open_PnL',
                        'Closed_PnL',
@@ -40,27 +38,23 @@ class PositionWindow(QtWidgets.QTableWidget):
             row = self._symbols.index(position_event.full_symbol)
             self.setItem(row, 1, QtWidgets.QTableWidgetItem(position_event.sec_type))
             self.setItem(row, 2, QtWidgets.QTableWidgetItem(str(position_event.size)))
-            self.setItem(row, 3, QtWidgets.QTableWidgetItem(str(position_event.pre_size)))
-            self.setItem(row, 4, QtWidgets.QTableWidgetItem(str(position_event.freezed_size)))
-            self.setItem(row, 5, QtWidgets.QTableWidgetItem(str(position_event.average_cost)))
-            self.setItem(row, 6, QtWidgets.QTableWidgetItem(str(position_event.unrealized_pnl)))
-            self.setItem(row, 7, QtWidgets.QTableWidgetItem(str(position_event.realized_pnl)))
-            self.setItem(row, 8, QtWidgets.QTableWidgetItem(position_event.account))
-            self.setItem(row, 9, QtWidgets.QTableWidgetItem(position_event.timestamp))
+            self.setItem(row, 3, QtWidgets.QTableWidgetItem(str(position_event.average_cost)))
+            self.setItem(row, 4, QtWidgets.QTableWidgetItem(str(position_event.unrealized_pnl)))
+            self.setItem(row, 5, QtWidgets.QTableWidgetItem(str(position_event.realized_pnl)))
+            self.setItem(row, 6, QtWidgets.QTableWidgetItem(position_event.account))
+            self.setItem(row, 7, QtWidgets.QTableWidgetItem(position_event.timestamp))
         else:
             self._symbols.insert(0, str(position_event.full_symbol))
             self.insertRow(0)
             self.setItem(0, 0, QtWidgets.QTableWidgetItem(position_event.full_symbol))
             self.setItem(0, 1, QtWidgets.QTableWidgetItem(position_event.sec_type))
             self.setItem(0, 2, QtWidgets.QTableWidgetItem(str(position_event.size)))
-            self.setItem(0, 3, QtWidgets.QTableWidgetItem(str(position_event.pre_size)))
-            self.setItem(0, 4, QtWidgets.QTableWidgetItem(str(position_event.freezed_size)))
-            self.setItem(0, 5, QtWidgets.QTableWidgetItem(str(position_event.average_cost)))
-            self.setItem(0, 6, QtWidgets.QTableWidgetItem(str(position_event.unrealized_pnl)))
-            self.setItem(0, 7, QtWidgets.QTableWidgetItem(str(position_event.realized_pnl)))
-            self.setItem(0, 8, QtWidgets.QTableWidgetItem(position_event.account))
-            self.setItem(0, 9, QtWidgets.QTableWidgetItem(position_event.timestamp))
+            self.setItem(0, 3, QtWidgets.QTableWidgetItem(str(position_event.average_cost)))
+            self.setItem(0, 4, QtWidgets.QTableWidgetItem(str(position_event.unrealized_pnl)))
+            self.setItem(0, 5, QtWidgets.QTableWidgetItem(str(position_event.realized_pnl)))
+            self.setItem(0, 6, QtWidgets.QTableWidgetItem(position_event.account))
+            self.setItem(0, 7, QtWidgets.QTableWidgetItem(position_event.timestamp))
 
-    def on_fill(self, fill_evnet):
+    def on_fill(self, fill_event):
         pass
 

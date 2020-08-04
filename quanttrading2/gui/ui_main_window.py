@@ -130,8 +130,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self._order_manager.on_fill(fill_event)  # update order manager with fill
         self._strategy_manager.on_fill(fill_event)  # feed fill to strategy
         self.fill_window.fill_signal.emit(fill_event)     # display
-        self.order_window.update_order_status(fill_event.client_order_id,
-                                              self._order_manager.retrieve_order(fill_event.client_order_id).order_status)
+        self.order_window.update_order_status(fill_event.order_id,
+                                              self._order_manager.retrieve_order(fill_event.order_id).order_status)
 
     def _position_event_handler(self, position_event):
         self._position_manager.on_position(position_event)       # position received

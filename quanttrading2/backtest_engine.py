@@ -97,11 +97,15 @@ class BacktestEngine(object):
         self._strategy.on_tick(tick_event)
 
     def _order_event_handler(self, order_event):
+        """
+        backtest doesn't send order_event back to strategy. It fills directly and becoems fill_event
+        """
         self._backtest_brokerage.place_order(order_event)
 
     def _fill_event_handler(self, fill_event):
         self._position_manager.on_fill(fill_event)
         self._performance_manager.on_fill(fill_event)
+        self._strategy.on_fill(fill_event)
 
     # -------------------------------- end of private functions -----------------------------#
     def run(self):

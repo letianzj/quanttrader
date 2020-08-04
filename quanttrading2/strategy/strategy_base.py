@@ -59,7 +59,7 @@ class StrategyBase(metaclass=ABCMeta):
         """
         pass
 
-    def on_order_status(self):
+    def on_order_status(self, order_event):
         """
         on order acknowledged
         :return:
@@ -74,7 +74,7 @@ class StrategyBase(metaclass=ABCMeta):
         """
         pass
 
-    def on_fill(self):
+    def on_fill(self, fill_event):
         """
         on order filled
         :return:

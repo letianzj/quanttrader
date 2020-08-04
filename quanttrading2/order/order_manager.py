@@ -70,7 +70,7 @@ class OrderManager(object):
         """
         on receive fill_event from broker
         """
-        if fill_event.fill_id in self.fill_dict:
+        if fill_event.fill_id in self.fill_dict.keys():
             _logger.error('fill exists')
         else:
             self.fill_dict[fill_event.fill_id] = fill_event
@@ -92,9 +92,9 @@ class OrderManager(object):
         except:
             return None
 
-    def retrieve_fill(self, internal_fill_id):
+    def retrieve_fill(self, fill_id):
         try:
-            return self.fill_dict[internal_fill_id]
+            return self.fill_dict[fill_id]
         except:
             return None
 
