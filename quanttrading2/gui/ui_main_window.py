@@ -146,29 +146,6 @@ class MainWindow(QtWidgets.QMainWindow):
     def _historical_event_handler(self, historical_event):
         print(historical_event)
 
-    def _outgoing_order_request_handler(self, o):
-        """
-         process o, check against risk manager and compliance manager
-        """
-        self.risk_manager.order_in_compliance(o)  # order pointer; modify order directly
-        self._order_manager.on_order_status(o)
-
-        msg = o.serialize()
-        print('send msg: ' + msg)
-        self._outgoing_queue.put(msg)
-
-    def _outgoing_account_request_handler(self, a):
-        msg = a.serialize()
-        print('send msg: ' + msg)
-        self._outgoing_queue.put(msg)
-
-    def _outgoing_position_request_handler(self, p):
-        msg = p.serialize()
-        print('send msg: ' + msg)
-        self._outgoing_queue.put(msg)
-
-    def _outgoing_log_msg_request_handler(self, g):
-        self.log_window.update_table(g)           # append to log window
     #################################################################################################
     # ------------------------------ Event Handler Ends --------------------------------------------#
     #################################################################################################

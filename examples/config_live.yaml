@@ -26,5 +26,9 @@ strategy:
       tick_trigger_threshold: 50
       tick_trigger_threshold2: 100
     symbols:
-      - IC1802
-      - IF1802
+      - SPY STK SMART
+      - AAPL STK SMART
+      - AMZN STK SMART
+      - ESU0 FUT GLOBEX
+      - CLU0 FUT NYMEX
+      - NGU0 FUT NYMEX

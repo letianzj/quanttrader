@@ -2,6 +2,9 @@
 # -*- coding: utf-8 -*-
 from PyQt5 import QtCore, QtWidgets, QtGui
 from ..order.fill_event import FillEvent
+import logging
+
+_logger = logging.getLogger(__name__)
 
 class FillWindow(QtWidgets.QTableWidget):
     fill_signal = QtCore.pyqtSignal(type(FillEvent()))
@@ -41,7 +44,7 @@ class FillWindow(QtWidgets.QTableWidget):
         if fill_event.fill_id in self._fillids:
             row = self._orderids.index(fill_event.broker_order_id)
             self.item(row, 6).setText(fill_event.fill_time)
-            print('received same fill twice')
+            _logger.error('received same fill twice')
         else:  # including empty
             try:
                 self._fillids.insert(0, fill_event.fill_id)
@@ -56,6 +59,6 @@ class FillWindow(QtWidgets.QTableWidget):
                 self.setItem(0, 7, QtWidgets.QTableWidgetItem(fill_event.exchange))
                 self.setItem(0, 8, QtWidgets.QTableWidgetItem(fill_event.account))
             except:
-                print('unable to find order that matches this fill')
+                _logger.error('unable to insert fill to fill window')
 
 
