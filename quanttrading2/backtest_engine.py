@@ -33,6 +33,7 @@ class BacktestEngine(object):
         self._performance_manager = PerformanceManager()
         self._position_manager = PositionManager()
         self._risk_manager = PassThroughRiskManager()
+        self.multiplier_dict = {}
         self._strategy = None
 
     def set_capital(self, capital):
@@ -41,19 +42,24 @@ class BacktestEngine(object):
     def set_strategy(self, strategy):
         self._strategy = strategy
 
-    def set_dvp(self, df_dvp):
-        self._performance_manager.set_dvp(df_dvp)
-        self._position_manager.set_dvp(df_dvp)
+    def set_fvp(self):
+        self._performance_manager.set_fvp(self.multiplier_dict)
+        self._position_manager.set_fvp(self.multiplier_dict)
 
     def add_data(self, data_key, data_source, watch=True):
         """
         Add data for backtest
-        :param data_key: AAPL or CL
+        :param data_key: AAPL or CL; if it is followed by number, assumed to be multiplier
         :param data_source:  dataframe, datetimeindex
         :param watch: track position or not
         :return:
         """
-        self._data_feed.set_data_source(data_source)
+        keys = data_key.split(' ')
+        if keys[-1].isdigit():       # multiplier
+            data_key = ' '.join(keys[:-1])
+            self.multiplier_dict[data_key] = int(keys[-1])
+
+        self._data_feed.set_data_source(data_source)          # get iter(datetimeindex)
         self._data_board.initialize_hist_data(data_key, data_source)
         if watch:
             self._performance_manager.add_watch(data_key, data_source)

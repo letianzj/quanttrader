@@ -12,9 +12,9 @@ class PerformanceManager(object):
     Record equity, positions, and trades in accordance to pyfolio format
     First date will be the first data start date
     """
-    def __init__(self, fvp=None):
+    def __init__(self):
         self._symbols = []
-        self._df_fvp = pd.DataFrame(columns=['dvp'])
+        self.dict_multipliers = {}          # sym ==> multiplier
 
         self._equity = None
         self._df_positions = None
@@ -26,8 +26,8 @@ class PerformanceManager(object):
         else:
             self._symbols.extend(data.columns)
 
-    def set_dvp(self, df_dvp=None):
-        self._df_fvp = df_dvp
+    def set_fvp(self, dict_fvp ={}):
+        self.dict_multipliers = dict_fvp
 
     #  or each sid
     def reset(self):
@@ -64,11 +64,7 @@ class PerformanceManager(object):
         equity = 0.0
         self._df_positions.loc[performance_time] = [0] * len(self._df_positions.columns)
         for sym, pos in position_manager.positions.items():
-            multiplier = 1
-            try:
-                multiplier = self._df_fvp.loc[sym, 'dvp']
-            except:
-                pass
+            multiplier = self.dict_multipliers.get(sym, 1)
 
             # data_board hasn't been updated yet
             equity += pos.size * data_board.get_last_price(sym) * multiplier

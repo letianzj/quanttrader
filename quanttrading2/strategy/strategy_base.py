@@ -19,10 +19,12 @@ class StrategyBase(metaclass=ABCMeta):
         self.id = -1
         self.name = ''
         self.author = ''
-        self.capital = 0.0
-        self.cash = 0.0
-        self.broker = None
-        self._data_board = None
+        self.capital = 0.0               # capital for this strategy
+        self.cash = 0.0                  # cash for this strategy
+        self.positions = {}              # symbol ==> position; only for this strategy
+        self.broker = None               # to place order directly with broker
+        self._data_board = None          # to get current data
+        self._position_manager = None     # to get overall positions (from other strategies as well)
         self.initialized = False
         self.active = False
 
@@ -83,10 +85,12 @@ class StrategyBase(metaclass=ABCMeta):
 
     def place_order(self, o):
         """
-        For live trading; It will be consistent with backtest
+        1. For live trading; It will be consistent with backtest
         if we use an outbound queue to send order to live broker
         Currently it calls simply the ib.placeOrder method
         Because order is placed directly; all subsequent on_order messages are order status updates
+        2. this places order directly; strategy manager will get this order from broker feedback;
+        and identify with sid
         :param o:
         :return:
         """

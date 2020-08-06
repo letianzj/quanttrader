@@ -7,6 +7,11 @@ _logger = logging.getLogger(__name__)
 
 class StrategyManager(object):
     def __init__(self, config, strat_dict, broker, order_manager, position_manager, data_board):
+        """
+        current design:
+        let position manager to track total positions
+        let strategy manager to track strategy position for each strategy
+        """
         self._config = config
         self._broker = broker
         self._order_manager = order_manager    # get sid from
@@ -14,6 +19,7 @@ class StrategyManager(object):
         self._data_board = data_board
         self._strategy_id = 1
         self._strategy_dict = {}            # sid ==> strategy
+        self._multiplier_dict = {}          # symbol ==> multiplier
         self._tick_strategy_dict = {}  # sym -> list of strategy
 
         self.load_strategy(strat_dict)
@@ -30,6 +36,12 @@ class StrategyManager(object):
             v.set_symbols(self._config['strategy'][v.name]['symbols'])      # list
             v.on_init(self._broker, self._data_board, self._position_manager)
             for sym in v.symbols:
+                ss = sym.split(' ')
+                if ss[-1].isdigit():  # multiplier
+                    sym = ' '.join(ss[:-1])
+                    self._multiplier_dict[sym] = int(ss[-1])
+
+                # now sym doesn't have multiplier
                 if sym in self._tick_strategy_dict:
                     self._tick_strategy_dict[sym].append(v.id)
                 else:
@@ -90,4 +102,7 @@ class StrategyManager(object):
         pass
 
     def on_fill(self, fill):
+        """
+        assign fill ordering to order id ==> strategy id
+        """
         pass

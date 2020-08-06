@@ -19,13 +19,13 @@ class PositionManager(object):
         self.contracts = {}            # symbol ==> contract
         self.positions = {}        # symbol ==> positions
         self.orders = {}               # order id ==> orders and order status; partially fill
-        self._df_fvp = None
+        self.dict_multipliers = {}        # sym ==> multiplier
 
     def set_capital(self, initial_capital):
         self.initial_capital = initial_capital
 
-    def set_dvp(self, df_fvp=None):
-        self._df_fvp = df_fvp
+    def set_fvp(self, dict_fvp={}):
+        self.dict_multipliers = dict_fvp
 
     def reset(self):
         self.cash = self.initial_capital
@@ -67,11 +67,7 @@ class PositionManager(object):
         """
         # sell will get cash back
         sym = fill_event.full_symbol
-        multiplier = 1
-        try:
-            multiplier = self._df_fvp.loc[sym, 'dvp']
-        except:
-            pass
+        multiplier = self.dict_multipliers.get(sym, 1)
 
         self.cash -= (fill_event.fill_size * fill_event.fill_price)*multiplier + fill_event.commission
         self.current_total_capital -= fill_event.commission                   # commission is a cost
@@ -84,11 +80,7 @@ class PositionManager(object):
     def mark_to_market(self, current_time, symbol, last_price, data_board):
         #for sym, pos in self.positions.items():
         sym = symbol
-        multiplier = 1
-        try:
-            multiplier = self._df_fvp.loc[sym, 'dvp']
-        except:
-            pass
+        multiplier = self.dict_multipliers.get(sym, 1)
         if symbol in self.positions:
             # TODO: for place holder case, nothing updated
             self.positions[symbol].mark_to_market(last_price, multiplier)

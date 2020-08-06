@@ -53,7 +53,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self.risk_manager = PassThroughRiskManager()
         self.account_manager = AccountManager(self._config['account'])
 
+        self.dict_multipliers = dict()
         self._strategy_manager = StrategyManager(self._config, strat_dict, self._broker, self._order_manager, self._position_manager, self._data_board)
+        self._position_manager.set_fvp(self._strategy_manager._multiplier_dict)
 
         self.widgets = dict()
         self._schedule_timer = QtCore.QTimer()                  # task scheduler; TODO produce result_packet
@@ -93,7 +95,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def open_trade_widget(self):
         widget = self.widgets.get('trade_menu', None)
         if not widget:
-            widget = TradeMenu(self._broker, self._ui_events_engine)
+            widget = TradeMenu(self._broker, self._ui_events_engine, self._strategy_manager._multiplier_dict)
             self.widgets['trade_menu'] = widget
         widget.show()
 
