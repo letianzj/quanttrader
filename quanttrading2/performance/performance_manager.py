@@ -53,7 +53,6 @@ class PerformanceManager(object):
         """
         if self._equity.empty:         # no previous day
             self._equity[current_time] = 0.0
-            return
 
         # on a new time/date, calculate the performances for previous time/date
         if current_time != self._equity.index[-1]:

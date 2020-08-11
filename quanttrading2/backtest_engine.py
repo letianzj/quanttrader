@@ -97,6 +97,7 @@ class BacktestEngine(object):
         self._current_time = tick_event.timestamp
 
         # performance update goes before position and databoard updates because it updates previous day performance
+        # it can't update today because orders haven't been filled yet.
         self._performance_manager.update_performance(self._current_time, self._position_manager, self._data_board)
         self._position_manager.mark_to_market(self._current_time, tick_event.full_symbol, tick_event.price, self._data_board)
         self._data_board.on_tick(tick_event)
