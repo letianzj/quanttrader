@@ -31,21 +31,27 @@ class BacktestEventEngine(object):
         self._handlers = defaultdict(list)
 
     # ------------------------------------ public functions -----------------------------#
-    def run(self):
+    def run(self, nSteps=-1):
         """
-        run backtest
+        run backtest,
+        if nSteps = -1, run to the end; else run nSteps
         """
         _logger.info("Running Backtest...")
+        nstep = 0
         while (self._active):
             try:
                 event = self._queue.get(False)
             except Empty:   # throw good exception
-                try:
-                    event = self._datafeed.stream_next()
-                    self._queue.put(event)
-                except:
-                    # stop if not able to next event
-                    self._active = False
+                if (nSteps == -1) or (nstep < nSteps):
+                    try:
+                        event = self._datafeed.stream_next()
+                        self._queue.put(event)
+                        nstep += 1
+                    except:
+                        # stop if not able to next event
+                        self._active = False
+                else:
+                    break
             else:  # not empty
                 try:
                     # call event handlers

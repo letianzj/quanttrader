@@ -48,7 +48,10 @@ class PerformanceManager(object):
             index=[fill_event.fill_time]))
 
     def update_performance(self, current_time, position_manager, data_board):
-        if self._equity.empty:
+        """
+        update previous time/date
+        """
+        if self._equity.empty:         # no previous day
             self._equity[current_time] = 0.0
             return
 
@@ -66,7 +69,7 @@ class PerformanceManager(object):
         for sym, pos in position_manager.positions.items():
             multiplier = self.dict_multipliers.get(sym, 1)
 
-            # data_board hasn't been updated yet
+            # data_board (timestamp) hasn't been updated yet
             equity += pos.size * data_board.get_last_price(sym) * multiplier
             self._df_positions.loc[performance_time, sym] = pos.size * data_board.get_last_price(sym) * multiplier
 
@@ -75,6 +78,6 @@ class PerformanceManager(object):
         self._df_positions.loc[performance_time, 'total'] = self._equity[performance_time]
 
         if performance_time != current_time:     # not final day
-            self._equity[current_time] = 0.0
+            self._equity[current_time] = 0.0            # add new date
         else:  # final day, re-arrange column order
             self._df_positions = self._df_positions[self._symbols + ['cash']]

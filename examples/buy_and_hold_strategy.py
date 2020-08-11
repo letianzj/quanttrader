@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from datetime import datetime
+import pytz
 from quanttrading2.util import read_ohlcv_csv
 from quanttrading2.strategy import StrategyBase
 from quanttrading2 import BacktestEngine
@@ -28,8 +29,8 @@ class BuyAndHoldStrategy(StrategyBase):
 if __name__ == "__main__":
     df = read_ohlcv_csv('./TEST.csv')
     init_capital = 100_000.0
-    test_start_date = datetime(2008,1,1)
-    test_end_date = datetime(2008, 12, 31)
+    test_start_date = datetime(2008,1,1, 8, 30, 0, 0, pytz.timezone('America/New_York'))
+    test_end_date = datetime(2008,12,31, 6, 0, 0, 0, pytz.timezone('America/New_York'))
     strategy = BuyAndHoldStrategy()
     strategy.set_capital(init_capital)
     strategy.set_symbols(['TTT'])

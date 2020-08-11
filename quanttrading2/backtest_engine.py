@@ -96,7 +96,7 @@ class BacktestEngine(object):
     def _tick_event_handler(self, tick_event):
         self._current_time = tick_event.timestamp
 
-        # performance update goes before position updates because it updates previous day performance
+        # performance update goes before position and databoard updates because it updates previous day performance
         self._performance_manager.update_performance(self._current_time, self._position_manager, self._data_board)
         self._position_manager.mark_to_market(self._current_time, tick_event.full_symbol, tick_event.price, self._data_board)
         self._data_board.on_tick(tick_event)
