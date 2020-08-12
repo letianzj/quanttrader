@@ -8,33 +8,40 @@ _logger = logging.getLogger(__name__)
 class StrategyManager(object):
     def __init__(self, config, strat_dict, broker, order_manager, position_manager, data_board):
         """
-        current design:
-        let position manager to track total positions
-        let strategy manager to track strategy position for each strategy
+        current design: oversees all strategies/traders, check with risk managers before send out orders
+        let strategy manager to track strategy position for each strategy, with the help from order manager
+
+        :param config:
+        :param strat_dict:     strat name ==> stract
+        :param broker:
+        :param order_manager:  support OMS
+        :param position_manager:    let position manager help track total positions
+        :param data_board:
         """
         self._config = config
         self._broker = broker
-        self._order_manager = order_manager    # get sid from
+        self._order_manager = order_manager
         self._position_manager = position_manager
         self._data_board = data_board
-        self._strategy_id = 1
+        self._strategy_id = 1           # 0 is mannual discretionary trade, or not found
         self._strategy_dict = {}            # sid ==> strategy
         self._multiplier_dict = {}          # symbol ==> multiplier
         self._tick_strategy_dict = {}  # sym -> list of strategy
+        self._sid_oid_dict = {0: [], -1: []}    # sid ==> oid list; 0: manual; -1: unknown source
 
         self.load_strategy(strat_dict)
 
     def load_strategy(self, strat_dict):
-        strategy_id = 1     # 0 is mannual discretionary trade, or not found
         for k, v in strat_dict.items():
             v.id = self._strategy_id
             v.name = k
-            self._strategy_dict[strategy_id] = v
-            strategy_id += 1
+            self._strategy_dict[self._strategy_id ] = v
+            self._sid_oid_dict[self._strategy_id] = []         # record its orders
+            self._strategy_id  += 1
 
             v.set_params(self._config['strategy'][v.name]['params'])        # dict
             v.set_symbols(self._config['strategy'][v.name]['symbols'])      # list
-            v.on_init(self._broker, self._data_board, self._position_manager)
+            v.on_init(self, self._data_board, self._position_manager)
             for sym in v.symbols:
                 ss = sym.split(' ')
                 if ss[-1].isdigit():  # multiplier
@@ -62,19 +69,54 @@ class StrategyManager(object):
         self._strategy_dict[sid].on_stop()
 
     def pause_strategy(self, sid):
-        pass
-
-    def flat_strategy(self, sid):
-        pass
+        self._strategy_dict[sid].active = False
 
     def start_all(self):
-        pass
+        for k, v in self._strategy_dict.items():
+            v.active = True
 
     def stop_all(self):
+        for k, v in self._strategy_dict.items():
+            v.active = False
+
+    def place_order(self, o):
+        # currently it puts order directly with broker; e.g. by simplying calling ib.placeOrder method
+        # Because order is placed directly; all subsequent on_order messages are order status updates
+        # TODO, use an outbound queue to send orders
+        # 1. check with risk manager
+
+        # 2. if green light
+        # 2.a record
+        oid = self._broker.orderid
+        self._broker.orderid += 1
+        o.order_id = oid
+        self._sid_oid_dict[o.source].append(o.id)
+        self._order_manager.on_order_status(o)
+
+        # 2.b place order
+        self._broker.place_order(o)
+
+    def flat_strategy(self, sid):
+        """
+        Assume each strategy track its own positions
+        """
         pass
 
+    def cancel_straetgy(self, sid):
+        if sid not in self._sid_oid_dict.keys():
+            _logger.error(f'Flat strategy can not locate strategy id {sid}')
+        else:
+            for oid in self._sid_oid_dict[sid]:
+                if self._order_manager.order_dict[oid]:
+                    pass
+
     def flat_all(self):
-        pass
+        """
+        flat all according to position_manager
+        :return:
+        """
+        for k, v in self._sid_oid_dict.items():
+            pass
 
     def cancel_all(self):
         pass

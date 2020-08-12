@@ -5,7 +5,7 @@ from .position import Position
 
 class PositionEvent(Event):
     """
-    position event
+    position event directly from live broker
     """
     def __init__(self):
         """

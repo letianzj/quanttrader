@@ -11,3 +11,4 @@ from .position import *
 from .risk import *
 from .strategy import *
 from .backtest_engine import BacktestEngine
+from .backtest_gym_engine import BacktestGymEngine

@@ -77,12 +77,19 @@ class PositionManager(object):
         else:
             self.positions[fill_event.full_symbol] = fill_event.to_position()
 
-    def mark_to_market(self, current_time, symbol, last_price, data_board):
-        #for sym, pos in self.positions.items():
-        sym = symbol
-        multiplier = self.dict_multipliers.get(sym, 1)
-        if symbol in self.positions:
-            # TODO: for place holder case, nothing updated
+    def mark_to_market(self, time_stamp, symbol, last_price, data_board):
+        """
+        from previous timestamp to current timestamp. Pnl from holdings
+        """
+        if symbol == 'PLACEHOLDER':        # backtest placeholder, update all
+            for sym, pos in self.positions.items():
+                multiplier = self.dict_multipliers.get(sym, 1)
+                real_last_price = data_board.get_hist_price(sym, time_stamp).Close.iloc[-1]         # not PLACEHOLDER
+                pos.mark_to_market(real_last_price, multiplier)
+                # data board not updated yet; get_last_time return previous time_stamp
+                self.current_total_capital += self.positions[sym].size * (real_last_price - data_board.get_last_price(sym)) * multiplier
+        elif symbol in self.positions:
+            # this is a quick way based on one symbol; actual pnl should sum up across positions
+            multiplier = self.dict_multipliers.get(symbol, 1)
             self.positions[symbol].mark_to_market(last_price, multiplier)
-            # data board not updated yet
-            self.current_total_capital += self.positions[symbol].size * (last_price - data_board.get_last_price(sym)) * multiplier
+            self.current_total_capital += self.positions[symbol].size * (last_price - data_board.get_last_price(symbol)) * multiplier

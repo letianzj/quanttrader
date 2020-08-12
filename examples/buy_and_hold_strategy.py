@@ -4,7 +4,7 @@ from datetime import datetime
 import pytz
 from quanttrading2.util import read_ohlcv_csv
 from quanttrading2.strategy import StrategyBase
-from quanttrading2 import BacktestEngine
+from quanttrading2 import BacktestGymEngine, BacktestEngine
 
 
 class BuyAndHoldStrategy(StrategyBase):
@@ -22,7 +22,7 @@ class BuyAndHoldStrategy(StrategyBase):
         if not self.invested:
             df_hist = self._data_board.get_hist_price(symbol, event.timestamp)
             close = df_hist.iloc[-1].Close
-            target_size = int(self.cash / close)
+            target_size = int(self._position_manager.initial_capital / close)
             self.adjust_position(symbol, size_from=0, size_to=target_size)
             self.invested = True
 

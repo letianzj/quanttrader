@@ -105,14 +105,15 @@ class InteractiveBrokers(BrokerageBase):
             _logger.error(f'Failed to create order to place {order_event.full_symbol}')
             return
 
-        order_event.order_id = self.orderid
+        if order_event.order_id < 0:
+            order_event.order_id = self.orderid
+            self.orderid += 1
         order_event.account = self.account
         order_event.timestamp = datetime.now().strftime("%H:%M:%S.%f")
-        order_event.order_status = OrderStatus.NEWBORN
-        self.order_dict[self.orderid] = order_event
-        self.event_engine.put(copy(order_event))
-        self.api.placeOrder(self.orderid, ib_contract, ib_order)
-        self.orderid += 1
+        order_event.order_status = OrderStatus.NEWBORN       # NEWBORN?
+        self.order_dict[order_event.order_id] = order_event
+        self.event_engine.put(copy(order_event))           # acknowledged
+        self.api.placeOrder(order_event.order_id, ib_contract, ib_order)
 
     def cancel_order(self, order_id):
         if not self.api.connected:
