@@ -22,10 +22,11 @@ class StrategyBase(metaclass=ABCMeta):
         self.symbols = []               # symbols interested
         self.strategy_manager = None     # to place order through strategy_manager
         self._data_board = None         # to get current data
-        self._position_manager = PositionManager()     # track local positions and cash
+        self._position_manager = PositionManager()    # track local positions and cash
         self._order_manager = OrderManager()        # manage lcoal (standing) orders and fills
-        self.initialized = False
+
         self.active = False
+        self.initialized = False
 
     def set_capital(self, capital):
         self._position_manager.set_capital(capital)
@@ -41,13 +42,11 @@ class StrategyBase(metaclass=ABCMeta):
                 except:
                     pass
 
-    def on_init(self, strategy_manager, data_board=None, multiplier_dict={}):
+    def on_init(self, strategy_manager, data_board, multiplier_dict):
         self.strategy_manager = strategy_manager
         self._data_board = data_board
-
-        self._position_manager.set_fvp(multiplier_dict)
+        self._position_manager.set_multiplier(multiplier_dict)
         self._position_manager.reset()
-
         self.initialized = True
 
     def on_start(self):
@@ -60,10 +59,10 @@ class StrategyBase(metaclass=ABCMeta):
         """
         Respond to tick
         """
-        # for live trading, turn off p&l tick
-        # for back test; this is PLACEHOLDER, do not need to tick neither
+        # for live trading, turn off p&l tick by not calling super.on_tick()
+        # for backtest, call super().on_tick() if need to track positions or npv or cash
         self._position_manager.mark_to_market(tick_event.timestamp, tick_event.full_symbol, tick_event.price, self._data_board)
-        pass
+
 
     def on_order_status(self, order_event):
         """
@@ -83,14 +82,13 @@ class StrategyBase(metaclass=ABCMeta):
     def on_fill(self, fill_event):
         """
         on order filled
-        :return:
+        derived class call super().on_fill first
         """
         self._position_manager.on_fill(fill_event)
 
     def place_order(self, o):
         """
-        :param o:
-        :return:
+        expect user to set up order type, order size and order price
         """
         o.source = self.id         # identify source
         o.create_time = datetime.now().strftime('%H:%M:%S.%f')
@@ -99,10 +97,7 @@ class StrategyBase(metaclass=ABCMeta):
 
     def adjust_position(self, sym, size_from, size_to):
         """
-        :param sym:
-        :param size_from:
-        :param size_to:
-        :return:
+        use market order to adjust position
         """
         o = OrderEvent()
         o.full_symbol = sym
@@ -111,8 +106,7 @@ class StrategyBase(metaclass=ABCMeta):
         o.source = self.id  # identify source
         o.create_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')
         if (self.active):
-            #self.strategy_manager.place_order(o)
-            self.strategy_manager.put(o)
+            self.strategy_manager.place_order(o)
 
     def cancel_order(self, oid):
         pass

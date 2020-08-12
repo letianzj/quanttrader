@@ -20,7 +20,7 @@ class BacktestBrokerage(BrokerageBase):
         """
         self._events_engine = events_engine
         self._data_board = data_board
-        self._next_order_id = 1
+        self.orderid = 1
         self._active_orders = {}
 
     # ------------------------------------ private functions -----------------------------#
@@ -42,13 +42,16 @@ class BacktestBrokerage(BrokerageBase):
     def _try_cross_order(self, order_event, current_price):
         if order_event.order_type == OrderType.MARKET:
             order_event.order_status = OrderStatus.FILLED
+        # stop limit, if buy, limit price < market price < stop price;
+        # if sell, limti price > market price > stop price
+        # cross if opposite
         # limit: if buy, limit_price >= current_price; if sell, opposite
-        elif (order_event.order_type == OrderType.LIMIT) & \
+        elif (order_event.order_type in [OrderType.LIMIT, OrderType.STOP_LIMIT]) & \
                 (((order_event.order_size > 0) & (order_event.limit_price >= current_price)) |
                  ((order_event.order_size < 0)&(order_event.limit_price <= current_price))):
             order_event.order_status = OrderStatus.FILLED
         # stop: if buy, stop_price <= current_price; if sell, opposite
-        elif (order_event.order_type == OrderType.STOP) & \
+        elif (order_event.order_type in [OrderType.STOP, OrderType.STOP_LIMIT]) & \
                 (((order_event.order_size > 0) & (order_event.stop_price <= current_price)) |
                  ((order_event.order_size < 0) & (order_event.stop_price >= current_price))):
             order_event.order_status = OrderStatus.FILLED
@@ -58,7 +61,7 @@ class BacktestBrokerage(BrokerageBase):
     # -------------------------------------- public functions -------------------------------#
     def reset(self):
         self._active_orders.clear()
-        self._next_order_id = 1
+        self.orderid = 1
 
     def on_tick(self, tick_event):
         # check standing (stop) orders
@@ -84,6 +87,15 @@ class BacktestBrokerage(BrokerageBase):
                 fill.commission = self._calculate_commission(fill.full_symbol, fill.fill_price, fill.fill_size)
                 self._events_engine.put(fill)
             else:
+                # Trailing stop; reset stop price, use limit price as trailing amount
+                # if buy, stop price drops when market price drops
+                # if sell, stop price increases when market price increases
+                if order_event.order_type == OrderType.TRAIING_STOP:
+                    if order_event.order_size > 0:
+                        order_event.stop_price = min(current_price+order_event.limit_price, order_event.stop_price)
+                    else:
+                        order_event.stop_price = max(current_price - order_event.limit_price, order_event.stop_price)
+
                 _remaining_active_orders_id.append(order_event)
 
         self._active_orders = {k : v for k, v in self._active_orders if k in _remaining_active_orders_id}
@@ -119,5 +131,5 @@ class BacktestBrokerage(BrokerageBase):
         self._active_orders = {k: v for k, v in self._active_orders if k != order_id}
 
     def next_order_id(self):
-        return self._next_order_id
+        return self.orderid
     # ------------------------------- end of public functions -----------------------------#

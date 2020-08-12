@@ -8,7 +8,7 @@ _logger = logging.getLogger(__name__)
 
 
 class PositionManager(object):
-    def __init__(self):
+    def __init__(self, multiplier_dict):
         """
         """
         self.initial_capital = 0
@@ -19,13 +19,13 @@ class PositionManager(object):
         self.contracts = {}            # symbol ==> contract
         self.positions = {}        # symbol ==> positions
         self.orders = {}               # order id ==> orders and order status; partially fill
-        self.dict_multipliers = {}        # sym ==> multiplier
+        self.multiplier_dict = {}        # sym ==> multiplier
+
+    def set_multiplier(self, multiplier_dict):
+        self.multiplier_dict = multiplier_dict
 
     def set_capital(self, initial_capital):
         self.initial_capital = initial_capital
-
-    def set_fvp(self, dict_fvp={}):
-        self.dict_multipliers = dict_fvp
 
     def reset(self):
         self.cash = self.initial_capital
@@ -67,7 +67,7 @@ class PositionManager(object):
         """
         # sell will get cash back
         sym = fill_event.full_symbol
-        multiplier = self.dict_multipliers.get(sym, 1)
+        multiplier = self.multiplier_dict.get(sym, 1)
 
         self.cash -= (fill_event.fill_size * fill_event.fill_price)*multiplier + fill_event.commission
         self.current_total_capital -= fill_event.commission                   # commission is a cost
@@ -83,13 +83,13 @@ class PositionManager(object):
         """
         if symbol == 'PLACEHOLDER':        # backtest placeholder, update all
             for sym, pos in self.positions.items():
-                multiplier = self.dict_multipliers.get(sym, 1)
+                multiplier = self.multiplier_dict.get(sym, 1)
                 real_last_price = data_board.get_hist_price(sym, time_stamp).Close.iloc[-1]         # not PLACEHOLDER
                 pos.mark_to_market(real_last_price, multiplier)
                 # data board not updated yet; get_last_time return previous time_stamp
                 self.current_total_capital += self.positions[sym].size * (real_last_price - data_board.get_last_price(sym)) * multiplier
         elif symbol in self.positions:
             # this is a quick way based on one symbol; actual pnl should sum up across positions
-            multiplier = self.dict_multipliers.get(symbol, 1)
+            multiplier = self.multiplier_dict.get(symbol, 1)
             self.positions[symbol].mark_to_market(last_price, multiplier)
             self.current_total_capital += self.positions[symbol].size * (last_price - data_board.get_last_price(symbol)) * multiplier

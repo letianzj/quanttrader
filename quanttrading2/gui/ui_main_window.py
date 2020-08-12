@@ -37,6 +37,7 @@ class MainWindow(QtWidgets.QMainWindow):
         ## member variables
         self._current_time = None
         self._config = config
+        self.multiplier_dict = dict()
         self.central_widget = None
         self.message_window = None
         self.order_window = None
@@ -48,14 +49,14 @@ class MainWindow(QtWidgets.QMainWindow):
         self._ui_events_engine = LiveEventEngine()  # update ui
         self._broker = InteractiveBrokers(self._ui_events_engine, self._config['account'])
         self._position_manager = PositionManager()
+        self._position_manager.set_multiplier(self.multiplier_dict)
         self._order_manager = OrderManager()
         self._data_board = DataBoard()
         self.risk_manager = PassThroughRiskManager()
         self.account_manager = AccountManager(self._config['account'])
 
-        self.dict_multipliers = dict()
-        self._strategy_manager = StrategyManager(self._config, strat_dict, self._broker, self._order_manager, self._position_manager, self._data_board)
-        self._position_manager.set_fvp(self._strategy_manager._multiplier_dict)
+        self._strategy_manager = StrategyManager(self._broker, self._order_manager, self._position_manager, self._data_board, self.multiplier_dict)
+        self._load_strategy(strat_dict)
 
         self.widgets = dict()
         self._schedule_timer = QtCore.QTimer()                  # task scheduler; TODO produce result_packet
@@ -82,6 +83,19 @@ class MainWindow(QtWidgets.QMainWindow):
         self._ui_events_engine.start()
 
         self.connect_to_broker()
+
+    def _load_strategy(self, strat_dict):
+        i = 1   # 0 is mannual discretionary trade, or not found
+        # similar to backtest; strategy sets capital, params, and symbols
+        for k, v in strat_dict.items():
+            v.id = i
+            v.name = k
+            v.active = self._config['strategy'][v.name]['active']
+            v.set_capital(self._config['strategy'][v.name]['capital'])  # float
+            v.set_params(self._config['strategy'][v.name]['params'])  # dict
+            v.set_symbols(self._config['strategy'][v.name]['symbols'])  # list
+            i += 1
+        self._strategy_manager.load_strategy(strat_dict)
 
     #################################################################################################
     # -------------------------------- Event Handler   --------------------------------------------#

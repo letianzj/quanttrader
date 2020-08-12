@@ -1,12 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import logging
+from ..order.order_status import OrderStatus
 
 _logger = logging.getLogger(__name__)
 
 
 class StrategyManager(object):
-    def __init__(self, config, strat_dict, broker, order_manager, position_manager, data_board):
+    def __init__(self, config, broker, order_manager, position_manager, data_board, multiplier_dict):
         """
         current design: oversees all strategies/traders, check with risk managers before send out orders
         let strategy manager to track strategy position for each strategy, with the help from order manager
@@ -23,25 +24,16 @@ class StrategyManager(object):
         self._order_manager = order_manager
         self._position_manager = position_manager
         self._data_board = data_board
-        self._strategy_id = 1           # 0 is mannual discretionary trade, or not found
         self._strategy_dict = {}            # sid ==> strategy
-        self._multiplier_dict = {}          # symbol ==> multiplier
+        self._multiplier_dict = multiplier_dict          # symbol ==> multiplier
         self._tick_strategy_dict = {}  # sym -> list of strategy
         self._sid_oid_dict = {0: [], -1: []}    # sid ==> oid list; 0: manual; -1: unknown source
 
-        self.load_strategy(strat_dict)
-
     def load_strategy(self, strat_dict):
         for k, v in strat_dict.items():
-            v.id = self._strategy_id
-            v.name = k
-            self._strategy_dict[self._strategy_id ] = v
-            self._sid_oid_dict[self._strategy_id] = []         # record its orders
-            self._strategy_id  += 1
-
-            v.set_params(self._config['strategy'][v.name]['params'])        # dict
-            v.set_symbols(self._config['strategy'][v.name]['symbols'])      # list
-            v.on_init(self, self._data_board, self._position_manager)
+            self._strategy_dict[v.id ] = v
+            self._sid_oid_dict[v.id] = []         # record its orders
+            v.on_init(self, self._data_board, self._multiplier_dict)
             for sym in v.symbols:
                 ss = sym.split(' ')
                 if ss[-1].isdigit():  # multiplier
@@ -58,9 +50,6 @@ class StrategyManager(object):
                 else:
                     print(f'add {sym}')
                     self._broker.market_data_subscription_reverse_dict[sym] = -1
-
-            v.active = False
-            self._strategy_dict[v.id] = v
 
     def start_strategy(self, sid):
         self._strategy_dict[sid].on_start()
@@ -90,8 +79,10 @@ class StrategyManager(object):
         oid = self._broker.orderid
         self._broker.orderid += 1
         o.order_id = oid
+        o.order_status = OrderStatus.NEWBORN
         self._sid_oid_dict[o.source].append(o.id)
         self._order_manager.on_order_status(o)
+        self._strategy_dict[o.source]._order_manager.on_order_status(o)
 
         # 2.b place order
         self._broker.place_order(o)

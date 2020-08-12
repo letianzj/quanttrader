@@ -6,6 +6,9 @@ client_id: 0
 #-------------- active strategies -------------#
 strategy:
   MovingAverageCrossStrategy:
+    patth: None
+    active: False
+    capital: 10000
     params:
       short_window: 20
       long_window: 80
@@ -14,6 +17,8 @@ strategy:
       - AAPL STK SMART
       - AMZN STK SMART
   BuyAndHoldStrategy:
+    patth: None
+    active: False
     params:
       ticks: 5
     symbols:
@@ -22,6 +27,8 @@ strategy:
       - MSFT STK SMART
   OrderPerIntervalStrategy:
     path: 'd:/workspace/quanttrading2/examples/order_per_interval_strategy.py'
+    active: True
+    capital: 50000
     params:
       tick_trigger_threshold: 50
       tick_trigger_threshold2: 100

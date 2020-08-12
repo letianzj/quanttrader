@@ -59,8 +59,8 @@ class InteractiveBrokers(BrokerageBase):
         self.account_summary = AccountEvent()
         self.account_summary.brokerage = 'IB'
         self.clientid = 0
-        self.reqid = 0
-        self.orderid = 0
+        self.reqid = 0           # next/available reqid
+        self.orderid = 0         # next/available orderid
 
     def connect(self, host='127.0.0.1', port=7497, clientId=0):
         self.clientid = clientId

@@ -52,12 +52,13 @@ class BacktestGymEngine(gym.Env):
         self._current_time = None
         self._start_date = start_date
         self._end_date = end_date
+        self.multiplier_dict = {}
         self._data_feed = BacktestDataFeed(self._start_date, self._end_date)
         self._data_board = DataBoard()
-        self._performance_manager = PerformanceManager()
+        self._performance_manager = PerformanceManager(self.multiplier_dict)
         self._position_manager = PositionManager()
+        self._position_manager.set_multiplier(self.multiplier_dict)
         self._risk_manager = PassThroughRiskManager()
-        self.multiplier_dict = {}
         self._strategy = None           # no strategy; strategy is to be learned
 
         self._n_assets = n_assets
@@ -73,9 +74,8 @@ class BacktestGymEngine(gym.Env):
     def set_capital(self, capital):
         self._position_manager.set_capital(capital)
 
-    def set_fvp(self):
-        self._performance_manager.set_fvp(self.multiplier_dict)
-        self._position_manager.set_fvp(self.multiplier_dict)
+    def set_multiplier(self, multiplier_dict):
+        self.multiplier_dict.update(multiplier_dict)
 
     def add_data(self, data_key, data_source, watch=True):
         """

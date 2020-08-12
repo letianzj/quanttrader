@@ -12,10 +12,10 @@ from .data.backtest_data_feed import BacktestDataFeed
 from .data.data_board import DataBoard
 from .brokerage.backtest_brokerage import BacktestBrokerage
 from .position.position_manager import PositionManager
+from .order.order_manager import OrderManager
 from .performance.performance_manager import PerformanceManager
 from .risk.risk_manager import PassThroughRiskManager
-from .strategy import StrategyBase
-
+from .strategy import StrategyManager
 
 _logger = logging.getLogger(__name__)
 
@@ -28,23 +28,29 @@ class BacktestEngine(object):
         self._current_time = None
         self._start_date = start_date
         self._end_date = end_date
+        self.config = dict()
+        self.multiplier_dict = {}              # one copy of multiplier dict shared across program
         self._data_feed = BacktestDataFeed(self._start_date, self._end_date)
         self._data_board = DataBoard()
-        self._performance_manager = PerformanceManager()
+        self._performance_manager = PerformanceManager(self.multiplier_dict) # send dict pointer
         self._position_manager = PositionManager()
+        self._position_manager.set_multiplier(self.multiplier_dict)
+        self._order_manager = OrderManager()
+        self._strategy_manager = StrategyManager(self._order_manager, self._position_manager, self._data_board, self.multiplier_dict)
         self._risk_manager = PassThroughRiskManager()
-        self.multiplier_dict = {}
         self._strategy = None
 
+    def set_multiplier(self, multiplier_dict):
+        self.multiplier_dict.update(multiplier_dict)
+
     def set_capital(self, capital):
+        """
+        set capital to the global position manager
+        """
         self._position_manager.set_capital(capital)
 
     def set_strategy(self, strategy):
         self._strategy = strategy
-
-    def set_fvp(self):
-        self._performance_manager.set_fvp(self.multiplier_dict)
-        self._position_manager.set_fvp(self.multiplier_dict)
 
     def add_data(self, data_key, data_source, watch=True):
         """
@@ -81,10 +87,10 @@ class BacktestEngine(object):
         )
 
         ## 4. set strategy
-        self._strategy.on_init(self._events_engine, self._data_board, self.multiplier_dict)
-        self._strategy.on_start()
+        self._strategy.active = True
+        self._strategy_manager.load_strategy({self._strategy.name: self._strategy})
 
-        ## 5. performance manager and portfolio manager
+        ## 5. global performance manager and portfolio manager
         self._performance_manager.reset()
         self._position_manager.reset()
 
@@ -106,8 +112,10 @@ class BacktestEngine(object):
         self._performance_manager.update_performance(self._current_time, self._position_manager, self._data_board)
         self._position_manager.mark_to_market(tick_event.timestamp, tick_event.full_symbol, tick_event.price, self._data_board)
         self._strategy.on_tick(tick_event)        # plus strategy.position_manager market to marekt
-        # data_baord update last, so it still holds price of last tick; for position MtM
-        # for backtest, strategy pull directly from hist_data; so it doesn't matter
+        # data_baord update after strategy, so it still holds price of last tick; for position MtM
+        # strategy uses tick.price for current price; and use data_board.last_price for previous price
+        # for backtest, this is PLACEHOLDER based on timestamp.
+        # strategy pull directly from data_board hist_data for current_price; and data_board.last_price for previous price
         self._data_board.on_tick(tick_event)
         # check standing orders, after databoard is updated
         self._backtest_brokerage.on_tick(tick_event)
