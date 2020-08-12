@@ -36,7 +36,9 @@ class BacktestEngine(object):
         self._position_manager = PositionManager()
         self._position_manager.set_multiplier(self.multiplier_dict)
         self._order_manager = OrderManager()
-        self._strategy_manager = StrategyManager(self._order_manager, self._position_manager, self._data_board, self.multiplier_dict)
+        self._events_engine = BacktestEventEngine(self._data_feed)
+        self._backtest_brokerage = BacktestBrokerage(self._events_engine, self._data_board)
+        self._strategy_manager = StrategyManager(self.config, self._backtest_brokerage, self._order_manager, self._position_manager, self._data_board, self.multiplier_dict)
         self._risk_manager = PassThroughRiskManager()
         self._strategy = None
 
@@ -78,14 +80,6 @@ class BacktestEngine(object):
         ## 1. data_feed
         self._data_feed.subscribe_market_data()
 
-        ## 2. event engine
-        self._events_engine = BacktestEventEngine(self._data_feed)
-
-        ## 3. brokerage
-        self._backtest_brokerage = BacktestBrokerage(
-            self._events_engine, self._data_board
-        )
-
         ## 4. set strategy
         self._strategy.active = True
         self._strategy_manager.load_strategy({self._strategy.name: self._strategy})
@@ -100,7 +94,7 @@ class BacktestEngine(object):
         ## 6. wire up event handlers
         self._events_engine.register_handler(EventType.TICK, self._tick_event_handler)
         # to be consistent with current live, order is placed directly
-        self._events_engine.register_handler(EventType.ORDER, self._order_event_handler)
+        # self._events_engine.register_handler(EventType.ORDER, self._order_event_handler)
         self._events_engine.register_handler(EventType.FILL, self._fill_event_handler)
 
     # ------------------------------------ private functions -----------------------------#
@@ -122,6 +116,7 @@ class BacktestEngine(object):
 
     def _order_event_handler(self, order_event):
         """
+        This is not active
         backtest doesn't send order_event back to strategy. It fills directly and becoems fill_event
         """
         self._backtest_brokerage.place_order(order_event)

@@ -8,7 +8,7 @@ _logger = logging.getLogger(__name__)
 
 
 class PositionManager(object):
-    def __init__(self, multiplier_dict):
+    def __init__(self):
         """
         """
         self.initial_capital = 0

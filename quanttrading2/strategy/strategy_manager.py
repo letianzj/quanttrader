@@ -80,7 +80,7 @@ class StrategyManager(object):
         self._broker.orderid += 1
         o.order_id = oid
         o.order_status = OrderStatus.NEWBORN
-        self._sid_oid_dict[o.source].append(o.id)
+        self._sid_oid_dict[o.source].append(oid)
         self._order_manager.on_order_status(o)
         self._strategy_dict[o.source]._order_manager.on_order_status(o)
 

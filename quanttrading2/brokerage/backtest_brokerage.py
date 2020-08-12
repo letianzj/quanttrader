@@ -21,6 +21,7 @@ class BacktestBrokerage(BrokerageBase):
         self._events_engine = events_engine
         self._data_board = data_board
         self.orderid = 1
+        self.market_data_subscription_reverse_dict = {}      # market data subscription, to be consistent with live
         self._active_orders = {}
 
     # ------------------------------------ private functions -----------------------------#
