@@ -24,9 +24,6 @@ class OrderManager(object):
 
     def on_tick(self, tick_event):
         """
-        check standing (stop) orders
-        put trigged into queue
-        and remove from standing order list
         """
         pass
 

@@ -4,6 +4,7 @@ from .brokerage_base import BrokerageBase
 from ..event.event import EventType
 from ..order.fill_event import FillEvent
 from ..order.order_event import OrderEvent
+from ..order.order_type import OrderType
 from ..order.order_status import OrderStatus
 
 
@@ -19,6 +20,7 @@ class BacktestBrokerage(BrokerageBase):
         """
         self._events_engine = events_engine
         self._data_board = data_board
+        self._next_order_id = 1
         self._active_orders = {}
 
     # ------------------------------------ private functions -----------------------------#
@@ -37,47 +39,85 @@ class BacktestBrokerage(BrokerageBase):
 
         return commission
 
-    def _cross_limit_order(self):
-        pass
+    def _try_cross_order(self, order_event, current_price):
+        if order_event.order_type == OrderType.MARKET:
+            order_event.order_status = OrderStatus.FILLED
+        # limit: if buy, limit_price >= current_price; if sell, opposite
+        elif (order_event.order_type == OrderType.LIMIT) & \
+                (((order_event.order_size > 0) & (order_event.limit_price >= current_price)) |
+                 ((order_event.order_size < 0)&(order_event.limit_price <= current_price))):
+            order_event.order_status = OrderStatus.FILLED
+        # stop: if buy, stop_price <= current_price; if sell, opposite
+        elif (order_event.order_type == OrderType.STOP) & \
+                (((order_event.order_size > 0) & (order_event.stop_price <= current_price)) |
+                 ((order_event.order_size < 0) & (order_event.stop_price >= current_price))):
+            order_event.order_status = OrderStatus.FILLED
 
-    def _cross_stop_order(self):
-        pass
-
-    def _cross_market_order(self):
-        pass
     # -------------------------------- end of private functions -----------------------------#
 
     # -------------------------------------- public functions -------------------------------#
     def reset(self):
         self._active_orders.clear()
+        self._next_order_id = 1
 
-    def on_tick(self):
-        pass
+    def on_tick(self, tick_event):
+        # check standing (stop) orders
+        # put trigged into queue
+        # and remove from standing order list
+        _remaining_active_orders_id = []
+        timestamp = tick_event.timestamp
+        for oid, order_event in self._active_orders.items():
+            # this should be after data board is updated
+            current_price = self._data_board.get_last_price(tick_event.full_symbol)
+            self._try_cross_order(order_event, current_price)
+
+            if order_event.order_status == OrderStatus.FILLED:
+                fill = FillEvent()
+                fill.order_id = order_event.order_id
+                fill.fill_id = order_event.order_id
+                fill.fill_time = self._data_board.get_last_timestamp(order_event.full_symbol)
+                fill.full_symbol = order_event.full_symbol
+                fill.fill_size = order_event.order_size
+                # TODO: use bid/ask to fill short/long
+                fill.fill_price = current_price
+                fill.exchange = 'BACKTEST'
+                fill.commission = self._calculate_commission(fill.full_symbol, fill.fill_price, fill.fill_size)
+                self._events_engine.put(fill)
+            else:
+                _remaining_active_orders_id.append(order_event)
+
+        self._active_orders = {k : v for k, v in self._active_orders if k in _remaining_active_orders_id}
+
 
     def place_order(self, order_event):
         """
-        immediate fill, no latency or slippage
+        try immediate fill, no latency or slippage
+        the alternative is to save the orders and fill on_tick
         """
-        # TODO: acknowledge the order
-        order_event.order_status = OrderStatus.FILLED
+        current_price = self._data_board.get_last_price(order_event.full_symbol)
+        self._try_cross_order(order_event, current_price)
 
-        fill = FillEvent()
-        fill.order_id = order_event.order_id
-        fill.fill_id = order_event.order_id
-        fill.fill_time = self._data_board.get_last_timestamp(order_event.full_symbol)
-        fill.full_symbol = order_event.full_symbol
-        fill.fill_size = order_event.order_size
-        # TODO: use bid/ask to fill short/long
-        fill.fill_price = self._data_board.get_last_price(order_event.full_symbol)
-        fill.exchange = 'BACKTEST'
-        fill.commission = self._calculate_commission(fill.full_symbol, fill.fill_price, fill.fill_size)
+        if order_event.order_status == OrderStatus.FILLED:
+            fill = FillEvent()
+            fill.order_id = order_event.order_id
+            fill.fill_id = order_event.order_id
+            fill.fill_time = self._data_board.get_last_timestamp(order_event.full_symbol)
+            fill.full_symbol = order_event.full_symbol
+            fill.fill_size = order_event.order_size
+            # TODO: use bid/ask to fill short/long
+            fill.fill_price = current_price
+            fill.exchange = 'BACKTEST'
+            fill.commission = self._calculate_commission(fill.full_symbol, fill.fill_price, fill.fill_size)
+            self._events_engine.put(fill)
+        else:
+            order_event.order_status = OrderStatus.ACKNOWLEDGED
+            self._active_orders[order_event.order_id] = order_event      # save standing orders
+            self._events_engine.put(order_event)
 
-        self._events_engine.put(fill)
 
     def cancel_order(self, order_id):
-        """cancel order is not supported"""
-        pass
+        self._active_orders = {k: v for k, v in self._active_orders if k != order_id}
 
     def next_order_id(self):
-        return 0
+        return self._next_order_id
     # ------------------------------- end of public functions -----------------------------#

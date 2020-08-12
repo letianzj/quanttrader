@@ -109,6 +109,8 @@ class BacktestEngine(object):
         # data_baord update last, so it still holds price of last tick; for position MtM
         # for backtest, strategy pull directly from hist_data; so it doesn't matter
         self._data_board.on_tick(tick_event)
+        # check standing orders, after databoard is updated
+        self._backtest_brokerage.on_tick(tick_event)
 
     def _order_event_handler(self, order_event):
         """

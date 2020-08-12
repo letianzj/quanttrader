@@ -120,7 +120,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._current_time = tick_event.timestamp
 
         self._data_board.on_tick(tick_event)       # update databoard
-        self._order_manager.on_tick(tick_event)     # check standing stop orders
+        self._order_manager.on_tick(tick_event)
         self._strategy_manager.on_tick(tick_event)  # feed strategies
 
     def _order_status_event_handler(self, order_status_event):  # including cancel
