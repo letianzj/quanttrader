@@ -58,7 +58,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.risk_manager = PassThroughRiskManager()
         self.account_manager = AccountManager(self._config['account'])
 
-        self._strategy_manager = StrategyManager(self._broker, self._order_manager, self._position_manager, self._data_board, self.multiplier_dict)
+        self._strategy_manager = StrategyManager(self._broker, self._order_manager, self._position_manager, self._data_board, self.risk_manager, self.multiplier_dict)
         self._load_strategy(strat_dict)
 
         self.widgets = dict()

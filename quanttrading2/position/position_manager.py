@@ -18,7 +18,6 @@ class PositionManager(object):
         self.current_total_capital = 0
         self.contracts = {}            # symbol ==> contract
         self.positions = {}        # symbol ==> positions
-        self.orders = {}               # order id ==> orders and order status; partially fill
         self.multiplier_dict = {}        # sym ==> multiplier
 
     def set_multiplier(self, multiplier_dict):
@@ -32,7 +31,6 @@ class PositionManager(object):
         self.current_total_capital = self.initial_capital
         self.contracts.clear()
         self.positions.clear()
-        self.orders.clear()
 
     def get_position_size(self, symbol):
         if symbol in self.positions.keys():

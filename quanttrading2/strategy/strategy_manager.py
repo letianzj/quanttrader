@@ -1,28 +1,32 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import logging
+from datetime import datetime
 from ..order.order_status import OrderStatus
+from ..order.order_event import OrderEvent
 
 _logger = logging.getLogger(__name__)
 
 
 class StrategyManager(object):
-    def __init__(self, config, broker, order_manager, position_manager, data_board, multiplier_dict):
+    def __init__(self, config, broker, order_manager, position_manager, risk_manager, data_board, multiplier_dict):
         """
         current design: oversees all strategies/traders, check with risk managers before send out orders
         let strategy manager to track strategy position for each strategy, with the help from order manager
 
         :param config:
         :param strat_dict:     strat name ==> stract
-        :param broker:
+        :param broker: to place order directly without message queue
         :param order_manager:  support OMS
         :param position_manager:    let position manager help track total positions
-        :param data_board:
+        :param risk_manager: chck order witth
+        :param data_board: for strategy
         """
         self._config = config
         self._broker = broker
         self._order_manager = order_manager
         self._position_manager = position_manager
+        self._risk_manager = risk_manager
         self._data_board = data_board
         self._strategy_dict = {}            # sid ==> strategy
         self._multiplier_dict = multiplier_dict          # symbol ==> multiplier
@@ -52,10 +56,10 @@ class StrategyManager(object):
                     self._broker.market_data_subscription_reverse_dict[sym] = -1
 
     def start_strategy(self, sid):
-        self._strategy_dict[sid].on_start()
+        self._strategy_dict[sid].active = True
 
     def stop_strategy(self, sid):
-        self._strategy_dict[sid].on_stop()
+        self._strategy_dict[sid].active = False
 
     def pause_strategy(self, sid):
         self._strategy_dict[sid].active = False
@@ -68,13 +72,19 @@ class StrategyManager(object):
         for k, v in self._strategy_dict.items():
             v.active = False
 
-    def place_order(self, o):
+    def place_order(self, o, check_risk=True):
         # currently it puts order directly with broker; e.g. by simplying calling ib.placeOrder method
         # Because order is placed directly; all subsequent on_order messages are order status updates
         # TODO, use an outbound queue to send orders
         # 1. check with risk manager
+        order_check = True
+        if check_risk:
+            order_check = self._risk_manager.order_in_compliance(o)
 
         # 2. if green light
+        if not order_check:
+            return
+
         # 2.a record
         oid = self._broker.orderid
         self._broker.orderid += 1
@@ -87,30 +97,53 @@ class StrategyManager(object):
         # 2.b place order
         self._broker.place_order(o)
 
-    def flat_strategy(self, sid):
-        """
-        Assume each strategy track its own positions
-        """
-        pass
-
     def cancel_straetgy(self, sid):
         if sid not in self._sid_oid_dict.keys():
-            _logger.error(f'Flat strategy can not locate strategy id {sid}')
+            _logger.error(f'Cancel strategy can not locate strategy id {sid}')
         else:
             for oid in self._sid_oid_dict[sid]:
-                if self._order_manager.order_dict[oid]:
-                    pass
+                o = self._order_manager.retrieve_order(oid)
+                if o is not None:
+                    if o.order_status < OrderStatus.FILLED:
+                        self._broker.cancel_order(oid)
+
+    def cancel_all(self):
+        for oid, o in self._order_manager.order_dict.items():
+            if o.order_status < OrderStatus.FILLED:
+                self._broker.cancel_order(oid)
+
+    def flat_strategy(self, sid):
+        """
+        flat with MARKET order (default)
+        Assume each strategy track its own positions
+        TODO: should turn off strategy?
+        """
+        if sid not in self._strategy_dict.keys():
+            _logger.error(f'Flat strategy can not locate strategy id {sid}')
+
+        for sym, pos in self._strategy_dict[sid]._position_manager.positions.items():
+            if pos.size != 0:
+                o = OrderEvent()
+                o.full_symbol = sym
+                o.order_size = -pos.size
+                o.source = 0           # mannual flat
+                o.create_time = datetime.now().strftime('%H:%M:%S.%f')
+                self.place_order(o, check_risk=False)
 
     def flat_all(self):
         """
         flat all according to position_manager
+        TODO: should turn off all strategies?
         :return:
         """
-        for k, v in self._sid_oid_dict.items():
-            pass
-
-    def cancel_all(self):
-        pass
+        for sym, pos in self._position_manager.positions.items():
+            if pos.size != 0:
+                o = OrderEvent()
+                o.full_symbol = sym
+                o.order_size = -pos.size
+                o.source = 0
+                o.create_time = datetime.now().strftime('%H:%M:%S.%f')
+                self.place_order(o, check_risk=False)
 
     def on_tick(self, k):
         # print(k.full_symbol, k.price, k.size)

@@ -38,8 +38,8 @@ class BacktestEngine(object):
         self._order_manager = OrderManager()
         self._events_engine = BacktestEventEngine(self._data_feed)
         self._backtest_brokerage = BacktestBrokerage(self._events_engine, self._data_board)
-        self._strategy_manager = StrategyManager(self.config, self._backtest_brokerage, self._order_manager, self._position_manager, self._data_board, self.multiplier_dict)
         self._risk_manager = PassThroughRiskManager()
+        self._strategy_manager = StrategyManager(self.config, self._backtest_brokerage, self._order_manager, self._position_manager, self._data_board, self._risk_manager, self.multiplier_dict)
         self._strategy = None
 
     def set_multiplier(self, multiplier_dict):
