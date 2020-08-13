@@ -48,7 +48,7 @@ class StrategyManager(object):
                 if sym in self._broker.market_data_subscription_reverse_dict.keys():
                     continue
                 else:
-                    print(f'add {sym}')
+                    _logger.info(f'add {sym}')
                     self._broker.market_data_subscription_reverse_dict[sym] = -1
 
     def start_strategy(self, sid):
@@ -113,7 +113,7 @@ class StrategyManager(object):
         pass
 
     def on_tick(self, k):
-        print(k.full_symbol, k.price, k.size)
+        # print(k.full_symbol, k.price, k.size)
         if k.full_symbol in self._tick_strategy_dict:
             # foreach strategy that subscribes to this tick
             s_list = self._tick_strategy_dict[k.full_symbol]

@@ -1,7 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from PyQt5 import QtCore, QtWidgets, QtGui
+import logging
 from ..account.account_event import AccountEvent
+
+_logger = logging.getLogger(__name__)
+
 
 class AccountWindow(QtWidgets.QTableWidget):
     account_signal = QtCore.pyqtSignal(type(AccountEvent()))
@@ -38,7 +42,7 @@ class AccountWindow(QtWidgets.QTableWidget):
         Only add row
         '''
         self._account_manager.on_account(account_event)
-        print(account_event.account_id)
+        _logger.info(f'account id recorded: {account_event.account_id}')
 
         if account_event.account_id in self._account_ids:
             row = self._account_ids.index(account_event.account_id)

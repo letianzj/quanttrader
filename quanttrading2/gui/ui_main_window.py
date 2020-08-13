@@ -6,6 +6,7 @@ import os
 import webbrowser
 import psutil
 from queue import Queue, Empty
+import logging
 from PyQt5 import QtCore, QtWidgets, QtGui
 from datetime import datetime
 
@@ -28,6 +29,8 @@ from .ui_account_window import AccountWindow
 from .ui_strategy_window import StrategyWindow
 from .ui_log_window import LogWindow
 from .ui_trade_menu import TradeMenu
+
+_logger = logging.getLogger(__name__)
 
 
 class MainWindow(QtWidgets.QMainWindow):
@@ -126,7 +129,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.strategy_window.update_status(self.strategy_window.currentRow(), False)
 
     def closeEvent(self, a0: QtGui.QCloseEvent):
-        print('closing main window')
+        _logger.info('closing main window')
         self.disconnect_from_broker()
         self._ui_events_engine.stop()
 
@@ -160,7 +163,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._position_manager.on_contract(contract_event)
 
     def _historical_event_handler(self, historical_event):
-        print(historical_event)
+        pass
 
     #################################################################################################
     # ------------------------------ Event Handler Ends --------------------------------------------#

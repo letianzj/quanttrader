@@ -5,6 +5,9 @@ from datetime import datetime, timedelta
 
 from .data_feed_base import DataFeedBase
 from ..data.bar_event import BarEvent
+import logging
+
+_logger = logging.getLogger(__name__)
 
 
 class LiveDataFeed(DataFeedBase):
@@ -101,15 +104,9 @@ class LiveDataFeed(DataFeedBase):
                 }
                 self.tickers[ticker] = ticker_prices
             except OSError:
-                print(
-                    "Could not subscribe ticker %s "
-                    "as no data CSV found for pricing." % ticker
-                )
+                _logger.error(f'Could not subscribe ticker {ticker} as no data CSV found for pricing.')
         else:
-            print(
-                "Could not subscribe ticker %s "
-                "as is already subscribed." % ticker
-            )
+            _logger.error(f"Could not subscribe ticker {ticker} as is already subscribed.")
 
     def _create_event(self, index, period, ticker, row):
         """
