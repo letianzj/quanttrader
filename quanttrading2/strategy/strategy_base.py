@@ -91,20 +91,29 @@ class StrategyBase(metaclass=ABCMeta):
         expect user to set up order type, order size and order price
         """
         o.source = self.id         # identify source
-        o.create_time = datetime.now().strftime('%H:%M:%S.%f')
+        if o.create_time is None:
+            o.create_time = datetime.now().strftime('%H:%M:%S.%f')
         if (self.active):
             self.strategy_manager.place_order(o)
 
-    def adjust_position(self, sym, size_from, size_to):
+    def adjust_position(self, sym, size_from, size_to, timestamp=None):
         """
         use market order to adjust position
+        :param sym:
+        :param size_from:
+        :param size_to:
+        :param timestamp: used by backtest broker to get price on timestamp
+        :return:
         """
         o = OrderEvent()
         o.full_symbol = sym
         o.order_type = OrderType.MARKET
         o.order_size = size_to - size_from
         o.source = self.id  # identify source
-        o.create_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')
+        if timestamp is None:
+            o.create_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')
+        else:
+            o.create_time = timestamp
         if (self.active):
             self.strategy_manager.place_order(o)
 

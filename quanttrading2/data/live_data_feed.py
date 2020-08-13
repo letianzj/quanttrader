@@ -51,7 +51,7 @@ class LiveDataFeed(DataFeedBase):
         else:
             sd = ed- timedelta(days = 365)
 
-        data = quandl.get('wiki/'+ticker, start_date=sd, end_date=ed, authtoken='ay68s2CUzKbVuy8GAqxj')
+        data = quandl.get('wiki/'+ticker, start_date=sd, end_date=ed, authtoken='your_token')
         self.tickers_data[ticker] = data
         self.tickers_data[ticker]["Ticker"] = ticker
 

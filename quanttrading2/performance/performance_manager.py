@@ -21,9 +21,9 @@ class PerformanceManager(object):
         self._df_trades = None
 
     def add_watch(self, data_key, data):
-        if 'Close' in data.columns:
+        if 'Close' in data.columns:             # OHLCV
             self._symbols.append(data_key)
-        else:
+        else:           # CLZ20, CLZ21
             self._symbols.extend(data.columns)
 
     #  or each sid

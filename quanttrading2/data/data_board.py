@@ -47,7 +47,7 @@ class DataBoard(object):
         elif self._PLACEHOLDER in self._current_data_dict:
             return self._current_data_dict[self._PLACEHOLDER].timestamp
         else:
-            return None
+            return self._current_time
 
     def get_current_timestamp(self):
         return self._current_time

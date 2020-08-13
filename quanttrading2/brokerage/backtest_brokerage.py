@@ -72,14 +72,15 @@ class BacktestBrokerage(BrokerageBase):
         timestamp = tick_event.timestamp
         for oid, order_event in self._active_orders.items():
             # this should be after data board is updated
-            current_price = self._data_board.get_last_price(tick_event.full_symbol)
+            # current_price = self._data_board.get_last_price(tick_event.full_symbol)      # last price is not updated yet
+            current_price = self._data_board.get_hist_price(order_event.full_symbol, timestamp).iloc[-1].Close
             self._try_cross_order(order_event, current_price)
 
             if order_event.order_status == OrderStatus.FILLED:
                 fill = FillEvent()
                 fill.order_id = order_event.order_id
                 fill.fill_id = order_event.order_id
-                fill.fill_time = self._data_board.get_last_timestamp(order_event.full_symbol)
+                fill.fill_time = timestamp
                 fill.full_symbol = order_event.full_symbol
                 fill.fill_size = order_event.order_size
                 # TODO: use bid/ask to fill short/long
@@ -107,14 +108,17 @@ class BacktestBrokerage(BrokerageBase):
         try immediate fill, no latency or slippage
         the alternative is to save the orders and fill on_tick
         """
-        current_price = self._data_board.get_last_price(order_event.full_symbol)
+        # current_price = self._data_board.get_last_price(order_event.full_symbol)      # last price is not updated yet
+        timestamp = order_event.create_time
+        current_price = self._data_board.get_hist_price(order_event.full_symbol, timestamp).iloc[-1].Close
         self._try_cross_order(order_event, current_price)
 
         if order_event.order_status == OrderStatus.FILLED:
             fill = FillEvent()
             fill.order_id = order_event.order_id
             fill.fill_id = order_event.order_id
-            fill.fill_time = self._data_board.get_last_timestamp(order_event.full_symbol)
+            # fill.fill_time = self._data_board.get_last_timestamp(order_event.full_symbol)
+            fill.fill_time = timestamp
             fill.full_symbol = order_event.full_symbol
             fill.fill_size = order_event.order_size
             # TODO: use bid/ask to fill short/long
