@@ -52,6 +52,11 @@ class OrderManager(object):
             return True
 
     def on_cancel(self, o):
+        """
+        TODO: remove on cancel? It's one order status
+        :param o:
+        :return:
+        """
         self._canceled_order_list.append(o.order_id)
         if o.order_id in self.order_dict.keys():
             self.order_dict[o.order_id].order_status = OrderStatus.CANCELED

@@ -93,8 +93,8 @@ class BacktestEngine(object):
 
         ## 6. wire up event handlers
         self._events_engine.register_handler(EventType.TICK, self._tick_event_handler)
-        # to be consistent with current live, order is placed directly
-        # self._events_engine.register_handler(EventType.ORDER, self._order_event_handler)
+        # to be consistent with current live, order is placed directly; this accepts other status like status, fill, cancel
+        self._events_engine.register_handler(EventType.ORDER, self._order_event_handler)
         self._events_engine.register_handler(EventType.FILL, self._fill_event_handler)
 
     # ------------------------------------ private functions -----------------------------#
@@ -117,11 +117,13 @@ class BacktestEngine(object):
     def _order_event_handler(self, order_event):
         """
         This is not active
-        backtest doesn't send order_event back to strategy. It fills directly and becoems fill_event
+        backtest doesn't send order_event back to strategy. It fills directly and becomes fill_event
         """
-        self._backtest_brokerage.place_order(order_event)
+        # self._backtest_brokerage.place_order(order_event)
+        pass
 
     def _fill_event_handler(self, fill_event):
+        self._order_manager.on_fill(fill_event)
         self._position_manager.on_fill(fill_event)
         self._performance_manager.on_fill(fill_event)
         self._strategy.on_fill(fill_event)

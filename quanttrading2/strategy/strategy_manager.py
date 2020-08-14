@@ -155,20 +155,40 @@ class StrategyManager(object):
                     self._strategy_dict[sid].on_tick(k)
 
     def on_position(self, pos):
+        """
+        get initial position
+        read from config file instead
+        :param pos:
+        :return:
+        """
         pass
 
     def on_order_status(self, order_event):
+        """
+        TODO: check if source is working
+        :param order_event:
+        :return:
+        """
         sid = order_event.source
         if sid in self._strategy_dict.keys():
             self._strategy_dict[sid].on_order_status(order_event)
         else:
             _logger.info('strategy manager doesnt hold the oid, possibly from outside of the system')
 
-    def on_cancel(self, oid):
-        pass
+    def on_cancel(self, order_event):
+        sid = order_event.source
+        if sid in self._strategy_dict.keys():
+            self._strategy_dict[sid].on_order_status(order_event)
+        else:
+            _logger.info('strategy manager doesnt hold the oid, possibly from outside of the system')
 
-    def on_fill(self, fill):
+    def on_fill(self, fill_event):
         """
         assign fill ordering to order id ==> strategy id
+        TODO: check fill_event source; if not, fix it or use fill_event.order_id
         """
-        pass
+        sid = fill_event.source
+        if sid in self._strategy_dict.keys():
+            self._strategy_dict[sid].on_fill(fill_event)
+        else:
+            _logger.info('strategy manager doesnt hold the oid, possibly from outside of the system')

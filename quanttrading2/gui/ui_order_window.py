@@ -51,7 +51,7 @@ class OrderWindow(QtWidgets.QTableWidget):
         '''
         update = self._order_manager.on_order_status(order_event)
 
-        if (update):
+        if(update):
             if order_event.order_id in self._orderids:
                 row = self._orderids.index(order_event.order_id)
                 self.item(row, 7).setText(str(self._order_manager.order_dict[order_event.order_id].fill_size))
@@ -77,8 +77,9 @@ class OrderWindow(QtWidgets.QTableWidget):
         """
         This is called by fill handler to update order status
         """
-        row = self._orderids.index(order_id)
-        self.item(row, 8).setText(order_status.name)
+        if order_id in self._orderids:
+            row = self._orderids.index(order_id)
+            self.item(row, 8).setText(order_status.name)
 
     def cancel_order(self,mi):
         row = mi.row()

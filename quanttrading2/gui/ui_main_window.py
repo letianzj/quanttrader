@@ -51,14 +51,14 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self._ui_events_engine = LiveEventEngine()  # update ui
         self._broker = InteractiveBrokers(self._ui_events_engine, self._config['account'])
-        self._position_manager = PositionManager()
+        self._position_manager = PositionManager()      # global position manager
         self._position_manager.set_multiplier(self.multiplier_dict)
-        self._order_manager = OrderManager()
+        self._order_manager = OrderManager()          # global order manager
         self._data_board = DataBoard()
         self.risk_manager = PassThroughRiskManager()
         self.account_manager = AccountManager(self._config['account'])
 
-        self._strategy_manager = StrategyManager(self._broker, self._order_manager, self._position_manager, self._data_board, self.risk_manager, self.multiplier_dict)
+        self._strategy_manager = StrategyManager(self._config, self._broker, self._order_manager, self._position_manager, self.risk_manager, self._data_board, self.multiplier_dict)
         self._load_strategy(strat_dict)
 
         self.widgets = dict()
@@ -136,20 +136,22 @@ class MainWindow(QtWidgets.QMainWindow):
     def _tick_event_handler(self, tick_event):
         self._current_time = tick_event.timestamp
 
-        self._data_board.on_tick(tick_event)       # update databoard
-        self._order_manager.on_tick(tick_event)
         self._strategy_manager.on_tick(tick_event)  # feed strategies
+        self._position_manager.mark_to_market(tick_event.timestamp, tick_event.full_symbol, tick_event.price, self._data_board)
+        self._data_board.on_tick(tick_event)       # update databoard
 
-    def _order_status_event_handler(self, order_status_event):  # including cancel
+    def _order_status_event_handler(self, order_event):  # including cancel
         # this is moved to ui_thread for consistency
+        # self._order_manager.on_order_status(order_event)
+        self._strategy_manager.on_order_status(order_event)
         pass
 
     def _fill_event_handler(self, fill_event):
-        # update portfolio manager for pnl
+        self._position_manager.on_fill(fill_event)   # update portfolio manager for pnl
         self._order_manager.on_fill(fill_event)  # update order manager with fill
         self._strategy_manager.on_fill(fill_event)  # feed fill to strategy
         self.fill_window.fill_signal.emit(fill_event)     # display
-        self.order_window.update_order_status(fill_event.order_id,
+        self.order_window.update_order_status(fill_event.order_id,        # let order_window listen to fill as well
                                               self._order_manager.retrieve_order(fill_event.order_id).order_status)
 
     def _position_event_handler(self, position_event):
@@ -242,7 +244,7 @@ class MainWindow(QtWidgets.QMainWindow):
         tab2_layout.addWidget(self.order_window)
         tab2.setLayout(tab2_layout)
 
-        self.fill_window =FillWindow(self._order_manager)
+        self.fill_window =FillWindow()
         tab3_layout = QtWidgets.QVBoxLayout()
         tab3_layout.addWidget(self.fill_window)
         tab3.setLayout(tab3_layout)

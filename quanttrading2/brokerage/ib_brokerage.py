@@ -437,7 +437,7 @@ class IBApi(EWrapper, EClient):
     def openOrderEnd(self):
         super().openOrderEnd()
         _logger.info("OpenOrderEnd")
-        _logger.info(f"Received %d openOrders {len(list(self.broker.order_dict.keys()))}")
+        _logger.info(f"Received openOrders {len(list(self.broker.order_dict.keys()))}")
 
     def orderStatus(self, orderId: OrderId, status: str, filled: float,
                     remaining: float, avgFillPrice: float, permId: int,
@@ -619,7 +619,7 @@ class IBApi(EWrapper, EClient):
 
     def marketDataType(self, reqId: TickerId, marketDataType: int):
         super().marketDataType(reqId, marketDataType)
-        _logger.info("MarketDataType. ReqId:", reqId, "Type:", marketDataType)
+        _logger.info(f"MarketDataType. ReqId: {reqId}, Type: {marketDataType}")
 
     def tickPrice(self, reqId: TickerId, tickType: TickType, price: float,
                   attrib: TickAttrib):

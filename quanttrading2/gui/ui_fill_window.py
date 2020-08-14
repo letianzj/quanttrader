@@ -7,9 +7,12 @@ import logging
 _logger = logging.getLogger(__name__)
 
 class FillWindow(QtWidgets.QTableWidget):
+    """
+    present fills
+    """
     fill_signal = QtCore.pyqtSignal(type(FillEvent()))
 
-    def __init__(self, order_manager, parent=None):
+    def __init__(self, parent=None):
         super(FillWindow, self).__init__(parent)
 
         self.header = ['OrderID',
@@ -23,7 +26,6 @@ class FillWindow(QtWidgets.QTableWidget):
                        'Account']
 
         self.init_table()
-        self._order_manager = order_manager
         self._fillids = []
         self.fill_signal.connect(self.update_table)
 
@@ -42,7 +44,7 @@ class FillWindow(QtWidgets.QTableWidget):
         Only add row
         '''
         if fill_event.fill_id in self._fillids:
-            row = self._orderids.index(fill_event.broker_order_id)
+            row = self._fillids.index(fill_event.fill_id)
             self.item(row, 6).setText(fill_event.fill_time)
             _logger.error('received same fill twice')
         else:  # including empty

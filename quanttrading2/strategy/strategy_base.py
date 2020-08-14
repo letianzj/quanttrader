@@ -23,7 +23,7 @@ class StrategyBase(metaclass=ABCMeta):
         self.strategy_manager = None     # to place order through strategy_manager
         self._data_board = None         # to get current data
         self._position_manager = PositionManager()    # track local positions and cash
-        self._order_manager = OrderManager()        # manage lcoal (standing) orders and fills
+        self._order_manager = OrderManager()        # manage local (standing) orders and fills
 
         self.active = False
         self.initialized = False
@@ -63,21 +63,20 @@ class StrategyBase(metaclass=ABCMeta):
         # for backtest, call super().on_tick() if need to track positions or npv or cash
         self._position_manager.mark_to_market(tick_event.timestamp, tick_event.full_symbol, tick_event.price, self._data_board)
 
-
     def on_order_status(self, order_event):
         """
         on order acknowledged
         :return:
         """
         #raise NotImplementedError("Should implement on_order_status()")
-        pass
+        self._order_manager.on_order_status(order_event)
 
-    def on_cancel(self):
+    def on_cancel(self, order_event):
         """
         on order canceled
         :return:
         """
-        pass
+        self._order_manager.on_cancel(order_event)
 
     def on_fill(self, fill_event):
         """
@@ -85,6 +84,7 @@ class StrategyBase(metaclass=ABCMeta):
         derived class call super().on_fill first
         """
         self._position_manager.on_fill(fill_event)
+        self._order_manager.on_fill(fill_event)
 
     def place_order(self, o):
         """
