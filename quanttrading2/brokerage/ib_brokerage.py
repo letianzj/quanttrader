@@ -222,7 +222,11 @@ class InteractiveBrokers(BrokerageBase):
     def unsubscribe_positions(self):
         self.api.cancelPositions()
 
-    def request_historical_data(self, symbol, start=None, end=None):
+    def request_historical_data(self, symbol, end=None):
+        """
+        1800 S (30 mins)
+        1 sec - 30 mins
+        """
         ib_contract = InteractiveBrokers.symbol_to_contract(symbol)
 
         if end:
@@ -231,7 +235,7 @@ class InteractiveBrokers(BrokerageBase):
             end_str = ''
 
         self.hist_data_request_dict[self.reqid] = symbol
-        self.api.reqHistoricalData(self.reqid, ib_contract, end_str, '1 D', '1 sec', 'TRADES', 1, 1, True, [])
+        self.api.reqHistoricalData(self.reqid, ib_contract, end_str, '1800 S', '1 secs', 'TRADES', 1, 1, False, [])  # first 1 is useRTH
         self.reqid += 1
 
     def cancel_historical_data(self, reqid):
