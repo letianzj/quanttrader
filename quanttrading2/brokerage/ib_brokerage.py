@@ -36,11 +36,12 @@ _logger = logging.getLogger(__name__)
 
 
 class InteractiveBrokers(BrokerageBase):
-    def __init__(self, event_engine, account: str):
+    def __init__(self, msg_event_engine, tick_vent_engine, account: str):
         """
         Initialises the handler, setting the event queue
         """
-        self.event_engine = event_engine          # save events to event queue
+        self.event_engine = msg_event_engine          # save events to event queue
+        self.tick_event_engine = tick_vent_engine
         self.api = IBApi(self)
         self.account = account
         self.contract_detail_request_contract_dict = {}        # reqid ==> contract
@@ -433,6 +434,8 @@ class IBApi(EWrapper, EClient):
             order_event.order_status = OrderStatus.PENDING_SUBMIT
         elif orderState.status == 'Cancelled':
             order_event.order_status = OrderStatus.CANCELED
+        elif orderState.status == 'Inactive':   # e.g. exchange closed
+            order_event.order_status = OrderStatus.ERROR
         else:
             order_event.order_status = OrderStatus.UNKNOWN
 
@@ -481,6 +484,8 @@ class IBApi(EWrapper, EClient):
             order_event.order_status = OrderStatus.CANCELED
             order_event.fill_size = filled         # remaining = order_size - fill_size
             order_event.cancel_time = datetime.now().strftime("%H:%M:%S.%f")
+        elif status == 'Inactive':   # e.g. exchange closed
+            order_event.order_status = OrderStatus.ERROR
         else:
             order_event.order_status = OrderStatus.UNKNOWN
         order_event.fill_size = filled
@@ -630,6 +635,7 @@ class IBApi(EWrapper, EClient):
         super().tickPrice(reqId, tickType, price, attrib)
 
         tick_event = self.broker.market_data_tick_dict[reqId]
+        tick_event.timestamp = datetime.now()
         if tickType == TickTypeEnum.BID:
             tick_event.tick_type = TickType.BID
             tick_event.bid_price_L1 = price
@@ -642,12 +648,13 @@ class IBApi(EWrapper, EClient):
         else:
             return
 
-        self.broker.event_engine.put(copy(tick_event))
+        self.broker.tick_event_engine.put(copy(tick_event))
 
     def tickSize(self, reqId: TickerId, tickType: TickType, size: int):
         super().tickSize(reqId, tickType, size)
 
         tick_event = self.broker.market_data_tick_dict[reqId]
+        tick_event.timestamp = datetime.now()
         if tickType == TickTypeEnum.BID_SIZE:
             tick_event.tick_type = TickType.BID
             tick_event.bid_size_L1 = size
@@ -660,7 +667,7 @@ class IBApi(EWrapper, EClient):
         else:
             return
 
-        self.broker.event_engine.put(copy(tick_event))
+        self.broker.tick_event_engine.put(copy(tick_event))
 
     def tickGeneric(self, reqId: TickerId, tickType: TickType, value: float):
         super().tickGeneric(reqId, tickType, value)
@@ -669,10 +676,10 @@ class IBApi(EWrapper, EClient):
 
     def tickString(self, reqId: TickerId, tickType: TickType, value: str):
         super().tickString(reqId, tickType, value)
-
-        tick_event = self.broker.market_data_tick_dict[reqId]
-        tick_event.timestamp = datetime.fromtimestamp(int(value))
-        self.broker.event_engine.put(copy(tick_event))
+        pass
+        # tick_event = self.broker.market_data_tick_dict[reqId]
+        # tick_event.timestamp = datetime.fromtimestamp(int(value))
+        # self.broker.tick_event_engine.put(copy(tick_event))
 
     def tickSnapshotEnd(self, reqId: int):
         super().tickSnapshotEnd(reqId)
@@ -772,7 +779,7 @@ class IBApi(EWrapper, EClient):
         bar_event.close_price = bar.close
         bar_event.volume = bar.volume
 
-        self.broker.event_engine.put(bar_event)
+        self.broker.tick_event_engine.put(bar_event)
 
     def historicalDataEnd(self, reqId: int, start: str, end: str):
         super().historicalDataEnd(reqId, start, end)

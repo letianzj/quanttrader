@@ -49,8 +49,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self.account_window = None
         self.strategy_window = None
 
-        self._ui_events_engine = LiveEventEngine()  # update ui
-        self._broker = InteractiveBrokers(self._ui_events_engine, self._config['account'])
+        self._msg_events_engine = LiveEventEngine()  # msg engine
+        self._tick_events_engine = LiveEventEngine()  # tick data engine
+        self._broker = InteractiveBrokers(self._msg_events_engine, self._tick_events_engine, self._config['account'])
         self._position_manager = PositionManager()      # global position manager
         self._position_manager.set_multiplier(self.multiplier_dict)
         self._order_manager = OrderManager()          # global order manager
@@ -73,17 +74,18 @@ class MainWindow(QtWidgets.QMainWindow):
         self.init_central_area()
 
         ## wire up event handlers
-        self._ui_events_engine.register_handler(EventType.TICK, self._tick_event_handler)
-        self._ui_events_engine.register_handler(EventType.ORDER, self.order_window.order_status_signal.emit)
-        self._ui_events_engine.register_handler(EventType.FILL, self._fill_event_handler)
-        self._ui_events_engine.register_handler(EventType.POSITION, self._position_event_handler)
-        self._ui_events_engine.register_handler(EventType.ACCOUNT, self.account_window.account_signal.emit)
-        self._ui_events_engine.register_handler(EventType.CONTRACT, self._contract_event_handler)
-        self._ui_events_engine.register_handler(EventType.HISTORICAL, self._historical_event_handler)
-        self._ui_events_engine.register_handler(EventType.LOG, self.log_window.msg_signal.emit)
+        self._tick_events_engine.register_handler(EventType.TICK, self._tick_event_handler)
+        self._msg_events_engine.register_handler(EventType.ORDER, self._order_status_event_handler)
+        self._msg_events_engine.register_handler(EventType.FILL, self._fill_event_handler)
+        self._msg_events_engine.register_handler(EventType.POSITION, self._position_event_handler)
+        self._msg_events_engine.register_handler(EventType.ACCOUNT, self.account_window.account_signal.emit)
+        self._msg_events_engine.register_handler(EventType.CONTRACT, self._contract_event_handler)
+        self._msg_events_engine.register_handler(EventType.HISTORICAL, self._historical_event_handler)
+        self._msg_events_engine.register_handler(EventType.LOG, self.log_window.msg_signal.emit)
 
         ## start
-        self._ui_events_engine.start()
+        self._msg_events_engine.start()
+        self._tick_events_engine.start()
 
         self.connect_to_broker()
 
@@ -112,7 +114,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def open_trade_widget(self):
         widget = self.widgets.get('trade_menu', None)
         if not widget:
-            widget = TradeMenu(self._broker, self._ui_events_engine, self._strategy_manager._multiplier_dict)
+            widget = TradeMenu(self._broker, self._msg_events_engine, self._strategy_manager._multiplier_dict)
             self.widgets['trade_menu'] = widget
         widget.show()
 
@@ -131,7 +133,8 @@ class MainWindow(QtWidgets.QMainWindow):
     def closeEvent(self, a0: QtGui.QCloseEvent):
         _logger.info('closing main window')
         self.disconnect_from_broker()
-        self._ui_events_engine.stop()
+        self._msg_events_engine.stop()
+        self._tick_events_engine.stop()
 
     def _tick_event_handler(self, tick_event):
         self._current_time = tick_event.timestamp
@@ -141,10 +144,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self._data_board.on_tick(tick_event)       # update databoard
 
     def _order_status_event_handler(self, order_event):  # including cancel
-        # this is moved to ui_thread for consistency
-        # self._order_manager.on_order_status(order_event)
+        # self._order_manager.on_order_status(order_event)     # this moves to order_window to tell it to update
+        self.order_window.order_status_signal.emit(order_event)
         self._strategy_manager.on_order_status(order_event)
-        pass
 
     def _fill_event_handler(self, fill_event):
         self._position_manager.on_fill(fill_event)   # update portfolio manager for pnl

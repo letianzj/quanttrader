@@ -19,7 +19,7 @@ class BacktestBrokerage(BrokerageBase):
         as well as access to local pricing.
         """
         self._events_engine = events_engine
-        self._data_board = data_board
+        self._data_board = data_board              # retrieve price against order
         self.orderid = 1
         self.market_data_subscription_reverse_dict = {}      # market data subscription, to be consistent with live
         self._active_orders = {}
@@ -125,6 +125,9 @@ class BacktestBrokerage(BrokerageBase):
             fill.fill_price = current_price
             fill.exchange = 'BACKTEST'
             fill.commission = self._calculate_commission(fill.full_symbol, fill.fill_price, fill.fill_size)
+
+            order_event.order_status = OrderStatus.FILLED
+            self._events_engine.put(order_event)
             self._events_engine.put(fill)
         else:
             order_event.order_status = OrderStatus.ACKNOWLEDGED

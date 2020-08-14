@@ -12,22 +12,18 @@ class OrderPerIntervalStrategy(StrategyBase):
     def __init__(self):
         super(OrderPerIntervalStrategy, self).__init__()
         self.ticks = 0
-        self.tick_trigger_threshold = 10
-        self.sign = 1
+        self.tick_trigger_threshold = 2000
+        self.direction = 1
 
     def on_tick(self, k):
-        symbol = self.symbols[0]
-        if k.full_symbol == symbol:
-            print(k)
-            if (self.ticks > self.tick_trigger_threshold):
-                o = OrderEvent()
-                o.full_symbol = symbol
-                o.order_type = OrderType.MARKET
-                o.order_size = 100 * self.sign
-                print('place order')
-                self.place_order(o)
-
-                self.ticks = 0
-                self.sign = self.sign * (-1)
-            else:
-                self.ticks += 1
+        print(k)
+        if (k.full_symbol == self.symbols[0]) & (self.ticks > self.tick_trigger_threshold):
+            o = OrderEvent()
+            o.full_symbol = k.full_symbol
+            o.order_type = OrderType.MARKET
+            o.order_size = self.direction
+            self.direction = 1 if self.direction == -1 else -1
+            self.place_order(o)
+            self.ticks = 0
+        else:
+            self.ticks += 1

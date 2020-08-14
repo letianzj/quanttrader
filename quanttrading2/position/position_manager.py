@@ -88,6 +88,10 @@ class PositionManager(object):
                 self.current_total_capital += self.positions[sym].size * (real_last_price - data_board.get_last_price(sym)) * multiplier
         elif symbol in self.positions:
             # this is a quick way based on one symbol; actual pnl should sum up across positions
+
             multiplier = self.multiplier_dict.get(symbol, 1)
             self.positions[symbol].mark_to_market(last_price, multiplier)
-            self.current_total_capital += self.positions[symbol].size * (last_price - data_board.get_last_price(symbol)) * multiplier
+            prev_price = data_board.get_last_price(symbol)
+            if prev_price is not None:    # in case data board hasn't been updated/empty
+                self.current_total_capital += self.positions[symbol].size * (last_price - prev_price) * multiplier
+

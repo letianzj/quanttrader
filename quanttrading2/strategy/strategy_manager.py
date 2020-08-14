@@ -91,8 +91,9 @@ class StrategyManager(object):
         o.order_id = oid
         o.order_status = OrderStatus.NEWBORN
         self._sid_oid_dict[o.source].append(oid)
-        self._order_manager.on_order_status(o)
-        self._strategy_dict[o.source]._order_manager.on_order_status(o)
+        # to be consistent, add after hear from broker
+        # self._order_manager.on_order_status(o)
+        # self._strategy_dict[o.source]._order_manager.on_order_status(o)
 
         # 2.b place order
         self._broker.place_order(o)
@@ -147,7 +148,7 @@ class StrategyManager(object):
 
     def on_tick(self, k):
         # print(k.full_symbol, k.price, k.size)
-        if k.full_symbol in self._tick_strategy_dict:
+        if k.full_symbol in self._tick_strategy_dict.keys():
             # foreach strategy that subscribes to this tick
             s_list = self._tick_strategy_dict[k.full_symbol]
             for sid in s_list:
@@ -173,14 +174,14 @@ class StrategyManager(object):
         if sid in self._strategy_dict.keys():
             self._strategy_dict[sid].on_order_status(order_event)
         else:
-            _logger.info('strategy manager doesnt hold the oid, possibly from outside of the system')
+            _logger.info(f'strategy manager doesnt hold the oid {order_event.order_id}, possibly from outside of the system')
 
     def on_cancel(self, order_event):
         sid = order_event.source
         if sid in self._strategy_dict.keys():
             self._strategy_dict[sid].on_order_status(order_event)
         else:
-            _logger.info('strategy manager doesnt hold the oid, possibly from outside of the system')
+            _logger.info(f'strategy manager doesnt hold the oid {order_event.order_id}, possibly from outside of the system')
 
     def on_fill(self, fill_event):
         """
@@ -191,4 +192,4 @@ class StrategyManager(object):
         if sid in self._strategy_dict.keys():
             self._strategy_dict[sid].on_fill(fill_event)
         else:
-            _logger.info('strategy manager doesnt hold the oid, possibly from outside of the system')
+            _logger.info(f'strategy manager doesnt hold the oid {fill_event.order_id}, possibly from outside of the system')

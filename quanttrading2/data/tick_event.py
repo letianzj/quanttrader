@@ -6,6 +6,9 @@ from ..event.event import *
 
 
 class TickType(Enum):
+    """
+    Unlike IB, it does not have tick_size, e.g., TickTypeEnum.BID_SIZE
+    """
     TRADE = 0
     BID = 1
     ASK = 2
@@ -41,6 +44,6 @@ class TickEvent(Event):
 
     def __str__(self):
         return "Time: %s, Ticker: %s, Type: %s,  Price: %s, Size %s" % (
-            str(self.timestamp), str(self.full_symbol), (self.tick_type),
+            str(self.timestamp.strftime("%H:%M:%S.%f")), str(self.full_symbol), (self.tick_type),
             str(self.price), str(self.size)
         )

@@ -51,6 +51,8 @@ class OrderWindow(QtWidgets.QTableWidget):
         '''
         update = self._order_manager.on_order_status(order_event)
 
+        print(self._order_manager.order_dict[order_event.order_id].order_status.name)
+
         if(update):
             if order_event.order_id in self._orderids:
                 row = self._orderids.index(order_event.order_id)

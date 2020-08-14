@@ -39,7 +39,6 @@ class LiveEventEngine(object):
                 # call event handlers
                 if event.event_type in self._handlers:
                     [handler(event) for handler in self._handlers[event.event_type]]
-
             except Empty:
                 pass
             except Exception as e:

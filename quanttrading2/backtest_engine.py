@@ -39,7 +39,7 @@ class BacktestEngine(object):
         self._events_engine = BacktestEventEngine(self._data_feed)
         self._backtest_brokerage = BacktestBrokerage(self._events_engine, self._data_board)
         self._risk_manager = PassThroughRiskManager()
-        self._strategy_manager = StrategyManager(self.config, self._backtest_brokerage, self._order_manager, self._position_manager, self._data_board, self._risk_manager, self.multiplier_dict)
+        self._strategy_manager = StrategyManager(self.config, self._backtest_brokerage, self._order_manager, self._position_manager, self._risk_manager, self._data_board, self.multiplier_dict)
         self._strategy = None
 
     def set_multiplier(self, multiplier_dict):
@@ -82,6 +82,7 @@ class BacktestEngine(object):
 
         ## 4. set strategy
         self._strategy.active = True
+        self._strategy.symbols.extend(['PLACEHOLDER'])
         self._strategy_manager.load_strategy({self._strategy.name: self._strategy})
 
         ## 5. global performance manager and portfolio manager
@@ -105,7 +106,7 @@ class BacktestEngine(object):
         # it can't update today because orders haven't been filled yet.
         self._performance_manager.update_performance(self._current_time, self._position_manager, self._data_board)
         self._position_manager.mark_to_market(tick_event.timestamp, tick_event.full_symbol, tick_event.price, self._data_board)
-        self._strategy.on_tick(tick_event)        # plus strategy.position_manager market to marekt
+        self._strategy_manager.on_tick(tick_event)        # plus strategy.position_manager market to marekt
         # data_baord update after strategy, so it still holds price of last tick; for position MtM
         # strategy uses tick.price for current price; and use data_board.last_price for previous price
         # for backtest, this is PLACEHOLDER based on timestamp.
@@ -116,10 +117,11 @@ class BacktestEngine(object):
 
     def _order_event_handler(self, order_event):
         """
-        This is not active
-        backtest doesn't send order_event back to strategy. It fills directly and becomes fill_event
+        acknowledge order
         """
         # self._backtest_brokerage.place_order(order_event)
+        self._order_manager.on_order_status(order_event)
+        self._strategy_manager.on_order_status(order_event)
         pass
 
     def _fill_event_handler(self, fill_event):

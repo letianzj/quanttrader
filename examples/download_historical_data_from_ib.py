@@ -37,6 +37,8 @@ def historical_event_handler(bar_event):
 
 def run(args):
     global  df
+    dfd = pd.DataFrame()
+    dict_all = dict()
     events_engine = LiveEventEngine()  # update ui
     broker = InteractiveBrokers(events_engine, 'DU0001')
     broker.reqid = 5000
@@ -68,19 +70,32 @@ def run(args):
         'XLRE STK SMART',
         'XLC STK SMART'
     ]
+    date = args.date
+    path = args.path
 
-    sym = 'AAPL STK SMART'
-    end_date = datetime.strptime('20200811', '%Y%m%d')
-    if 'STK' in sym:
-        end_date = end_date - timedelta(hours=8)       # 16:00
-    else:
-        end_date = end_date - timedelta(hours=7)       # 17:00
+    for sym in symbols:
+        end_date = datetime.strptime(date, '%Y%m%d')
+        if 'STK' in sym:
+            end_date = end_date - timedelta(hours=8)       # 16:00
+        else:  # FUT
+            end_date = end_date - timedelta(hours=7)       # 17:00
 
-    while end_date.hour >= 10:
-        broker.request_historical_data(sym, end_date)
-        end_date = end_date - timedelta(minutes=30)
-        time.sleep(15)       # 15 seconds
-        # TODO combine first
+        while end_date.hour >= 10:       # last one is (9:30am, 10am)
+            print(sym, end_date)
+            broker.request_historical_data(sym, end_date)
+            end_date = end_date - timedelta(minutes=30)
+            time.sleep(15)       # 15 seconds
+
+            # daily combine and remove duplicates
+            dfd = df.combine_first(dfd)
+            # ready for the next 30min
+            df = pd.DataFrame(columns=['Open', 'High', 'Low', 'Close', 'Volume'])
+
+            dict_all[sym] = dfd
+
+    outfile = f'd:/workspace/quantresearch/data/tick/{date}.pkl'
+    with open(outfile, 'wb') as f:
+        pickle.dump(dict_all, f, pickle.HIGHEST_PROTOCOL)
 
     broker.disconnect()
     events_engine.stop()
@@ -89,6 +104,7 @@ def run(args):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Historical Downloader')
     parser.add_argument('--date', help='yyyymmdd')
+    parser.add_argument('--path', default='d:/workspace/quantresearch/data/tick/', help='hist data folder')
 
     args = parser.parse_args()
     run(args)
