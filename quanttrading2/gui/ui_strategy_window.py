@@ -32,10 +32,10 @@ class StrategyWindow(QtWidgets.QTableWidget):
 
         for key, value in self._strategy_manager._strategy_dict.items():
             try:
-                self.insertRow(0)
-                self.setItem(0, 0, QtWidgets.QTableWidgetItem(str(key)))
-                self.setItem(0, 1, QtWidgets.QTableWidgetItem(str(value.name)))
-                self.setItem(0, 6, QtWidgets.QTableWidgetItem('active' if value.active else 'inactive'))
+                self.insertRow(self.rowCount())
+                self.setItem(self.rowCount()-1, 0, QtWidgets.QTableWidgetItem(str(key)))
+                self.setItem(self.rowCount()-1, 1, QtWidgets.QTableWidgetItem(str(value.name)))
+                self.setItem(self.rowCount()-1, 6, QtWidgets.QTableWidgetItem('active' if value.active else 'inactive'))
             except:
                 pass
 
