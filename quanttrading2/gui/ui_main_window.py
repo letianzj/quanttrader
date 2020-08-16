@@ -122,13 +122,45 @@ class MainWindow(QtWidgets.QMainWindow):
         self.statusBar().showMessage(message)
 
     def start_strategy(self):
-        self.strategy_window.update_status(self.strategy_window.currentRow(), True)
-
-    def pause_strategy(self):
-        pass
+        try:
+            sid_txt = self.strategy_window.item(self.strategy_window.currentRow(), 0).text()
+            _logger.info(f'control: start_strategy {sid_txt}')
+            self.strategy_window.update_status(self.strategy_window.currentRow(), True)
+        except:
+            _logger.error(f'control: start_strategy error, no row selected')
 
     def stop_strategy(self):
-        self.strategy_window.update_status(self.strategy_window.currentRow(), False)
+        try:
+            sid_txt = self.strategy_window.item(self.strategy_window.currentRow(), 0).text()
+            _logger.info(f'control: stop_strategy {sid_txt}')
+            self.strategy_window.update_status(self.strategy_window.currentRow(), False)
+        except:
+            _logger.error(f'control: stop_strategy error, no row selected')
+
+    def liquidate_strategy(self):
+        try:
+            sid_txt = self.strategy_window.item(self.strategy_window.currentRow(), 0).text()
+            _logger.info(f'control: liquidate_strategy {sid_txt}')
+            sid = int(self.strategy_window.item(self.strategy_window.currentRow(), 0).text())
+            self._strategy_manager.flat_strategy(sid)
+        except:
+            _logger.error(f'control: liquidate_strategy error, no row selected')
+
+    def start_all_strategy(self):
+        _logger.info(f'control: start all strategy')
+        self._strategy_manager.start_all()
+        for i in range(self.strategy_window.rowCount()):
+            self.strategy_window.setItem(i, 6, QtWidgets.QTableWidgetItem('active'))
+
+    def stop_all_strategy(self):
+        _logger.info(f'control: stop all strategy')
+        self._strategy_manager.stop_all()
+        for i in range(self.strategy_window.rowCount()):
+            self.strategy_window.setItem(i, 6, QtWidgets.QTableWidgetItem('inactive'))
+
+    def liquidate_all_strategy(self):
+        _logger.info(f'control: liquidate all strategy')
+        self._strategy_manager.flat_all()
 
     def closeEvent(self, a0: QtGui.QCloseEvent):
         _logger.info('closing main window')
@@ -210,15 +242,22 @@ class MainWindow(QtWidgets.QMainWindow):
         control_layout = QtWidgets.QHBoxLayout()
         self.btn_strat_start = QtWidgets.QPushButton('Start_Strat')
         self.btn_strat_start.clicked.connect(self.start_strategy)
-        self.btn_strat_pause = QtWidgets.QPushButton('Pause_Strat')
-        self.btn_strat_pause.clicked.connect(self.pause_strategy)
         self.btn_strat_stop = QtWidgets.QPushButton('Stop_Strat')
         self.btn_strat_stop.clicked.connect(self.stop_strategy)
         self.btn_strat_liquidate = QtWidgets.QPushButton('Liquidate_Strat')
+        self.btn_strat_liquidate.clicked.connect(self.liquidate_strategy)
+        self.btn_all_start = QtWidgets.QPushButton('Start_All')
+        self.btn_all_start.clicked.connect(self.start_all_strategy)
+        self.btn_all_stop = QtWidgets.QPushButton('Stop_All')
+        self.btn_all_stop.clicked.connect(self.stop_all_strategy)
+        self.btn_all_liquidate = QtWidgets.QPushButton('Liquidate_All')
+        self.btn_all_liquidate.clicked.connect(self.liquidate_all_strategy)
         control_layout.addWidget(self.btn_strat_start)
-        control_layout.addWidget(self.btn_strat_pause)
         control_layout.addWidget(self.btn_strat_stop)
         control_layout.addWidget(self.btn_strat_liquidate)
+        control_layout.addWidget(self.btn_all_start)
+        control_layout.addWidget(self.btn_all_stop)
+        control_layout.addWidget(self.btn_all_liquidate)
 
         top.setLayout(control_layout)
         # -------------------------------- Bottom ------------------------------------------#

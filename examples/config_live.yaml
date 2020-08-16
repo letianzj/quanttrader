@@ -6,18 +6,16 @@ client_id: 0
 #-------------- active strategies -------------#
 strategy:
   MovingAverageCrossStrategy:
-    patth: None
-    active: False
+    path: 'd:/workspace/quanttrading2/examples/moving_average_cross_strategy.py'
+    active: True
     capital: 10000
     params:
       short_window: 20
       long_window: 80
     symbols:
-      - SPY STK SMART
-      - AAPL STK SMART
-      - AMZN STK SMART
+      - CLU0 FUT NYMEX
   BuyAndHoldStrategy:
-    patth: None
+    path: None
     active: False
     params:
       ticks: 5
