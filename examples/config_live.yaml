@@ -7,7 +7,7 @@ client_id: 0
 strategy:
   MovingAverageCrossStrategy:
     path: 'd:/workspace/quanttrading2/examples/moving_average_cross_strategy.py'
-    active: True
+    active: False
     capital: 10000
     params:
       short_window: 20
@@ -25,7 +25,7 @@ strategy:
       - MSFT STK SMART
   OrderPerIntervalStrategy:
     path: 'd:/workspace/quanttrading2/examples/order_per_interval_strategy.py'
-    active: True
+    active: False
     capital: 50000
     params:
       tick_trigger_threshold: 5000
