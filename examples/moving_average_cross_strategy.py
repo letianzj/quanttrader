@@ -41,9 +41,9 @@ class MovingAverageCrossStrategy(StrategyBase):
                 self.last_time = k.timestamp
 
             if k.price > self.ema:    # buy at bid
-                if (self._position_manager.get_position_size(self.symbol) == 0):
+                if self._position_manager.get_position_size(self.symbol) == 0:
                     # because it only places one lot futures; if fill != order ==> has order unfilled
-                    if len(self._order_manager.fill_dict) != len(self._order_manager.order_dict):  # no standing order
+                    if len(self._order_manager.fill_dict) != len(self._order_manager.order_dict):  # has standing order
                         return
                     else:
                         o = OrderEvent()
