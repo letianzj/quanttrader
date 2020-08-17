@@ -29,29 +29,34 @@ def main(config_file):
     except IOError:
         print("config.yaml is missing")
 
-    logging.basicConfig(
-        level=logging.DEBUG,
-        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-        handlers=[
-            #logging.handlers.RotatingFileHandler(f"{config['log_path']}{today}.log"),
-            logging.FileHandler(f"{config['log_path']}{today}.log"),
-            logging.StreamHandler()
-        ]
-    )
+    _logger = logging.getLogger('quanttrading2')
+    _logger.setLevel(logging.DEBUG)
+    handler1 = logging.StreamHandler()
+    handler2 = logging.FileHandler(f"{config['log_path']}{today}.log")
+    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    handler1.setFormatter(formatter)
+    handler2.setFormatter(formatter)
+    _logger.addHandler(handler1)
+    _logger.addHandler(handler2)
 
-    _logger = logging.getLogger()
+    _logger2 = logging.getLogger('qtlive')
+    _logger2.setLevel(logging.DEBUG)
+    _logger2.addHandler(handler1)
+    _logger2.addHandler(handler2)
 
     i = 1
     for s, v in config['strategy'].items():
         try:
+            print(s)
             exec(open(v['path']).read(), locals())
             exec(f'strat_{i}=locals()["{s}"]()')
             exec(f'strategy_dict["{s}"]=strat_{i}')
             i += 1
         except Exception as e:
-            _logger.error(f'Unable to load strategy {s}: {str(e)}')
+            _logger2.error(f'Unable to load strategy {s}: {str(e)}')
 
     app = QtWidgets.QApplication(sys.argv)
+    app.setWindowIcon(QtGui.QIcon("gui/image/logo.ico"))
     mainWindow = MainWindow(config, strategy_dict)
 
     if config['theme'] == 'dark':

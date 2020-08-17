@@ -5,7 +5,7 @@ from quanttrading2.order.order_event import OrderEvent
 from quanttrading2.order.order_type import OrderType
 import logging
 
-_logger = logging.getLogger(__name__)
+_logger = logging.getLogger('qtlive')
 
 
 class OrderPerIntervalStrategy(StrategyBase):
@@ -27,6 +27,7 @@ class OrderPerIntervalStrategy(StrategyBase):
             o.order_type = OrderType.MARKET
             o.order_size = self.direction
             self.direction = 1 if self.direction == -1 else -1
+            _logger.info('OrderPerIntervalStrategy order placed')
             self.place_order(o)
             self.ticks = 0
         else:

@@ -1,7 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from enum import Enum
+from functools import total_ordering
 
+@total_ordering
 class OrderStatus(Enum):
     UNKNOWN = 0
     NEWBORN = 1              # in use
@@ -15,3 +17,8 @@ class OrderStatus(Enum):
     API_PENDING = 10
     API_CANCELLED = 11
     ERROR = 12
+
+    def __lt__(self, other):
+        if self.__class__ is other.__class__:
+            return self.value < other.value
+        return NotImplemented

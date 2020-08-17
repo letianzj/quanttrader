@@ -3,6 +3,7 @@
 from PyQt5 import QtCore, QtWidgets, QtGui
 from ..order.order_event import OrderEvent
 
+
 class OrderWindow(QtWidgets.QTableWidget):
     '''
     Order Monitor
@@ -50,8 +51,6 @@ class OrderWindow(QtWidgets.QTableWidget):
         else append one row
         '''
         update = self._order_manager.on_order_status(order_event)
-
-        print(self._order_manager.order_dict[order_event.order_id].order_status.name)
 
         if(update):
             if order_event.order_id in self._orderids:

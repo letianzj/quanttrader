@@ -11,11 +11,13 @@ import time
 from datetime import datetime, timedelta
 import pandas as pd
 import numpy as np
+from signal import signal, SIGINT, SIG_DFL
 import pickle
 from quanttrading2.event.event import EventType
 from quanttrading2.event.live_event_engine import LiveEventEngine
 from quanttrading2.brokerage.ib_brokerage import InteractiveBrokers
 
+signal(SIGINT, SIG_DFL)
 df = pd.DataFrame(columns=['Open', 'High', 'Low', 'Close', 'Volume'])
 
 def log_event_handler(log_event):
@@ -54,27 +56,30 @@ def run(args):
     # RTH stock 9:30~16:00; FUT 9:30~17:00, ES halt 16:15~16:30
     # 7.5h x 2 = 15 requests = 15*15 ~ 4min
     symbols = [
-        'ESU0 FUT GLOBEX',
-        'NQU0 FUT GLOBEX',
-        'CLU0 FUT NYNEX',
+        'ESU0 FUT GLOBEX',          # 9:30 a.m. ET on the 3rd Friday of the contract month
+        'NQU0 FUT GLOBEX',          # 9:30 a.m. ET on the 3rd Friday of the contract month
+        # VWAP between 14:00:00 and 14:30:00 ET (14:28:00 to 14:30:00 if not final)
+        'CLU0 FUT NYNEX',           # 3 business day prior to the 25th calendar day of the month prior to the contract month, if not business day;
         'CLV0 FUT NYNEX',
-        'HOU0 FUT NYMEX',
+        'HOU0 FUT NYMEX',           # last business day of the month prior to the contract month; 14:28:00 to 14:30:00 ET, 14:00:00 and 14:30:00 ET.
         'HOV0 FUT NYMEX',
-        'XBU0 FUT NYMEX',
-        'XBV0 FUT NYMEX',
-        'SPY STK SMART',
-        'QQQ STK SMART',
-        'XLE STK SMART',
-        'XLF STK SMART',
-        'XLU STK SMART',
-        'XLK STK SMART',
-        'XLP STK SMART',
-        'XLI STK SMART',
-        'XLV STK SMART',
-        'XLB STK SMART',
-        'XLY STK SMART',
-        'XLRE STK SMART',
-        'XLC STK SMART'
+        'RBU0 FUT NYMEX',           # last business day of the month prior to the contract month.;  14:28:00 to 14:30:00 ET, 14:00:00 and 14:30:00 ET.
+        'RBV0 FUT NYMEX',
+        # 'NGU0 FUT NYMEX',         # 3rd last business days of the month prior to the contract month. 14:28:00 to 14:30:00 ET
+        # 'NGV0 FUT NYMEX',
+        # 'SPY STK SMART',
+        # 'QQQ STK SMART',
+        # 'XLE STK SMART',
+        # 'XLF STK SMART',
+        # 'XLU STK SMART',
+        # 'XLK STK SMART',
+        # 'XLP STK SMART',
+        # 'XLI STK SMART',
+        # 'XLV STK SMART',
+        # 'XLB STK SMART',
+        # 'XLY STK SMART',
+        # 'XLRE STK SMART',
+        # 'XLC STK SMART'
     ]
     date = args.date
     path = args.path

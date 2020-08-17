@@ -14,7 +14,7 @@ strategy:
       short_window: 20
       long_window: 80
     symbols:
-      - CLU0 FUT NYMEX
+      - CLV0 FUT NYMEX
   BuyAndHoldStrategy:
     path: None
     active: False
@@ -36,5 +36,5 @@ strategy:
       #- AAPL STK SMART
       #- AMZN STK SMART
       - ESU0 FUT GLOBEX
-      - CLU0 FUT NYMEX
-      - NGU0 FUT NYMEX
+      - CLV0 FUT NYMEX
+      - NGV0 FUT NYMEX

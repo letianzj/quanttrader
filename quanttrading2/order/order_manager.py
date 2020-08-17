@@ -82,7 +82,7 @@ class OrderManager(object):
                 self.order_dict[fill_event.order_id].fill_size += fill_event.fill_size
                 self.order_dict[fill_event.order_id].fill_price = fill_event.fill_price   # TODO: take average
 
-                if (self.order_dict[fill_event.order_id].order_size == self.order_dict[fill_event.order_id].fill_size):
+                if self.order_dict[fill_event.order_id].order_size == self.order_dict[fill_event.order_id].fill_size:
                     self.order_dict[fill_event.order_id].order_status = OrderStatus.FILLED
                     if fill_event.order_id in self.standing_order_list:
                         self.standing_order_list.remove(fill_event.order_id)

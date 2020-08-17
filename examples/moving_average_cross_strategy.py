@@ -8,7 +8,7 @@ from quanttrading2.order.order_type import OrderType
 import numpy as np
 import logging
 
-_logger = logging.getLogger(__name__)
+_logger = logging.getLogger('qtlive')
 
 
 class MovingAverageCrossStrategy(StrategyBase):
@@ -46,6 +46,8 @@ class MovingAverageCrossStrategy(StrategyBase):
                 if self._position_manager.get_position_size(symbol) == 0:
                     if self._order_manager.has_standing_order():
                         return
+                    if self.last_bid < 0:     # bid not initiated yet
+                        return
                     else:
                         o = OrderEvent()
                         o.full_symbol = symbol
@@ -57,6 +59,8 @@ class MovingAverageCrossStrategy(StrategyBase):
             else:   # exit long position
                 if (self._position_manager.get_position_size(symbol) == 1):
                     if self._order_manager.has_standing_order():
+                        return
+                    if self.last_ask < 0:     # ask not initiated yet
                         return
                     else:
                         o = OrderEvent()
