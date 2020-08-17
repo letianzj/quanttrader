@@ -39,14 +39,17 @@ def run(args):
     global  df
     dfd = pd.DataFrame()
     dict_all = dict()
-    events_engine = LiveEventEngine()  # update ui
-    broker = InteractiveBrokers(events_engine, 'DU0001')
+    events_engine = LiveEventEngine()
+    tick_event_engine = LiveEventEngine()
+    broker = InteractiveBrokers(events_engine, tick_event_engine, 'DU0001')
     broker.reqid = 5000
     events_engine.register_handler(EventType.LOG, log_event_handler)
-    events_engine.register_handler(EventType.BAR, historical_event_handler)
+    tick_event_engine.register_handler(EventType.BAR, historical_event_handler)
     events_engine.start()
+    tick_event_engine.start()
 
     broker.connect('127.0.0.1', 7497, 0)
+    time.sleep(5)  # 5 seconds
 
     # RTH stock 9:30~16:00; FUT 9:30~17:00, ES halt 16:15~16:30
     # 7.5h x 2 = 15 requests = 15*15 ~ 4min
@@ -54,8 +57,11 @@ def run(args):
         'ESU0 FUT GLOBEX',
         'NQU0 FUT GLOBEX',
         'CLU0 FUT NYNEX',
+        'CLV0 FUT NYNEX',
         'HOU0 FUT NYMEX',
+        'HOV0 FUT NYMEX',
         'XBU0 FUT NYMEX',
+        'XBV0 FUT NYMEX',
         'SPY STK SMART',
         'QQQ STK SMART',
         'XLE STK SMART',
@@ -91,14 +97,24 @@ def run(args):
             # ready for the next 30min
             df = pd.DataFrame(columns=['Open', 'High', 'Low', 'Close', 'Volume'])
 
-            dict_all[sym] = dfd
+        dfd.sort_index(inplace=True)
+        dict_all[sym] = dfd
 
-    outfile = f'd:/workspace/quantresearch/data/tick/{date}.pkl'
+    dict_stats = {}
+    for k, v in dict_all.items():
+        dict_stats[k] = v.shape[0]
+
+    df_stats = pd.DataFrame.from_dict(dict_stats, orient='index')
+    print('-----------------------------------------------')
+    print(df_stats)
+
+    outfile = f'{path}{date}.pkl'
     with open(outfile, 'wb') as f:
         pickle.dump(dict_all, f, pickle.HIGHEST_PROTOCOL)
 
     broker.disconnect()
     events_engine.stop()
+    tick_event_engine.stop()
 
 
 if __name__ == '__main__':

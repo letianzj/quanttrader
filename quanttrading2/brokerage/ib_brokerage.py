@@ -36,12 +36,12 @@ _logger = logging.getLogger(__name__)
 
 
 class InteractiveBrokers(BrokerageBase):
-    def __init__(self, msg_event_engine, tick_vent_engine, account: str):
+    def __init__(self, msg_event_engine, tick_event_engine, account: str):
         """
         Initialises the handler, setting the event queue
         """
         self.event_engine = msg_event_engine          # save events to event queue
-        self.tick_event_engine = tick_vent_engine
+        self.tick_event_engine = tick_event_engine
         self.api = IBApi(self)
         self.account = account
         self.contract_detail_request_contract_dict = {}        # reqid ==> contract
