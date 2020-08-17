@@ -3,6 +3,7 @@
 import sys
 import os
 import argparse
+from datetime import datetime
 import yaml
 from PyQt5 import QtCore, QtWidgets, QtGui
 from quanttrading2.gui.ui_main_window import MainWindow
@@ -18,6 +19,7 @@ signal(SIGINT, SIG_DFL)
 
 def main(config_file):
     config = None
+    today =  datetime.today().strftime('%Y%m%d')
     strategy_dict = {}
     try:
         # path = os.path.abspath(os.path.dirname(__file__))
@@ -27,14 +29,17 @@ def main(config_file):
     except IOError:
         print("config.yaml is missing")
 
-    _logger = logging.getLogger('quanttrading2')
-    _logger.setLevel(logging.DEBUG)
+    logging.basicConfig(
+        level=logging.DEBUG,
+        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+        handlers=[
+            #logging.handlers.RotatingFileHandler(f"{config['log_path']}{today}.log"),
+            logging.FileHandler(f"{config['log_path']}{today}.log"),
+            logging.StreamHandler()
+        ]
+    )
 
-    handler = logging.StreamHandler(sys.stdout)
-    handler.setLevel(logging.DEBUG)
-    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-    handler.setFormatter(formatter)
-    _logger.addHandler(handler)
+    _logger = logging.getLogger()
 
     i = 1
     for s, v in config['strategy'].items():
@@ -43,8 +48,8 @@ def main(config_file):
             exec(f'strat_{i}=locals()["{s}"]()')
             exec(f'strategy_dict["{s}"]=strat_{i}')
             i += 1
-        except:
-            pass
+        except Exception as e:
+            _logger.error(f'Unable to load strategy {s}: {str(e)}')
 
     app = QtWidgets.QApplication(sys.argv)
     mainWindow = MainWindow(config, strategy_dict)

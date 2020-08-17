@@ -15,12 +15,14 @@ class OrderManager(object):
     def __init__(self):
         self.order_dict = {}              # order_id ==> order
         self.fill_dict = {}                # fill_id ==> fill
-        self._canceled_order_list = []  # order_id of canceled orders for convenience
+        self.standing_order_list = []        # order_id of standing order for convenience
+        self.canceled_order_list = []  # order_id of canceled orders for convenience
 
     def reset(self):
         self.order_dict.clear()
         self.fill_dict.clear()
-        self._canceled_order_list = []
+        self.standing_order_list = []
+        self.canceled_order_list = []
 
     def on_tick(self, tick_event):
         """
@@ -43,12 +45,14 @@ class OrderManager(object):
             # only change status when it is logical
             elif self.order_dict[order_event.order_id].order_status.value <= order_event.order_status.value:
                 self.order_dict[order_event.order_id].order_status = order_event.order_status
+                self.standing_order_list.append(order_event.order_id)
                 return True
             else:  # no need to change status
                 return False
         # order_id not yet assigned, open order at connection or placed by trader?
         else:
             self.order_dict[order_event.order_id] = order_event
+            self.standing_order_list.append(order_event.order_id)
             return True
 
     def on_cancel(self, o):
@@ -57,9 +61,11 @@ class OrderManager(object):
         :param o:
         :return:
         """
-        self._canceled_order_list.append(o.order_id)
+        self.canceled_order_list.append(o.order_id)
         if o.order_id in self.order_dict.keys():
             self.order_dict[o.order_id].order_status = OrderStatus.CANCELED
+            if o.order_id in self.standing_order_list:
+                self.standing_order_list.remove(o.order_id)
         else:
             _logger.error('cancel order is not registered')
 
@@ -78,6 +84,8 @@ class OrderManager(object):
 
                 if (self.order_dict[fill_event.order_id].order_size == self.order_dict[fill_event.order_id].fill_size):
                     self.order_dict[fill_event.order_id].order_status = OrderStatus.FILLED
+                    if fill_event.order_id in self.standing_order_list:
+                        self.standing_order_list.remove(fill_event.order_id)
                 else:
                     self.order_dict[fill_event.order_id].order_status = OrderStatus.PARTIALLY_FILLED
             else:
@@ -95,3 +103,9 @@ class OrderManager(object):
         except:
             return None
 
+    def has_standing_order(self):
+        for oid in self.standing_order_list:
+            if oid in self.order_dict.keys():
+                if self.order_dict[oid].order_status < OrderStatus.FILLED:  # has standing order
+                    return True
+        return False

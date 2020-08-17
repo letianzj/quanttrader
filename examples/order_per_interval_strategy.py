@@ -3,6 +3,9 @@
 from quanttrading2.strategy.strategy_base import StrategyBase
 from quanttrading2.order.order_event import OrderEvent
 from quanttrading2.order.order_type import OrderType
+import logging
+
+_logger = logging.getLogger(__name__)
 
 
 class OrderPerIntervalStrategy(StrategyBase):
@@ -14,6 +17,7 @@ class OrderPerIntervalStrategy(StrategyBase):
         self.ticks = 0
         self.tick_trigger_threshold = 2000
         self.direction = 1
+        _logger.info('OrderPerIntervalStrategy initiated')
 
     def on_tick(self, k):
         print(k)
