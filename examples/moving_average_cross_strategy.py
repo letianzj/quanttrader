@@ -44,31 +44,36 @@ class MovingAverageCrossStrategy(StrategyBase):
                 self.ema += alpha * (self.last_trade - self.ema)
                 self.last_time = k.timestamp
 
+            print(f'MovingAverageCrossStrategy: {self.last_trade} {self.ema}')
             if k.price > self.ema:    # buy at bid
-                if self._position_manager.get_position_size(symbol) == 0:
-                    if self._order_manager.has_standing_order():
+                if self._order_manager.has_standing_order():
+                    return
+                if self.last_bid < 0:     # bid not initiated yet
+                    return
+                else:
+                    current_pos = int(self._position_manager.get_position_size(symbol))
+                    if current_pos not in [-1, 0]:
                         return
-                    if self.last_bid < 0:     # bid not initiated yet
-                        return
-                    else:
-                        o = OrderEvent()
-                        o.full_symbol = symbol
-                        o.order_type = OrderType.LIMIT
-                        o.limit_price = self.last_bid
-                        o.order_size = 1
-                        _logger.info(f'MovingAverageCrossStrategy long order placed. ema {self.ema}, last {k.price}, bid {self.last_bid}')
-                        self.place_order(o)
+                    o = OrderEvent()
+                    o.full_symbol = symbol
+                    o.order_type = OrderType.LIMIT
+                    o.limit_price = self.last_bid
+                    o.order_size = 1 - current_pos
+                    _logger.info(f'MovingAverageCrossStrategy long order placed. ema {self.ema}, last {k.price}, bid {self.last_bid}')
+                    self.place_order(o)
             else:   # exit long position
-                if (self._position_manager.get_position_size(symbol) == 1):
-                    if self._order_manager.has_standing_order():
+                if self._order_manager.has_standing_order():
+                    return
+                if self.last_ask < 0:     # ask not initiated yet
+                    return
+                else:
+                    current_pos = int(self._position_manager.get_position_size(symbol))
+                    if current_pos not in [0, 1]:
                         return
-                    if self.last_ask < 0:     # ask not initiated yet
-                        return
-                    else:
-                        o = OrderEvent()
-                        o.full_symbol = symbol
-                        o.order_type = OrderType.LIMIT
-                        o.limit_price = self.last_ask
-                        o.order_size = -1
-                        _logger.info('MovingAverageCrossStrategy flat order placed. ema {self.ema}, last {k.price}, ask {self.last_ask}')
-                        self.place_order(o)
+                    o = OrderEvent()
+                    o.full_symbol = symbol
+                    o.order_type = OrderType.LIMIT
+                    o.limit_price = self.last_ask
+                    o.order_size = -1 - current_pos
+                    _logger.info(f'MovingAverageCrossStrategy short order placed. ema {self.ema}, last {k.price}, ask {self.last_ask}')
+                    self.place_order(o)

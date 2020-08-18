@@ -32,6 +32,7 @@ from .ui_log_window import LogWindow
 from .ui_trade_menu import TradeMenu
 
 _logger = logging.getLogger(__name__)
+_logger_tick = logging.getLogger('tick_recorder')
 
 
 class MainWindow(QtWidgets.QMainWindow):
@@ -99,7 +100,7 @@ class MainWindow(QtWidgets.QMainWindow):
             v.active = self._config['strategy'][v.name]['active']
             v.set_capital(self._config['strategy'][v.name]['capital'])  # float
             v.set_params(self._config['strategy'][v.name]['params'])  # dict
-            v.set_symbols(self._config['strategy'][v.name]['symbols'])  # list
+            v.set_symbols(self._config['strategy'][v.name]['symbols'])  # list  # not before multiplier is removed
             i += 1
         self._strategy_manager.load_strategy(strat_dict)
 
@@ -122,6 +123,8 @@ class MainWindow(QtWidgets.QMainWindow):
     def update_status_bar(self, message):
         self.statusBar().showMessage(message)
         self.strategy_window.update_pnl()        # pnl update
+        # self._broker.heartbeat()
+        _logger.info(f'Current tick queue size: {self._tick_events_engine._queue.qsize()}')
 
     def start_strategy(self):
         try:
@@ -174,8 +177,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self._current_time = tick_event.timestamp
 
         self._strategy_manager.on_tick(tick_event)  # feed strategies
-        self._position_manager.mark_to_market(tick_event.timestamp, tick_event.full_symbol, tick_event.price, self._data_board)
+        # self._position_manager.mark_to_market(tick_event.timestamp, tick_event.full_symbol, tick_event.price, self._data_board)   # do not mtm; just update from position_event
         self._data_board.on_tick(tick_event)       # update databoard
+        _logger_tick.info(tick_event)
 
     def _order_status_event_handler(self, order_event):  # including cancel
         # self._order_manager.on_order_status(order_event)     # this moves to order_window to tell it to update
@@ -184,7 +188,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.strategy_window.update_order(order_event)
 
     def _fill_event_handler(self, fill_event):
-        self._position_manager.on_fill(fill_event)   # update portfolio manager for pnl
+        # self._position_manager.on_fill(fill_event)   # update portfolio manager for pnl    # do not fill; just update from position_event
         self._order_manager.on_fill(fill_event)  # update order manager with fill
         self._strategy_manager.on_fill(fill_event)  # feed fill to strategy
         self.fill_window.fill_signal.emit(fill_event)     # display
@@ -333,4 +337,4 @@ class StatusThread(QtCore.QThread):
             cpuPercent = psutil.cpu_percent()
             memoryPercent = psutil.virtual_memory().percent
             self.status_update.emit('CPU Usage: ' + str(cpuPercent) + '% Memory Usage: ' + str(memoryPercent) + '%')
-            self.sleep(2)
+            self.sleep(5)

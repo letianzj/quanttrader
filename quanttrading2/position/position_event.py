@@ -30,3 +30,8 @@ class PositionEvent(Event):
         pos.account = self.account
 
         return pos
+
+    def __str__(self):
+        return "Ticker: %s, Cost: %s, Size: %s, opl: %s, rpl: %s" % (
+            str(self.full_symbol), str(self.average_cost), str(self.size), str(self.unrealized_pnl), str(self.realized_pnl)
+        )

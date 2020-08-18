@@ -46,25 +46,29 @@ class Position(object):
                                       + fill_event.commission / multiplier) \
                                      // (self.size + fill_event.fill_size)
             else:        # flat long
+                #_logger.info(f'flat long realized_pnl {self.realized_pnl}, avg {self.average_price}, fill {fill_event.fill_price}, {fill_event.fill_size}, {multiplier}, {fill_event.commission}')
                 if abs(self.size) >= abs(fill_event.fill_size):   # stay long
                     self.realized_pnl += (self.average_price - fill_event.fill_price) * fill_event.fill_size \
                                          * multiplier - fill_event.commission
                 else:   # flip to short
-                    self.realized_pnl += (fill_event.fill_size - self.average_price) * self.size \
+                    self.realized_pnl += (fill_event.fill_price - self.average_price) * self.size \
                                          * multiplier - fill_event.commission
                     self.average_price = fill_event.fill_price
-        else:        # existing short
+        elif self.size < 0:        # existing short
             if fill_event.fill_size < 0:         # short more
                 self.average_price = (self.average_price * self.size + fill_event.fill_price * fill_event.fill_size
                                       + fill_event.commission / multiplier) \
                                      // (self.size + fill_event.fill_size)
             else:          # flat short
+                #_logger.info(f'flat short realized_pnl {self.realized_pnl}, avg {self.average_price}, fill {fill_event.fill_price}, {fill_event.fill_size}, {multiplier}, {fill_event.commission}')
                 if abs(self.size) >= abs(fill_event.fill_size):  # stay short
                     self.realized_pnl += (self.average_price - fill_event.fill_price) * fill_event.fill_size \
                                          * multiplier - fill_event.commission
                 else:   # flip to long
-                    self.realized_pnl += (fill_event.fill_size - self.average_price) * self.size \
+                    self.realized_pnl += (fill_event.fill_price - self.average_price) * self.size \
                                          * multiplier - fill_event.commission
                     self.average_price = fill_event.fill_price
+        else:      # no position
+            self.average_price = fill_event.fill_price + fill_event.commission / multiplier /fill_event.fill_size
 
         self.size += fill_event.fill_size

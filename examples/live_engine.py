@@ -44,6 +44,13 @@ def main(config_file):
     _logger2.addHandler(handler1)
     _logger2.addHandler(handler2)
 
+    _logger3 = logging.getLogger('tick_recorder')
+    _logger3.setLevel(logging.INFO)
+    handler3 = logging.FileHandler(f"{config['tick_path']}{today}.txt")
+    formatter = logging.Formatter('')
+    handler3.setFormatter(formatter)
+    _logger3.addHandler(handler3)
+
     i = 1
     for s, v in config['strategy'].items():
         try:

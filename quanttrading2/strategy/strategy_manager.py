@@ -38,11 +38,13 @@ class StrategyManager(object):
             self._strategy_dict[v.id ] = v
             self._sid_oid_dict[v.id] = []         # record its orders
             v.on_init(self, self._data_board, self._multiplier_dict)
+            syms = []
             for sym in v.symbols:
                 ss = sym.split(' ')
                 if ss[-1].isdigit():  # multiplier
                     sym = ' '.join(ss[:-1])
                     self._multiplier_dict[sym] = int(ss[-1])
+                syms.append(sym)
 
                 # now sym doesn't have multiplier
                 if sym in self._tick_strategy_dict:
@@ -54,6 +56,7 @@ class StrategyManager(object):
                 else:
                     _logger.info(f'add {sym}')
                     self._broker.market_data_subscription_reverse_dict[sym] = -1
+            v.set_symbols(syms)
 
     def start_strategy(self, sid):
         self._strategy_dict[sid].active = True

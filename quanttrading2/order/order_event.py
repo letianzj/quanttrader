@@ -31,3 +31,8 @@ class OrderEvent(Event):
         self.account = ''
         self.source = -1              # sid, -1: unknown, 0: discretionary
         self.timestamp = ''
+
+    def __str__(self):
+        return "Time: %s, Source: %s, Type: %s, LMT: %s, STP %s Size %s" % (
+            self.timestamp, str(self.source), str(self.order_type), str(self.limit_price), str(self.stop_price), str(self.order_size)
+        )

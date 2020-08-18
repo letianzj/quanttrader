@@ -56,14 +56,9 @@ class PositionManager(object):
             _logger.info("Contract %s information already exists " % contract.full_symbol)
 
     def on_position(self, pos_event):
-        """get initial position"""
-        # TODO, current_total_capital accounts for initial positions
+        """respond to updatePortfolio; global position_manager only"""
         pos = pos_event.to_position()
-
-        if pos.full_symbol not in self.positions:
-            self.positions[pos.full_symbol] = pos
-        else:
-            _logger.error("Symbol %s already exists in the portfolio " % pos.full_symbol)
+        self.positions[pos.full_symbol] = pos
 
     def on_fill(self, fill_event):
         """

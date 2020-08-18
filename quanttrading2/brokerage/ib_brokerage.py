@@ -248,6 +248,12 @@ class InteractiveBrokers(BrokerageBase):
     def setServerLogLevel(self, level=1):
         self.api.setServerLogLevel(level)
 
+    def heartbeat(self):
+        if self.api.isConnected():
+            _logger.info('reqPositions')
+            # self.api.reqPositions()
+            self.reqCurrentTime()     # EWrapper::currentTime
+
     def log(self, msg):
         timestamp = datetime.now().strftime("%H:%M:%S.%f")
         log_event = LogEvent()

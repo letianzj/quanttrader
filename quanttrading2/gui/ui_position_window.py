@@ -3,6 +3,10 @@
 from PyQt5 import QtCore, QtWidgets, QtGui
 from ..position.position_event import PositionEvent
 from ..order.fill_event import FillEvent
+import logging
+
+_logger = logging.getLogger(__name__)
+
 
 class PositionWindow(QtWidgets.QTableWidget):
     position_signal = QtCore.pyqtSignal(type(PositionEvent()))

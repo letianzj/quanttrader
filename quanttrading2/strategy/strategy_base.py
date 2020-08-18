@@ -6,6 +6,10 @@ from ..order.order_event import OrderEvent
 from ..order.order_type import OrderType
 from ..order import OrderManager
 from ..position import PositionManager
+import logging
+
+_logger = logging.getLogger(__name__)
+
 
 class StrategyBase(metaclass=ABCMeta):
     """
@@ -105,6 +109,8 @@ class StrategyBase(metaclass=ABCMeta):
         :param timestamp: used by backtest broker to get price on timestamp
         :return:
         """
+        if size_from == size_to:
+            return
         o = OrderEvent()
         o.full_symbol = sym
         o.order_type = OrderType.MARKET

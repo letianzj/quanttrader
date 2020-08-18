@@ -22,14 +22,14 @@ class OrderPerIntervalStrategy(StrategyBase):
     def on_tick(self, k):
         super().on_tick(k)     # extra mtm calc
 
-        print(k)
+        print(k, self.ticks)
         if (k.full_symbol == self.symbols[0]) & (self.ticks > self.tick_trigger_threshold):
             o = OrderEvent()
             o.full_symbol = k.full_symbol
             o.order_type = OrderType.MARKET
             o.order_size = self.direction
             self.direction = 1 if self.direction == -1 else -1
-            _logger.info('OrderPerIntervalStrategy order placed')
+            _logger.info(f'OrderPerIntervalStrategy order placed on ticks {self.ticks}')
             self.place_order(o)
             self.ticks = 0
         else:
