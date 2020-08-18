@@ -6,6 +6,7 @@ import os
 import webbrowser
 import psutil
 from queue import Queue, Empty
+from copy import copy
 import logging
 from PyQt5 import QtCore, QtWidgets, QtGui
 from datetime import datetime
@@ -177,7 +178,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def _order_status_event_handler(self, order_event):  # including cancel
         # self._order_manager.on_order_status(order_event)     # this moves to order_window to tell it to update
-        self.order_window.order_status_signal.emit(order_event)
+        self.order_window.order_status_signal.emit(copy(order_event))    # NEED TO MAKE A COPY
         self._strategy_manager.on_order_status(order_event)
 
     def _fill_event_handler(self, fill_event):

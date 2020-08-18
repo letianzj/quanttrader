@@ -17,8 +17,8 @@ class StrategyManager(object):
         :param config:
         :param strat_dict:     strat name ==> stract
         :param broker: to place order directly without message queue
-        :param order_manager:  support OMS
-        :param position_manager:    let position manager help track total positions
+        :param order_manager:  this order manager support total/global orders
+        :param position_manager:    this position manager help track total/global positions
         :param risk_manager: chck order witth
         :param data_board: for strategy
         """

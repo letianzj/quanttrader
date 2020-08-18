@@ -11,8 +11,7 @@ strategy:
     active: False
     capital: 10000
     params:
-      short_window: 20
-      long_window: 80
+      G: 20
     symbols:
       - CLV0 FUT NYMEX
   BuyAndHoldStrategy:
@@ -20,6 +19,7 @@ strategy:
     active: False
     params:
       ticks: 5
+      tick_trigger_threshold: 5000
     symbols:
       - SPY STK SMART
       - AMZN STK SMART
@@ -29,8 +29,7 @@ strategy:
     active: False
     capital: 50000
     params:
-      tick_trigger_threshold: 5000
-      tick_trigger_threshold2: 100
+      tick_trigger_threshold: 50
     symbols:
       #- SPY STK SMART
       #- AAPL STK SMART

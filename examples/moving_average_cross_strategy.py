@@ -30,7 +30,7 @@ class MovingAverageCrossStrategy(StrategyBase):
         if k.tick_type == TickType.BID:
             self.last_bid = k.bid_price_L1
         if k.tick_type == TickType.ASK:
-            self.last_bid = k.ask_price_L1
+            self.last_ask = k.ask_price_L1
         elif k.tick_type == TickType.TRADE:
             self.last_trade = k.price
             if self.ema == -1:
