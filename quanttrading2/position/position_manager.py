@@ -32,6 +32,13 @@ class PositionManager(object):
         self.contracts.clear()
         self.positions.clear()
 
+    def get_holdings_count(self):
+        n = 0
+        for s, p in self.positions.items():
+            if p.size != 0:
+                n+=1
+        return n
+
     def get_position_size(self, symbol):
         if symbol in self.positions.keys():
             return self.positions[symbol].size

@@ -56,16 +56,15 @@ def run(args):
     # RTH stock 9:30~16:00; FUT 9:30~17:00, ES halt 16:15~16:30
     # 7.5h x 2 = 15 requests = 15*15 ~ 4min
     symbols = [
-        'ESU0 FUT GLOBEX',          # 9:30 a.m. ET on the 3rd Friday of the contract month
+        'ESU0 FUT GLOBEX',          # 9:30 a.m. ET on the 3rd Friday of the contract month; 15:14:30 – 15:15:00 CT; final 9:30am opening prices
         'NQU0 FUT GLOBEX',          # 9:30 a.m. ET on the 3rd Friday of the contract month
-        # VWAP between 14:00:00 and 14:30:00 ET (14:28:00 to 14:30:00 if not final)
-        'CLU0 FUT NYNEX',           # 3 business day prior to the 25th calendar day of the month prior to the contract month, if not business day;
+        'CLU0 FUT NYNEX',           # 3 business day prior to the 25th calendar day of the month prior to the contract month, if not business day; active -2D; 4:28:00 to 14:30:00 ET; 14:00:00 and 14:30:00 ET
         'CLV0 FUT NYNEX',
-        'HOU0 FUT NYMEX',           # last business day of the month prior to the contract month; 14:28:00 to 14:30:00 ET, 14:00:00 and 14:30:00 ET.
+        'HOU0 FUT NYMEX',           # last business day of the month prior to the contract month; active -2D CL; 14:28:00 to 14:30:00 ET, 14:00:00 and 14:30:00 ET.
         'HOV0 FUT NYMEX',
-        'RBU0 FUT NYMEX',           # last business day of the month prior to the contract month.;  14:28:00 to 14:30:00 ET, 14:00:00 and 14:30:00 ET.
+        'RBU0 FUT NYMEX',           # last business day of the month prior to the contract month.; active -2D CL; 14:28:00 to 14:30:00 ET, 14:00:00 and 14:30:00 ET.
         'RBV0 FUT NYMEX',
-        # 'NGU0 FUT NYMEX',         # 3rd last business days of the month prior to the contract month. 14:28:00 to 14:30:00 ET
+        # 'NGU0 FUT NYMEX',         # 3rd last business days of the month prior to the contract month; active -2D. 14:28:00 to 14:30:00 ET; 14:00:00 and 14:30:00 ET
         # 'NGV0 FUT NYMEX',
         # 'SPY STK SMART',
         # 'QQQ STK SMART',
@@ -124,7 +123,7 @@ def run(args):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Historical Downloader')
-    parser.add_argument('--date', help='yyyymmdd')
+    parser.add_argument('--date', help='yyyymmdd midnight, download previous day')
     parser.add_argument('--path', default='d:/workspace/quantresearch/data/tick/', help='hist data folder')
 
     args = parser.parse_args()

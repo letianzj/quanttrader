@@ -14,7 +14,8 @@ class StrategyWindow(QtWidgets.QTableWidget):
         self.header = ['SID',
                        'SName',
                        'nHoldings',
-                       'nTrades',
+                       'nOrders',
+                       'nFilled',
                        'Open_PnL',
                        'Closed_PnL',
                        'Status']
@@ -35,17 +36,37 @@ class StrategyWindow(QtWidgets.QTableWidget):
                 self.insertRow(self.rowCount())
                 self.setItem(self.rowCount()-1, 0, QtWidgets.QTableWidgetItem(str(key)))
                 self.setItem(self.rowCount()-1, 1, QtWidgets.QTableWidgetItem(str(value.name)))
-                self.setItem(self.rowCount()-1, 6, QtWidgets.QTableWidgetItem('active' if value.active else 'inactive'))
+                self.setItem(self.rowCount()-1, 7, QtWidgets.QTableWidgetItem('active' if value.active else 'inactive'))
             except:
                 pass
 
-    def update_table(self, order_event):
-        pass
+    def update_order(self, order_event):
+        sid = order_event.source
+        if sid in self._strategy_manager._strategy_dict.keys():
+            row = sid - 1            # sid starts from 1
+            norders = len(self._strategy_manager._strategy_dict[sid]._order_manager.order_dict)
+            nfilled = len(self._strategy_manager._strategy_dict[sid]._order_manager.fill_dict)
+            self.setItem(row, 3, QtWidgets.QTableWidgetItem(str(norders)))
+            self.setItem(row, 4, QtWidgets.QTableWidgetItem(str(nfilled)))
 
-    def add_table(self, row, string):
+    def update_fill(self, fill_event):
+        if fill_event.fill_id in self._strategy_manager._order_manager.fill_dict.keys():
+            oid = self._strategy_manager._order_manager.fill_dict[fill_event.fill_id].order_id
+            if oid in  self._strategy_manager._order_manager.order_dict.keys():
+                sid = self._strategy_manager._order_manager.order_dict[oid].source
+                if sid in self._strategy_manager._strategy_dict.keys():
+                    row = sid - 1            # sid starts from 1
+                    norders = len(self._strategy_manager._strategy_dict[sid]._order_manager.order_dict)
+                    nfilled = len(self._strategy_manager._strategy_dict[sid]._order_manager.fill_dict)
+                    nholdings = self._strategy_manager._strategy_dict[sid]._position_manager.get_holdings_count()
+                    self.setItem(row, 2, QtWidgets.QTableWidgetItem(str(nholdings)))
+                    self.setItem(row, 3, QtWidgets.QTableWidgetItem(str(norders)))
+                    self.setItem(row, 4, QtWidgets.QTableWidgetItem(str(nfilled)))
+
+    def update_pnl(self):
         pass
 
     def update_status(self, row, active):
         sid = int(self.item(row,0).text())
         self._strategy_manager._strategy_dict[sid].active = active
-        self.setItem(row, 6, QtWidgets.QTableWidgetItem('active' if active else 'inactive'))
+        self.setItem(row, 7, QtWidgets.QTableWidgetItem('active' if active else 'inactive'))
