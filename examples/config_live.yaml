@@ -13,7 +13,7 @@ strategy:
     params:
       G: 20
     symbols:
-      - CLV0 FUT NYMEX
+      - CLV0 FUT NYMEX 1000
   BuyAndHoldStrategy:
     path: None
     active: False
@@ -34,6 +34,6 @@ strategy:
       #- SPY STK SMART
       #- AAPL STK SMART
       #- AMZN STK SMART
-      - ESU0 FUT GLOBEX
-      - CLV0 FUT NYMEX
-      - NGV0 FUT NYMEX
+      - ESU0 FUT GLOBEX 50
+      - CLV0 FUT NYMEX 1000
+      - NGV0 FUT NYMEX 10000

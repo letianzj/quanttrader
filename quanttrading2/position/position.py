@@ -19,6 +19,9 @@ class Position(object):
         self.unrealized_pnl = 0
         self.account = ''
 
+    def get_current_pnl(self):
+        return self.realized_pnl, self.unrealized_pnl
+
     def mark_to_market(self, last_price, multiplier):
         """
         given new market price, update the position

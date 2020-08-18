@@ -64,7 +64,15 @@ class StrategyWindow(QtWidgets.QTableWidget):
                     self.setItem(row, 4, QtWidgets.QTableWidgetItem(str(nfilled)))
 
     def update_pnl(self):
-        pass
+        for sid, s in self._strategy_manager._strategy_dict.items():
+            closed_pnl = 0
+            open_pnl = 0
+            for sym, pos in s._position_manager.positions.items():
+                p1, p2 = pos.get_current_pnl()
+                closed_pnl += p1
+                open_pnl += p2
+            self.setItem(sid - 1, 5, QtWidgets.QTableWidgetItem(str(open_pnl)))
+            self.setItem(sid - 1, 6, QtWidgets.QTableWidgetItem(str(closed_pnl)))
 
     def update_status(self, row, active):
         sid = int(self.item(row,0).text())

@@ -26,6 +26,8 @@ class MovingAverageCrossStrategy(StrategyBase):
         _logger.info('MovingAverageCrossStrategy initiated')
 
     def on_tick(self, k):
+        super().on_tick(k)     # extra mtm calc
+
         symbol = self.symbols[0]
         if k.tick_type == TickType.BID:
             self.last_bid = k.bid_price_L1

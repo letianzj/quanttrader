@@ -121,6 +121,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def update_status_bar(self, message):
         self.statusBar().showMessage(message)
+        self.strategy_window.update_pnl()        # pnl update
 
     def start_strategy(self):
         try:
@@ -332,4 +333,4 @@ class StatusThread(QtCore.QThread):
             cpuPercent = psutil.cpu_percent()
             memoryPercent = psutil.virtual_memory().percent
             self.status_update.emit('CPU Usage: ' + str(cpuPercent) + '% Memory Usage: ' + str(memoryPercent) + '%')
-            self.sleep(1)
+            self.sleep(2)

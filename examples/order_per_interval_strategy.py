@@ -20,6 +20,8 @@ class OrderPerIntervalStrategy(StrategyBase):
         _logger.info('OrderPerIntervalStrategy initiated')
 
     def on_tick(self, k):
+        super().on_tick(k)     # extra mtm calc
+
         print(k)
         if (k.full_symbol == self.symbols[0]) & (self.ticks > self.tick_trigger_threshold):
             o = OrderEvent()
