@@ -54,7 +54,7 @@ class MovingAverageCrossStrategy(StrategyBase):
                         o.order_type = OrderType.LIMIT
                         o.limit_price = self.last_bid
                         o.order_size = 1
-                        _logger.info('MovingAverageCrossStrategy long order placed')
+                        _logger.info(f'MovingAverageCrossStrategy long order placed. ema {self.ema}, last {k.price}, bid {self.last_bid}')
                         self.place_order(o)
             else:   # exit long position
                 if (self._position_manager.get_position_size(symbol) == 1):
@@ -68,5 +68,5 @@ class MovingAverageCrossStrategy(StrategyBase):
                         o.order_type = OrderType.LIMIT
                         o.limit_price = self.last_ask
                         o.order_size = -1
-                        _logger.info('MovingAverageCrossStrategy flat order placed')
+                        _logger.info('MovingAverageCrossStrategy flat order placed. ema {self.ema}, last {k.price}, ask {self.last_ask}')
                         self.place_order(o)
