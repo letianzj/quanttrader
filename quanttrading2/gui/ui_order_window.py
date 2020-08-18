@@ -74,13 +74,16 @@ class OrderWindow(QtWidgets.QTableWidget):
                 self.setItem(0, 10, QtWidgets.QTableWidgetItem(self._order_manager.order_dict[order_event.order_id].cancel_time))
                 self.setItem(0, 11, QtWidgets.QTableWidgetItem(self._order_manager.order_dict[order_event.order_id].account))
 
-    def update_order_status(self, order_id, order_status):
+    def update_order_status(self, order_id):
         """
         This is called by fill handler to update order status
         """
+
         if order_id in self._orderids:
             row = self._orderids.index(order_id)
-            self.item(row, 8).setText(order_status.name)
+            self.item(row, 7).setText(str(self._order_manager.order_dict[order_id].fill_size))
+            self.item(row, 8).setText(self._order_manager.order_dict[order_id].order_status.name)
+            self.item(row, 10).setText(self._order_manager.order_dict[order_id].create_time)
 
     def cancel_order(self,mi):
         row = mi.row()
