@@ -13,7 +13,7 @@ setup(
     description='quanttrading2 backtest live trading',
     long_description=readme,
     long_description_content_type='text/markdown',
-    version='0.3.0',
+    version='0.3.7',
     author='Letian Wang',
     author_email='letian.zj@gmail.com',
     url='https://github.com/letianzj/quanttrading2',
@@ -29,14 +29,16 @@ setup(
     ],
     install_requires = [
         'matplotlib>=3.0.3',
-        'numpy>=1.19.0',
+        'numpy>=1.18.0',
         'pandas>=1.0.5',
-        'pytz>=2019.3',
+        'pytz>=2018.9',
         'scipy>=1.4.1',
         'scikit-learn>=0.22.1',
         'seaborn>=0.10.1',
-        'pytest>=5.3.5',
-        'PyQt5>=5.15.0'
+        'pytest>=3.6.4',
+        'PyQt5>=5.13.0',
+        'ibapi>=9.76.1',
+        'gym>=0.17.0'
     ],
     keywords='quanttrading2 backtest live trading'
 )

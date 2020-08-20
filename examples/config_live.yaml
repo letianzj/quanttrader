@@ -9,25 +9,15 @@ tick_path: 'd:/workspace/runtime/tick/'
 #-------------- active strategies -------------#
 strategy:
   MovingAverageCrossStrategy:
-    path: 'd:/workspace/quanttrading2/examples/moving_average_cross_strategy.py'
+    path: './moving_average_cross_strategy.py'
     active: False
     capital: 10000
     params:
       G: 20
     symbols:
       - CLV0 FUT NYMEX 1000
-  BuyAndHoldStrategy:
-    path: None
-    active: False
-    params:
-      ticks: 5
-      tick_trigger_threshold: 5000
-    symbols:
-      - SPY STK SMART
-      - AMZN STK SMART
-      - MSFT STK SMART
   OrderPerIntervalStrategy:
-    path: 'd:/workspace/quanttrading2/examples/order_per_interval_strategy.py'
+    path: 'order_per_interval_strategy.py'
     active: False
     capital: 50000
     params:
@@ -37,5 +27,5 @@ strategy:
       #- AAPL STK SMART
       #- AMZN STK SMART
       - ESU0 FUT GLOBEX 50
-      - CLV0 FUT NYMEX 1000
-      - NGV0 FUT NYMEX 10000
+      #- CLV0 FUT NYMEX 1000
+      #- NGV0 FUT NYMEX 10000
