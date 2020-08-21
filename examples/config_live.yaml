@@ -9,7 +9,6 @@ tick_path: 'd:/workspace/runtime/tick/'
 #-------------- active strategies -------------#
 strategy:
   MovingAverageCrossStrategy:
-    path: './moving_average_cross_strategy.py'
     active: False
     capital: 10000
     params:
@@ -17,7 +16,6 @@ strategy:
     symbols:
       - CLV0 FUT NYMEX 1000
   OrderPerIntervalStrategy:
-    path: 'order_per_interval_strategy.py'
     active: False
     capital: 50000
     params:

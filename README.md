@@ -14,32 +14,23 @@ Backtest and live trading in 100% pure Python, open sourced [on GitHub](https://
 
 __Prerequisite__: download and install IB TWS or IB Gateway; enable API connection as described [here](https://interactivebrokers.github.io/tws-api/initial_setup.html).
 
-__Approach one__: using pip install
+__Installation__
 
-step 1.a
+Step 1
 
 ```shell
 pip install quanttrading2
 ```
 
-step 1.b
+Alternatively, download or git the source code and include unzipped path in PYTHONPATH environment variable.
 
-download [examples\ive_engine.py](https://github.com/letianzj/quanttrading2/blob/master/examples/live_engine.py) and [examples\config_live.yaml](https://github.com/letianzj/quanttrading2/blob/master/examples/config_live.yaml).
+step 2
 
-step 1.c
+download and unzip [starter_kit](https://github.com/letianzj/quanttrading2/blob/master/examples/starter_kit.zip) in examples folder.
+
+step 3
 ```shell
-python live_engine.py
-```
-
-__Approach two__: using source code.
-
-step 2.a. download and unzip source code.
-
-step 2.b. include unzipped path in PYTHONPATH environment variable.
-
-step 2.c.
-```shell
-cd examples
+cd runtime      # from unzip starter_kit
 python live_engine.py
 ```
 

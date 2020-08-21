@@ -3,6 +3,7 @@
 import sys
 import os
 import argparse
+import importlib
 from datetime import datetime
 import yaml
 from PyQt5 import QtCore, QtWidgets, QtGui
@@ -51,16 +52,22 @@ def main(config_file):
     handler3.setFormatter(formatter)
     _logger3.addHandler(handler3)
 
-    i = 1
-    for s, v in config['strategy'].items():
-        try:
-            print(s)
-            exec(open(v['path']).read(), locals())
-            exec(f'strat_{i}=locals()["{s}"]()')
-            exec(f'strategy_dict["{s}"]=strat_{i}')
-            i += 1
-        except Exception as e:
-            _logger2.error(f'Unable to load strategy {s}: {str(e)}')
+    strategy_dict = {}
+    for _, _, files in os.walk('./strategy'):
+        for name in files:
+            if 'strategy' in name and '.pyc' not in name:
+                s = name.replace('.py', '')
+                try:
+                    moduleName = f'strategy.{s}'
+                    # import module
+                    module = importlib.import_module(moduleName)
+                    for k in dir(module):
+                        if ('Strategy' in k) and ('Abstract' not in k) and (k in config['strategy']):
+                            v = module.__getattribute__(k)
+                            _strategy = v()
+                            strategy_dict[k] = _strategy
+                except Exception as e:
+                    _logger2.error(f'Unable to load strategy {s}: {str(e)}')
 
     app = QtWidgets.QApplication(sys.argv)
     app.setWindowIcon(QtGui.QIcon("gui/image/logo.ico"))

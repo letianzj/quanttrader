@@ -3,6 +3,7 @@
 from quanttrading2.strategy.strategy_base import StrategyBase
 from quanttrading2.order.order_event import OrderEvent
 from quanttrading2.order.order_type import OrderType
+from quanttrading2.data.tick_event import TickType
 import logging
 
 _logger = logging.getLogger('qtlive')
@@ -22,6 +23,8 @@ class OrderPerIntervalStrategy(StrategyBase):
     def on_tick(self, k):
         super().on_tick(k)     # extra mtm calc
 
+        if k.tick_type == TickType.TRADE:
+            pass
         print(k, self.ticks)
         if (k.full_symbol == self.symbols[0]) & (self.ticks > self.tick_trigger_threshold):
             o = OrderEvent()
