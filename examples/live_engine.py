@@ -30,6 +30,11 @@ def main(config_file):
     except IOError:
         print("config.yaml is missing")
 
+    required_dirs = ['./log/', './tick/', './strategy/']
+    for d in required_dirs:
+        if not os.path.exists(d):
+            os.makedirs(d)
+
     _logger = logging.getLogger('quanttrading2')
     _logger.setLevel(logging.DEBUG)
     handler1 = logging.StreamHandler()
