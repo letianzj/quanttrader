@@ -4,13 +4,13 @@ Backtest and live trading in 100% pure Python, open sourced [on GitHub](https://
 
 ### Backtest
 
-[Backtests Blog](https://letianzj.github.io/quanttrading-backtest.html)
+[Backtest code structure](https://letianzj.github.io/quanttrading-backtest.html)
 
 [Backtests examples](https://github.com/letianzj/QuantResearch/tree/master/backtest)
 
-[Param search example](https://github.com/letianzj/QuantResearch/blob/master/backtest/ma_double_cross.py)
-
 ### Live trading
+
+[Live Trading code structure](https://letianzj.github.io/live-trading-ib-native-python.html)
 
 __Prerequisite__: download and install IB TWS or IB Gateway; enable API connection as described [here](https://interactivebrokers.github.io/tws-api/initial_setup.html).
 
