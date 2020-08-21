@@ -3,8 +3,6 @@ theme: dark           # white, dark
 host: '127.0.0.1'
 port: 7497
 client_id: 0
-log_path: 'd:/workspace/runtime/log/'
-tick_path: 'd:/workspace/runtime/tick/'
 
 #-------------- active strategies -------------#
 strategy:

@@ -33,7 +33,7 @@ def main(config_file):
     _logger = logging.getLogger('quanttrading2')
     _logger.setLevel(logging.DEBUG)
     handler1 = logging.StreamHandler()
-    handler2 = logging.FileHandler(f"{config['log_path']}{today}.log")
+    handler2 = logging.FileHandler(f"./log/{today}.log")
     formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
     handler1.setFormatter(formatter)
     handler2.setFormatter(formatter)
@@ -47,7 +47,7 @@ def main(config_file):
 
     _logger3 = logging.getLogger('tick_recorder')
     _logger3.setLevel(logging.INFO)
-    handler3 = logging.FileHandler(f"{config['tick_path']}{today}.txt")
+    handler3 = logging.FileHandler(f"./tick/{today}.txt")
     formatter = logging.Formatter('')
     handler3.setFormatter(formatter)
     _logger3.addHandler(handler3)
