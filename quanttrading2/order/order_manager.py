@@ -107,9 +107,10 @@ class OrderManager(object):
         except:
             return None
 
-    def has_standing_order(self):
+    def retrieve_standing_orders(self):
+        oids = []
         for oid in self.standing_order_set:
             if oid in self.order_dict.keys():
                 if self.order_dict[oid].order_status < OrderStatus.FILLED:  # has standing order
-                    return True
-        return False
+                    oids.append(oid)
+        return oids

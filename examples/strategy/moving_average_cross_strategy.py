@@ -33,9 +33,9 @@ class MovingAverageCrossStrategy(StrategyBase):
             self.last_bid = k.bid_price_L1
         if k.tick_type == TickType.ASK:
             self.last_ask = k.ask_price_L1
-        elif k.tick_type == TickType.TRADE:
+        elif k.tick_type == TickType.TRADE:     # only place on trade
             self.last_trade = k.price
-            if self.ema == -1:
+            if self.ema == -1:          # intialize ema; alternative is to use yesterday close in __init__
                 self.ema = self.last_trade
                 self.last_time = k.timestamp
             else:
@@ -45,35 +45,47 @@ class MovingAverageCrossStrategy(StrategyBase):
                 self.last_time = k.timestamp
 
             print(f'MovingAverageCrossStrategy: {self.last_trade} {self.ema}')
-            if k.price > self.ema:    # buy at bid
-                if self._order_manager.has_standing_order():
-                    return
+            if k.price > self.ema:    # (flip to) long
+                # check standing orders; if it is also a buy order, do nothing
+                # elif it is a sell order; cancel the order
+                standing_oids = self._order_manager.retrieve_standing_orders()
+                if len(standing_oids) > 0:
+                    if self._order_manager.retrieve_order(standing_oids[0]).order_size > 0:
+                        return
+                    else:
+                        self.cancel_order(standing_oids[0])
                 if self.last_bid < 0:     # bid not initiated yet
                     return
-                else:
-                    current_pos = int(self._position_manager.get_position_size(symbol))
-                    if current_pos not in [-1, 0]:
-                        return
-                    o = OrderEvent()
-                    o.full_symbol = symbol
-                    o.order_type = OrderType.LIMIT
-                    o.limit_price = self.last_bid
-                    o.order_size = 1 - current_pos
-                    _logger.info(f'MovingAverageCrossStrategy long order placed. ema {self.ema}, last {k.price}, bid {self.last_bid}')
-                    self.place_order(o)
-            else:   # exit long position
-                if self._order_manager.has_standing_order():
+
+                current_pos = int(self._position_manager.get_position_size(symbol))
+                if current_pos not in [-1, 0]:
                     return
+                o = OrderEvent()
+                o.full_symbol = symbol
+                o.order_type = OrderType.LIMIT
+                o.limit_price = self.last_bid
+                o.order_size = 1 - current_pos
+                _logger.info(f'MovingAverageCrossStrategy long order placed. ema {self.ema}, last {k.price}, bid {self.last_bid}')
+                self.place_order(o)
+            else:   # (flip to) short
+                # check standing orders; if it is also a short order, do nothing
+                # elif it is a long order; cancel the order
+                standing_oids = self._order_manager.retrieve_standing_orders()
+                if len(standing_oids) > 0:
+                    if self._order_manager.retrieve_order(standing_oids[0]).order_size < 0:
+                        return
+                    else:
+                        self.cancel_order(standing_oids[0])
                 if self.last_ask < 0:     # ask not initiated yet
                     return
-                else:
-                    current_pos = int(self._position_manager.get_position_size(symbol))
-                    if current_pos not in [0, 1]:
-                        return
-                    o = OrderEvent()
-                    o.full_symbol = symbol
-                    o.order_type = OrderType.LIMIT
-                    o.limit_price = self.last_ask
-                    o.order_size = -1 - current_pos
-                    _logger.info(f'MovingAverageCrossStrategy short order placed. ema {self.ema}, last {k.price}, ask {self.last_ask}')
-                    self.place_order(o)
+
+                current_pos = int(self._position_manager.get_position_size(symbol))
+                if current_pos not in [0, 1]:
+                    return
+                o = OrderEvent()
+                o.full_symbol = symbol
+                o.order_type = OrderType.LIMIT
+                o.limit_price = self.last_ask
+                o.order_size = -1 - current_pos
+                _logger.info(f'MovingAverageCrossStrategy short order placed. ema {self.ema}, last {k.price}, ask {self.last_ask}')
+                self.place_order(o)

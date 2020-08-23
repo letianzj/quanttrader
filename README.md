@@ -26,11 +26,11 @@ Alternatively, download or git the source code and include unzipped path in PYTH
 
 step 2
 
-download and unzip [starter_kit](https://github.com/letianzj/quanttrading2/blob/master/examples/starter_kit.zip) in examples folder.
+Download [live_engine.py](https://github.com/letianzj/quanttrading2/blob/master/examples/live_engine.py), [config_live.yaml](https://github.com/letianzj/quanttrading2/blob/master/examples/config_live.yaml), [order_per_interval_strategy.py](order_per_interval_strategy.py) by clicking Raw button, right clicking save as, and then change the file extension to .py or .yaml.
 
 step 3
 ```shell
-cd runtime      # from unzip starter_kit
+cd where_the_files_are_saved
 python live_engine.py
 ```
 
