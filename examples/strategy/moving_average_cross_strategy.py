@@ -25,10 +25,16 @@ class MovingAverageCrossStrategy(StrategyBase):
         self.G = 20
         _logger.info('MovingAverageCrossStrategy initiated')
 
+    def on_fill(self, fill_event):
+        super().on_fill(fill_event)
+
+        _logger.info(f'MovingAverageCrossStrategy order filled. oid {fill_event.order_id}, filled price {fill_event.fill_price} size {fill_event.fill_size}')
+
     def on_tick(self, k):
         super().on_tick(k)     # extra mtm calc
 
         symbol = self.symbols[0]
+        print(k)
         if k.tick_type == TickType.BID:
             self.last_bid = k.bid_price_L1
         if k.tick_type == TickType.ASK:
@@ -50,10 +56,17 @@ class MovingAverageCrossStrategy(StrategyBase):
                 # elif it is a sell order; cancel the order
                 standing_oids = self._order_manager.retrieve_standing_orders()
                 if len(standing_oids) > 0:
-                    if self._order_manager.retrieve_order(standing_oids[0]).order_size > 0:
+                    _logger.info(f"MovingAverageCrossStrategy standing orders: {','.join(map(str, standing_oids))}")
+                # it is possible having more than one standing orders:
+                #       one to be cancelled
+                #       the other to be filled
+                for oid in standing_oids:
+                    if self._order_manager.retrieve_order(oid).order_size > 0:
+                        _logger.info(f'MovingAverageCrossStrategy long order already in place. ema {self.ema}, last {k.price}, bid {self.last_bid}')
                         return
-                    else:
-                        self.cancel_order(standing_oids[0])
+                    elif self._order_manager.retrieve_order(oid).order_size < 0:
+                        _logger.info(f'MovingAverageCrossStrategy cancel existing short. ema {self.ema}, last {k.price}, bid {self.last_bid}')
+                        self.cancel_order(oid)
                 if self.last_bid < 0:     # bid not initiated yet
                     return
 
@@ -65,17 +78,24 @@ class MovingAverageCrossStrategy(StrategyBase):
                 o.order_type = OrderType.LIMIT
                 o.limit_price = self.last_bid
                 o.order_size = 1 - current_pos
-                _logger.info(f'MovingAverageCrossStrategy long order placed. ema {self.ema}, last {k.price}, bid {self.last_bid}')
+                _logger.info(f'MovingAverageCrossStrategy long order placed, size {o.order_size}. ema {self.ema}, last {k.price}, bid {self.last_bid}')
                 self.place_order(o)
             else:   # (flip to) short
                 # check standing orders; if it is also a short order, do nothing
                 # elif it is a long order; cancel the order
                 standing_oids = self._order_manager.retrieve_standing_orders()
                 if len(standing_oids) > 0:
-                    if self._order_manager.retrieve_order(standing_oids[0]).order_size < 0:
+                    _logger.info(f"MovingAverageCrossStrategy standing orders: {','.join(map(str, standing_oids))}")
+                # it is possible having more than one standing orders:
+                #       one to be cancelled
+                #       the other to be filled
+                for oid in standing_oids:
+                    if self._order_manager.retrieve_order(oid).order_size < 0:
+                        _logger.info(f'MovingAverageCrossStrategy short order already in place. ema {self.ema}, last {k.price}, bid {self.last_bid}')
                         return
-                    else:
-                        self.cancel_order(standing_oids[0])
+                    elif self._order_manager.retrieve_order(oid).order_size > 0:
+                        _logger.info(f'MovingAverageCrossStrategy cancel existing long. ema {self.ema}, last {k.price}, bid {self.last_bid}')
+                        self.cancel_order(oid)
                 if self.last_ask < 0:     # ask not initiated yet
                     return
 
@@ -87,5 +107,5 @@ class MovingAverageCrossStrategy(StrategyBase):
                 o.order_type = OrderType.LIMIT
                 o.limit_price = self.last_ask
                 o.order_size = -1 - current_pos
-                _logger.info(f'MovingAverageCrossStrategy short order placed. ema {self.ema}, last {k.price}, ask {self.last_ask}')
+                _logger.info(f'MovingAverageCrossStrategy short order placed, size {o.order_size}, ema {self.ema}, last {k.price}, ask {self.last_ask}')
                 self.place_order(o)

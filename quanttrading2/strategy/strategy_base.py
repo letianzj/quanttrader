@@ -75,13 +75,6 @@ class StrategyBase(metaclass=ABCMeta):
         #raise NotImplementedError("Should implement on_order_status()")
         self._order_manager.on_order_status(order_event)
 
-    def on_cancel(self, order_event):
-        """
-        on order canceled
-        :return:
-        """
-        self._order_manager.on_cancel(order_event)
-
     def on_fill(self, fill_event):
         """
         on order filled
@@ -124,15 +117,20 @@ class StrategyBase(metaclass=ABCMeta):
             self.strategy_manager.place_order(o)
 
     def cancel_order(self, oid):
-        pass
+        if oid in self._order_manager.standing_order_set:
+            self._order_manager.on_cancel(oid)
+            self.strategy_manager.cancel_order(oid)
+        else:
+            _logger.error(f'Not a standing order to be cancelled, sid {id}, oid {oid}')
 
     def cancel_all(self):
         """
         cancel all standing orders from this strategy id
         :return:
         """
-        pass
-
+        for oid in self._order_manager.standing_order_set:
+            self._order_manager.on_cancel(oid)
+            self.strategy_manager.cancel_order(oid)
 
 class Strategies(StrategyBase):
     """

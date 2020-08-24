@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from queue import Queue, Empty
+from queue import Empty, Queue
+# from multiprocessing import Queue
 from ..event.event import EventType
 from threading import Thread
 import logging

@@ -94,27 +94,28 @@ class StrategyManager(object):
         o.order_id = oid
         o.order_status = OrderStatus.NEWBORN
         self._sid_oid_dict[o.source].append(oid)
-        # to be consistent, add after hear from broker
-        # self._order_manager.on_order_status(o)
-        # self._strategy_dict[o.source]._order_manager.on_order_status(o)
+        self._order_manager.on_order_status(o)
+        self._strategy_dict[o.source].on_order_status(o)
 
         # 2.b place order
         self._broker.place_order(o)
 
-    def cancel_straetgy(self, sid):
-        if sid not in self._sid_oid_dict.keys():
+    def cancel_order(self, oid):
+        self._order_manager.on_cancel(oid)
+        self._broker.cancel_order(oid)
+
+    def cancel_strategy(self, sid):
+        """
+        call strategy cancel to take care of strategy order_manager
+        """
+        if sid not in self._strategy_dict.keys():
             _logger.error(f'Cancel strategy can not locate strategy id {sid}')
         else:
-            for oid in self._sid_oid_dict[sid]:
-                o = self._order_manager.retrieve_order(oid)
-                if o is not None:
-                    if o.order_status < OrderStatus.FILLED:
-                        self._broker.cancel_order(oid)
+            self._strategy_dict[sid].cancel_all()
 
     def cancel_all(self):
-        for oid, o in self._order_manager.order_dict.items():
-            if o.order_status < OrderStatus.FILLED:
-                self._broker.cancel_order(oid)
+        for sid, s in self._strategy_dict.items():
+            s.cancel_all()
 
     def flat_strategy(self, sid):
         """
@@ -180,6 +181,9 @@ class StrategyManager(object):
             _logger.info(f'strategy manager doesnt hold the oid {order_event.order_id}, possibly from outside of the system')
 
     def on_cancel(self, order_event):
+        """
+        TODO no need for this
+        """
         sid = order_event.source
         if sid in self._strategy_dict.keys():
             self._strategy_dict[sid].on_order_status(order_event)

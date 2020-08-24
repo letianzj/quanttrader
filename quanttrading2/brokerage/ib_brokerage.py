@@ -111,9 +111,10 @@ class InteractiveBrokers(BrokerageBase):
             self.orderid += 1
         order_event.account = self.account
         order_event.timestamp = datetime.now().strftime("%H:%M:%S.%f")
-        order_event.order_status = OrderStatus.NEWBORN       # NEWBORN?
+        order_event.order_status = OrderStatus.ACKNOWLEDGED       # acknowledged
         self.order_dict[order_event.order_id] = order_event
-        self.event_engine.put(copy(order_event))           # acknowledged
+        _logger.info(f'Order acknowledged {order_event.order_id}, {order_event.full_symbol}')
+        self.event_engine.put(copy(order_event))
         self.api.placeOrder(order_event.order_id, ib_contract, ib_order)
 
     def cancel_order(self, order_id):
@@ -486,7 +487,7 @@ class IBApi(EWrapper, EClient):
             order_event.order_status = OrderStatus.FILLED
         elif status == 'PreSubmitted':
             order_event.order_status = OrderStatus.PENDING_SUBMIT
-        elif status == 'Cancelled':
+        elif status == 'Cancelled' or status == 'ApiCancelled':
             order_event.order_status = OrderStatus.CANCELED
             order_event.fill_size = filled         # remaining = order_size - fill_size
             order_event.cancel_time = datetime.now().strftime("%H:%M:%S.%f")

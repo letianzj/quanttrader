@@ -7,9 +7,9 @@ from functools import total_ordering
 class OrderStatus(Enum):
     UNKNOWN = 0
     NEWBORN = 1              # in use
-    PENDING_SUBMIT = 2
-    SUBMITTED = 3           # in use
-    ACKNOWLEDGED = 4        # in use
+    ACKNOWLEDGED = 2        # in use
+    PENDING_SUBMIT = 3      # or PRE-SUBMIT
+    SUBMITTED = 4           # in use
     PARTIALLY_FILLED = 5
     FILLED = 6              # in use
     PENDING_CANCEL = 7

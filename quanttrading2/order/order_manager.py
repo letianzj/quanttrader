@@ -47,6 +47,10 @@ class OrderManager(object):
                 self.order_dict[order_event.order_id].order_status = order_event.order_status
                 if order_event.order_status < OrderStatus.FILLED:
                     self.standing_order_set.add(order_event.order_id)
+                elif order_event.order_status == OrderStatus.CANCELED:
+                    self.canceled_order_set.add(order_event.order_id)
+                    if order_event.order_id in self.standing_order_set:
+                        self.standing_order_set.remove(order_event.order_id)
                 return True
             else:  # no need to change status
                 return False
@@ -55,19 +59,23 @@ class OrderManager(object):
             self.order_dict[order_event.order_id] = order_event
             if order_event.order_status < OrderStatus.FILLED:
                 self.standing_order_set.add(order_event.order_id)
+            elif order_event.order_status == OrderStatus.CANCELED:
+                self.canceled_order_set.add(order_event.order_id)
+                if order_event.order_id in self.standing_order_set:
+                    self.standing_order_set.remove(order_event.order_id)
             return True
 
-    def on_cancel(self, o):
+    def on_cancel(self, oid):
         """
-        TODO: remove on cancel? It's one order status
+        This proactively set order status to PENDING_CANCEL
         :param o:
         :return:
         """
-        self.canceled_order_set.add(o.order_id)
-        if o.order_id in self.order_dict.keys():
-            self.order_dict[o.order_id].order_status = OrderStatus.CANCELED
-            if o.order_id in self.standing_order_set:
-                self.standing_order_set.remove(o.order_id)
+        self.canceled_order_set.add(oid)
+        if oid in self.standing_order_set:
+            self.standing_order_set.remove(oid)
+        if oid in self.order_dict.keys():
+            self.order_dict[oid].order_status = OrderStatus.PENDING_CANCEL
         else:
             _logger.error('cancel order is not registered')
 
