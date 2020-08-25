@@ -40,7 +40,7 @@ def read_intraday_bar_pickle(filepath, syms, tz='America/New_York'):
             pass
     return dict_ret
 
-def read_tick_data_txt(filepath, tz='America/New_York'):
+def read_tick_data_txt(filepath, remove_bo=True, tz='America/New_York'):
     """
     filename = yyyymmdd.txt
     """
@@ -48,14 +48,16 @@ def read_tick_data_txt(filepath, tz='America/New_York'):
     data = pd.read_csv(filepath, sep=',', header=None)
     data.columns = ['Time', 'ProcessTime', 'Ticker', 'Type', 'BidSize', 'Bid', 'Ask', 'AskSize', 'Price', 'Size']
     data = data[['Time', 'Ticker', 'Type', 'BidSize', 'Bid', 'Ask', 'AskSize', 'Price', 'Size']]
+    if remove_bo:
+        data = data[data.Type.str.contains('TickType.TRADE')]
     data.Time = data.Time.apply(lambda t: datetime.strptime(f'{asofdate} {t}', "%Y%m%d %H:%M:%S.%f"))
     data.set_index('Time', inplace=True)
     data.index = data.index.tz_localize(tz)  # # US/Eastern, UTC
     dg = data.groupby('Ticker')
     dict_ret = {}
     for sym, dgf in dg:
+        dgf = dgf[~dgf.index.duplicated(keep='last')]
         dict_ret[sym] = dgf
-
     return dict_ret
 
 
