@@ -34,15 +34,17 @@ class LiveEventEngine(object):
         run dispatcher
         """
         while self.__active == True:
+            event_type=None
             try:
                 event = self._queue.get(block=True, timeout=1)
+                event_type = event.event_type
                 # call event handlers
                 if event.event_type in self._handlers:
                     [handler(event) for handler in self._handlers[event.event_type]]
             except Empty:
                 pass
             except Exception as e:
-                _logger.error(f"Error {str(e)}")
+                _logger.error(f"Event {event_type}, Error {str(e)}")
 
     #----------------------------- end of private functions ---------------------------#
 

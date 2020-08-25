@@ -42,6 +42,6 @@ class FillEvent(Event):
         return new_position
 
     def __str__(self):
-        return "Time: %s, Source: %s, Ticker: %s, Price: %s, Size %s Comm %s" % (
-            self.fill_time, str(self.source), self.full_symbol, str(self.fill_price), str(self.fill_size), str(self.commission)
+        return "Time: %s, Source: %s, Oid: %s, Ticker: %s, Price: %s, Size %s Comm %s" % (
+            self.fill_time, str(self.source), str(self.order_id), self.full_symbol, str(self.fill_price), str(self.fill_size), str(self.commission)
         )

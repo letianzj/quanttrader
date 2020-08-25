@@ -1,0 +1,27 @@
+# default:  multiplier: 1
+#           margin: 100%
+ES:
+  Type: FUT
+  Root: ES
+  Multiplier: 50
+  Margin: 12000
+NQ:
+  Type: FUT
+  Root: NQ
+  Multiplier: 20
+  Margin: 16000
+CL:
+  Type: FUT
+  Root: CL
+  Multiplier: 1000
+  Margin: 6200
+HO:
+  Type: FUT
+  Root: HO
+  Multiplier: 42000
+  Margin: 5100
+RB:
+  Type: FUT
+  Root: RB
+  Multiplier: 42000
+  Margin: 6000

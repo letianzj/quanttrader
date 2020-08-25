@@ -44,7 +44,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._config = config
         self.multiplier_dict = dict()
         self.central_widget = None
-        self.message_window = None
+        self.log_window = None
         self.order_window = None
         self.fill_window = None
         self.position_window = None
@@ -78,8 +78,11 @@ class MainWindow(QtWidgets.QMainWindow):
         ## wire up event handlers
         self._tick_events_engine.register_handler(EventType.TICK, self._tick_event_handler)
         self._msg_events_engine.register_handler(EventType.ORDER, self._order_status_event_handler)
+        self._msg_events_engine.register_handler(EventType.ORDER, self.order_window.order_status_signal.emit)  # display
         self._msg_events_engine.register_handler(EventType.FILL, self._fill_event_handler)
+        self._msg_events_engine.register_handler(EventType.FILL, self.fill_window.fill_signal.emit)         # display
         self._msg_events_engine.register_handler(EventType.POSITION, self._position_event_handler)
+        self._msg_events_engine.register_handler(EventType.POSITION, self.position_window.position_signal.emit)   # display
         self._msg_events_engine.register_handler(EventType.ACCOUNT, self.account_window.account_signal.emit)
         self._msg_events_engine.register_handler(EventType.CONTRACT, self._contract_event_handler)
         self._msg_events_engine.register_handler(EventType.HISTORICAL, self._historical_event_handler)
@@ -183,21 +186,19 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def _order_status_event_handler(self, order_event):  # including cancel
         # self._order_manager.on_order_status(order_event)     # this moves to order_window to tell it to update
-        self.order_window.order_status_signal.emit(copy(order_event))    # NEED TO MAKE A COPY
         self._strategy_manager.on_order_status(order_event)
         self.strategy_window.update_order(order_event)
 
     def _fill_event_handler(self, fill_event):
         # self._position_manager.on_fill(fill_event)   # update portfolio manager for pnl    # do not fill; just update from position_event
         self._order_manager.on_fill(fill_event)  # update order manager with fill
+        self._position_manager.on_fill(fill_event)
         self._strategy_manager.on_fill(fill_event)  # feed fill to strategy
-        self.fill_window.fill_signal.emit(fill_event)     # display
         self.order_window.update_order_status(fill_event.order_id)        # let order_window listen to fill as well
         self.strategy_window.update_fill(fill_event)
 
     def _position_event_handler(self, position_event):
         self._position_manager.on_position(position_event)       # position received
-        self.position_window.position_signal.emit(position_event)     # display
 
     def _account_event_handler(self, account_event):
         pass

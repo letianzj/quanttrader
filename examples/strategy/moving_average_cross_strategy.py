@@ -54,6 +54,8 @@ class MovingAverageCrossStrategy(StrategyBase):
             if k.price > self.ema:    # (flip to) long
                 # check standing orders; if it is also a buy order, do nothing
                 # elif it is a sell order; cancel the order
+                # TODO it's possible that order fails to be placed due to connection issue; and order status is kept as acknowledged
+                # TODO it's also possible to cancel a partially filled order
                 standing_oids = self._order_manager.retrieve_standing_orders()
                 if len(standing_oids) > 0:
                     _logger.info(f"MovingAverageCrossStrategy standing orders: {','.join(map(str, standing_oids))}")
@@ -72,13 +74,14 @@ class MovingAverageCrossStrategy(StrategyBase):
 
                 current_pos = int(self._position_manager.get_position_size(symbol))
                 if current_pos not in [-1, 0]:
+                    # _logger.error(f'MovingAverageCrossStrategy current size exceeds. {current_pos}')
                     return
                 o = OrderEvent()
                 o.full_symbol = symbol
                 o.order_type = OrderType.LIMIT
                 o.limit_price = self.last_bid
                 o.order_size = 1 - current_pos
-                _logger.info(f'MovingAverageCrossStrategy long order placed, size {o.order_size}. ema {self.ema}, last {k.price}, bid {self.last_bid}')
+                _logger.info(f'MovingAverageCrossStrategy long order placed, current size {current_pos}, order size {o.order_size}. ema {self.ema}, last {k.price}, bid {self.last_bid}')
                 self.place_order(o)
             else:   # (flip to) short
                 # check standing orders; if it is also a short order, do nothing
@@ -101,11 +104,12 @@ class MovingAverageCrossStrategy(StrategyBase):
 
                 current_pos = int(self._position_manager.get_position_size(symbol))
                 if current_pos not in [0, 1]:
+                    # _logger.error(f'MovingAverageCrossStrategy current size exceeds. {current_pos}')
                     return
                 o = OrderEvent()
                 o.full_symbol = symbol
                 o.order_type = OrderType.LIMIT
                 o.limit_price = self.last_ask
                 o.order_size = -1 - current_pos
-                _logger.info(f'MovingAverageCrossStrategy short order placed, size {o.order_size}, ema {self.ema}, last {k.price}, ask {self.last_ask}')
+                _logger.info(f'MovingAverageCrossStrategy short order placed, current size {current_pos}, order size {o.order_size}, ema {self.ema}, last {k.price}, ask {self.last_ask}')
                 self.place_order(o)

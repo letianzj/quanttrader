@@ -3,6 +3,7 @@
 from .order_type import *
 from .order_status import *
 from datetime import datetime
+from copy import copy
 import logging
 
 _logger = logging.getLogger(__name__)
@@ -56,7 +57,7 @@ class OrderManager(object):
                 return False
         # order_id not yet assigned, open order at connection or placed by trader?
         else:
-            self.order_dict[order_event.order_id] = order_event
+            self.order_dict[order_event.order_id] = copy(order_event)        # it is important to use copy
             if order_event.order_status < OrderStatus.FILLED:
                 self.standing_order_set.add(order_event.order_id)
             elif order_event.order_status == OrderStatus.CANCELED:

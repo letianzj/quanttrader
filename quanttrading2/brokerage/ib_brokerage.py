@@ -957,7 +957,7 @@ class IBApi(EWrapper, EClient):
     def execDetails(self, reqId: int, contract: Contract, execution: Execution):
         super().execDetails(reqId, contract, execution)
         msg = f"ExecDetails. ReqId: {reqId}, Symbol: {contract.symbol}, SecType: {contract.secType}, " \
-              f"Currency: {contract.currency}, {execution}"
+              f"Currency: {contract.currency}, oid: {execution.orderId}, {execution.price}, {execution.shares}"
         _logger.info(msg)
 
         fill_event = FillEvent()
