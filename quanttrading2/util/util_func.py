@@ -3,6 +3,7 @@
 import os
 import decimal
 import pandas as pd
+import pickle
 from datetime import datetime
 
 
@@ -23,6 +24,40 @@ def read_ohlcv_csv(filepath, adjust=True, tz='America/New_York'):
 
     df = df[['Open', 'High', 'Low', 'Close', 'Volume']]
     return df
+
+def read_intraday_bar_pickle(filepath, syms, tz='America/New_York'):
+    dict_hist_data = {}
+    if os.path.isfile(filepath):
+        with open(filepath, 'rb') as f:
+            dict_hist_data = pickle.load(f)
+    dict_ret = {}
+    for sym in syms:
+        try:
+            df = dict_hist_data[sym]
+            df.index = df.index.tz_localize(tz)          # # US/Eastern, UTC
+            dict_ret[sym] = df
+        except:
+            pass
+    return dict_ret
+
+def read_tick_data_txt(filepath, tz='America/New_York'):
+    """
+    filename = yyyymmdd.txt
+    """
+    asofdate = filepath.split('/')[-1].split('.')[0]
+    data = pd.read_csv(filepath, sep=',', header=None)
+    data.columns = ['Time', 'ProcessTime', 'Ticker', 'Type', 'BidSize', 'Bid', 'Ask', 'AskSize', 'Price', 'Size']
+    data = data[['Time', 'Ticker', 'Type', 'BidSize', 'Bid', 'Ask', 'AskSize', 'Price', 'Size']]
+    data.Time = data.Time.apply(lambda t: datetime.strptime(f'{asofdate} {t}', "%Y%m%d %H:%M:%S.%f"))
+    data.set_index('Time', inplace=True)
+    data.index = data.index.tz_localize(tz)  # # US/Eastern, UTC
+    dg = data.groupby('Ticker')
+    dict_ret = {}
+    for sym, dgf in dg:
+        dict_ret[sym] = dgf
+
+    return dict_ret
+
 
 def save_one_run_results(output_dir, equity, df_positions, df_trades, batch_tag=None):
     df_positions.to_csv('{}{}{}{}'.format(output_dir, '/positions_', batch_tag if batch_tag else '', '.csv'))
