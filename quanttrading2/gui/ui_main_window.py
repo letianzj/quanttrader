@@ -124,7 +124,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.statusBar().showMessage(message)
         self.strategy_window.update_pnl()        # pnl update
         # self._broker.heartbeat()
-        _logger.info(f'Current tick queue size: {self._tick_events_engine._queue.qsize()}')
+        # _logger.info(f'Current tick queue size: {self._tick_events_engine._queue.qsize()}')
 
     def start_strategy(self):
         try:

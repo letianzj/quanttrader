@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 from pandas import Timestamp
 from enum import Enum
+from datetime import datetime
 from ..event.event import *
 
 
@@ -43,7 +44,8 @@ class TickEvent(Event):
         self.lower_limit_price = 0.0
 
     def __str__(self):
-        return "Time: %s, Ticker: %s, Type: %s,  BidSize: %s, Bid: %s, Ask: %s, AskSize: %s, Price: %s, Size %s" % (
-            str(self.timestamp.strftime("%H:%M:%S.%f")), str(self.full_symbol), (self.tick_type),
+        return "%s, %s, %s, %s, %s, %s, %s, %s, %s, %s" % (
+            str(self.timestamp.strftime("%H:%M:%S.%f")), str(datetime.now().strftime("%H:%M:%S.%f")),
+            str(self.full_symbol), (self.tick_type),
             str(self.bid_size_L1), str(self.bid_price_L1), str(self.ask_price_L1), str(self.ask_size_L1), str(self.price), str(self.size)
         )
