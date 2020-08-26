@@ -30,6 +30,7 @@ from .ui_account_window import AccountWindow
 from .ui_strategy_window import StrategyWindow
 from .ui_log_window import LogWindow
 from .ui_trade_menu import TradeMenu
+from .ui_position_menu import PositionMenu
 
 _logger = logging.getLogger(__name__)
 _logger_tick = logging.getLogger('tick_recorder')
@@ -121,6 +122,13 @@ class MainWindow(QtWidgets.QMainWindow):
         if not widget:
             widget = TradeMenu(self._broker, self._msg_events_engine, self._strategy_manager._multiplier_dict)
             self.widgets['trade_menu'] = widget
+        widget.show()
+
+    def open_position_widget(self):
+        widget = self.widgets.get('position_menu', None)
+        if not widget:
+            widget = PositionMenu(self._strategy_manager)
+            self.widgets['position_menu'] = widget
         widget.show()
 
     def update_status_bar(self, message):
@@ -220,6 +228,13 @@ class MainWindow(QtWidgets.QMainWindow):
         menubar = self.menuBar()
 
         sysMenu = menubar.addMenu('Menu')
+        sys_positionAction = QtWidgets.QAction('CheckPos', self)
+        sys_positionAction.setStatusTip('Check Positions')
+        sys_positionAction.triggered.connect(self.open_position_widget)
+        sysMenu.addAction(sys_positionAction)
+
+        sysMenu.addSeparator()
+
         sys_tradeAction = QtWidgets.QAction('Trade', self)
         sys_tradeAction.setStatusTip('Manual Trade')
         sys_tradeAction.triggered.connect(self.open_trade_widget)
