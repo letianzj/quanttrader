@@ -11,12 +11,12 @@ _logger = logging.getLogger(__name__)
 
 
 class TradeMenu(QtWidgets.QWidget):
-    def __init__(self, broker, event_engine, mmultiplier_dict):
+    def __init__(self, broker, event_engine, instrument_meta):
         super(TradeMenu, self).__init__()
 
         self.broker = broker
         self.event_engine = event_engine
-        self.multiplier_dict = mmultiplier_dict
+        self.instrument_meta = instrument_meta
 
         self.init_ui()
 
@@ -64,10 +64,15 @@ class TradeMenu(QtWidgets.QWidget):
         q = str(self.order_quantity.text())
         t = self.order_type.currentIndex()
 
-        ss = s.split(' ')
-        if ss[-1].isdigit():  # multiplier
-            s = ' '.join(ss[:-1])
-            self._multiplier_dict[s] = int(ss[-1])
+        if s not in self._instrument_meta.keys():
+            ss = s.split(' ')
+            for i, c in enumerate(ss[0]):
+                if c.isdigit():
+                    break
+                if i < len(ss[0]):
+                    sym_root = ss[0][:i - 1]
+                    if sym_root in self._instrument_meta.keys():
+                        self._instrument_meta[s] = self._instrument_meta[sym_root]  # add for quick access
 
         # to be checked by risk manger
         try:

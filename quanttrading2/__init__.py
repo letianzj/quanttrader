@@ -10,6 +10,7 @@ from .performance import *
 from .position import *
 from .risk import *
 from .strategy import *
+from .util import *
 from .backtest_engine import BacktestEngine
 
 # https://docs.python-guide.org/writing/logging/

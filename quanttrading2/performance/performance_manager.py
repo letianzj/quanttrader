@@ -4,6 +4,9 @@ import numpy as np
 import pandas as pd
 import re
 import matplotlib.pyplot as plt
+import logging
+
+_logger = logging.getLogger(__name__)
 
 
 class PerformanceManager(object):
@@ -12,9 +15,9 @@ class PerformanceManager(object):
     Record equity, positions, and trades in accordance to pyfolio format
     First date will be the first data start date
     """
-    def __init__(self, multiplier_dict):
+    def __init__(self, instrument_meta):
         self._symbols = []
-        self.multiplier_dict = multiplier_dict          # sym ==> multiplier
+        self.instrument_meta = instrument_meta          # sym ==> meta
 
         self._equity = None
         self._df_positions = None
@@ -63,7 +66,10 @@ class PerformanceManager(object):
         equity = 0.0
         self._df_positions.loc[performance_time] = [0] * len(self._df_positions.columns)
         for sym, pos in position_manager.positions.items():
-            multiplier = self.multiplier_dict.get(sym, 1)
+            if sym in self.instrument_meta.keys():
+                multiplier = self.instrument_meta[sym]['Multiplier']
+            else:
+                multiplier = 1
 
             # data_board (timestamp) hasn't been updated yet
             equity += pos.size * data_board.get_last_price(sym) * multiplier

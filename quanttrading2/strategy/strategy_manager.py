@@ -9,7 +9,7 @@ _logger = logging.getLogger(__name__)
 
 
 class StrategyManager(object):
-    def __init__(self, config, broker, order_manager, position_manager, risk_manager, data_board, multiplier_dict):
+    def __init__(self, config, broker, order_manager, position_manager, risk_manager, data_board, instrument_meta):
         """
         current design: oversees all strategies/traders, check with risk managers before send out orders
         let strategy manager to track strategy position for each strategy, with the help from order manager
@@ -29,24 +29,36 @@ class StrategyManager(object):
         self._risk_manager = risk_manager
         self._data_board = data_board
         self._strategy_dict = {}            # sid ==> strategy
-        self._multiplier_dict = multiplier_dict          # symbol ==> multiplier
+        self._instrument_meta = instrument_meta          # symbol ==> instrument_meta
         self._tick_strategy_dict = {}  # sym -> list of strategy
         self._sid_oid_dict = {0: [], -1: []}    # sid ==> oid list; 0: manual; -1: unknown source
 
     def load_strategy(self, strat_dict):
+        sid = 1   # 0 is mannual discretionary trade, or not found
+        # similar to backtest; strategy sets capital, params, and symbols
         for k, v in strat_dict.items():
-            self._strategy_dict[v.id ] = v
+            v.id = sid
+            sid += 1
+            v.name = k
+            if v.name in self._config['strategy'].keys():
+                v.active = self._config['strategy'][v.name]['active']
+                v.set_capital(self._config['strategy'][v.name]['capital'])  # float
+                v.set_params(self._config['strategy'][v.name]['params'])  # dict
+                v.set_symbols(self._config['strategy'][v.name]['symbols'])  # list
+            self._strategy_dict[v.id] = v
             self._sid_oid_dict[v.id] = []         # record its orders
-            v.on_init(self, self._data_board, self._multiplier_dict)
-            syms = []
             for sym in v.symbols:
-                ss = sym.split(' ')
-                if ss[-1].isdigit():  # multiplier
-                    sym = ' '.join(ss[:-1])
-                    self._multiplier_dict[sym] = int(ss[-1])
-                syms.append(sym)
+                if sym not in self._instrument_meta.keys():
+                    # find first digit position
+                    ss = sym.split(' ')
+                    for i, c in enumerate(ss[0]):
+                        if c.isdigit():
+                            break
+                    if i < len(ss[0]):
+                        sym_root = ss[0][:i-1]
+                        if sym_root in self._instrument_meta.keys():
+                            self._instrument_meta[sym] = self._instrument_meta[sym_root]      # add for quick access
 
-                # now sym doesn't have multiplier
                 if sym in self._tick_strategy_dict:
                     self._tick_strategy_dict[sym].append(v.id)
                 else:
@@ -56,7 +68,8 @@ class StrategyManager(object):
                 else:
                     _logger.info(f'add {sym}')
                     self._broker.market_data_subscription_reverse_dict[sym] = -1
-            v.set_symbols(syms)
+
+            v.on_init(self, self._data_board, self._instrument_meta)
 
     def start_strategy(self, sid):
         self._strategy_dict[sid].active = True

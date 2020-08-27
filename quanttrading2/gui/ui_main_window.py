@@ -37,13 +37,13 @@ _logger_tick = logging.getLogger('tick_recorder')
 
 
 class MainWindow(QtWidgets.QMainWindow):
-    def __init__(self, config, strat_dict):
+    def __init__(self, config, instrument_meta, strat_dict):
         super(MainWindow, self).__init__()
 
         ## member variables
         self._current_time = None
         self._config = config
-        self.multiplier_dict = dict()
+        self.instrument_meta = instrument_meta
         self.central_widget = None
         self.log_window = None
         self.order_window = None
@@ -56,14 +56,14 @@ class MainWindow(QtWidgets.QMainWindow):
         self._tick_events_engine = LiveEventEngine()  # tick data engine
         self._broker = InteractiveBrokers(self._msg_events_engine, self._tick_events_engine, self._config['account'])
         self._position_manager = PositionManager()      # global position manager
-        self._position_manager.set_multiplier(self.multiplier_dict)
+        self._position_manager.set_instrument_meta(self.instrument_meta)
         self._order_manager = OrderManager()          # global order manager
         self._data_board = DataBoard()
         self.risk_manager = PassThroughRiskManager()
         self.account_manager = AccountManager(self._config['account'])
 
-        self._strategy_manager = StrategyManager(self._config, self._broker, self._order_manager, self._position_manager, self.risk_manager, self._data_board, self.multiplier_dict)
-        self._load_strategy(strat_dict)
+        self._strategy_manager = StrategyManager(self._config, self._broker, self._order_manager, self._position_manager, self.risk_manager, self._data_board, self.instrument_meta)
+        self._strategy_manager.load_strategy(strat_dict)  # use instrument_meta to set self.instrument_meta
 
         self.widgets = dict()
         self._schedule_timer = QtCore.QTimer()                  # task scheduler; TODO produce result_packet
@@ -95,19 +95,6 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.connect_to_broker()
 
-    def _load_strategy(self, strat_dict):
-        i = 1   # 0 is mannual discretionary trade, or not found
-        # similar to backtest; strategy sets capital, params, and symbols
-        for k, v in strat_dict.items():
-            v.id = i
-            v.name = k
-            v.active = self._config['strategy'][v.name]['active']
-            v.set_capital(self._config['strategy'][v.name]['capital'])  # float
-            v.set_params(self._config['strategy'][v.name]['params'])  # dict
-            v.set_symbols(self._config['strategy'][v.name]['symbols'])  # list  # not before multiplier is removed
-            i += 1
-        self._strategy_manager.load_strategy(strat_dict)
-
     #################################################################################################
     # -------------------------------- Event Handler   --------------------------------------------#
     #################################################################################################
@@ -120,7 +107,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def open_trade_widget(self):
         widget = self.widgets.get('trade_menu', None)
         if not widget:
-            widget = TradeMenu(self._broker, self._msg_events_engine, self._strategy_manager._multiplier_dict)
+            widget = TradeMenu(self._broker, self._msg_events_engine, self._strategy_manager._instrument_meta)
             self.widgets['trade_menu'] = widget
         widget.show()
 

@@ -46,10 +46,10 @@ class StrategyBase(metaclass=ABCMeta):
                 except:
                     pass
 
-    def on_init(self, strategy_manager, data_board, multiplier_dict):
+    def on_init(self, strategy_manager, data_board, instrument_meta):
         self.strategy_manager = strategy_manager
         self._data_board = data_board
-        self._position_manager.set_multiplier(multiplier_dict)
+        self._position_manager.set_instrument_meta(instrument_meta)
         self._position_manager.reset()
         self.initialized = True
 

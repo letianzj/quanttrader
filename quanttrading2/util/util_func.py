@@ -7,9 +7,6 @@ import pickle
 from datetime import datetime
 
 
-def retrieve_multiplier_from_full_symbol(full_symbol):
-    return 1.0
-
 def read_ohlcv_csv(filepath, adjust=True, tz='America/New_York'):
     df = pd.read_csv(filepath, header=0, parse_dates=True, sep=',', index_col=0)
     df.index = df.index + pd.DateOffset(hours=16)
@@ -59,7 +56,6 @@ def read_tick_data_txt(filepath, remove_bo=True, tz='America/New_York'):
         dgf = dgf[~dgf.index.duplicated(keep='last')]
         dict_ret[sym] = dgf
     return dict_ret
-
 
 def save_one_run_results(output_dir, equity, df_positions, df_trades, batch_tag=None):
     df_positions.to_csv('{}{}{}{}'.format(output_dir, '/positions_', batch_tag if batch_tag else '', '.csv'))

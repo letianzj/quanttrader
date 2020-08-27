@@ -12,16 +12,15 @@ strategy:
     params:
       G: 20
     symbols:
-      - CLV0 FUT NYMEX 1000
+      - CLV0 FUT NYMEX
   OrderPerIntervalStrategy:
     active: False
     capital: 50000
     params:
-      tick_trigger_threshold: 500
+      tick_trigger_threshold: 5000
     symbols:
       #- SPY STK SMART
       #- AAPL STK SMART
       #- AMZN STK SMART
-      - ESU0 FUT GLOBEX 50
-      #- CLV0 FUT NYMEX 1000
-      #- NGV0 FUT NYMEX 10000
+      - ESU0 FUT GLOBEX
+      #- NGV0 FUT NYMEX

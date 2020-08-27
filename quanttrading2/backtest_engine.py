@@ -29,21 +29,22 @@ class BacktestEngine(object):
         self._start_date = start_date
         self._end_date = end_date
         self.config = dict()
-        self.multiplier_dict = {}              # one copy of multiplier dict shared across program
+        self.config['strategy'] = dict()       # to be consistent with live; in backtest, strategy is set outside
+        self.instrument_meta = {}              # one copy of meta dict shared across program
         self._data_feed = BacktestDataFeed(self._start_date, self._end_date)
         self._data_board = DataBoard()
-        self._performance_manager = PerformanceManager(self.multiplier_dict) # send dict pointer
+        self._performance_manager = PerformanceManager(self.instrument_meta) # send dict pointer
         self._position_manager = PositionManager()
-        self._position_manager.set_multiplier(self.multiplier_dict)
+        self._position_manager.set_instrument_meta(self.instrument_meta)
         self._order_manager = OrderManager()
         self._events_engine = BacktestEventEngine(self._data_feed)
         self._backtest_brokerage = BacktestBrokerage(self._events_engine, self._data_board)
         self._risk_manager = PassThroughRiskManager()
-        self._strategy_manager = StrategyManager(self.config, self._backtest_brokerage, self._order_manager, self._position_manager, self._risk_manager, self._data_board, self.multiplier_dict)
+        self._strategy_manager = StrategyManager(self.config, self._backtest_brokerage, self._order_manager, self._position_manager, self._risk_manager, self._data_board, self.instrument_meta)
         self._strategy = None
 
-    def set_multiplier(self, multiplier_dict):
-        self.multiplier_dict.update(multiplier_dict)
+    def set_instrument_meta(self, instrument_meta):
+        self.instrument_meta.update(instrument_meta)
 
     def set_capital(self, capital):
         """
@@ -57,15 +58,21 @@ class BacktestEngine(object):
     def add_data(self, data_key, data_source, watch=True):
         """
         Add data for backtest
-        :param data_key: AAPL or CL; if it is followed by number, assumed to be multiplier
+        :param data_key: AAPL or CL
         :param data_source:  dataframe, datetimeindex
         :param watch: track position or not
         :return:
         """
-        keys = data_key.split(' ')
-        if keys[-1].isdigit():       # multiplier
-            data_key = ' '.join(keys[:-1])
-            self.multiplier_dict[data_key] = int(keys[-1])
+        if data_key not in self.instrument_meta.keys():
+            keys = data_key.split(' ')
+            # find first digit position
+            for i, c in enumerate(keys[0]):
+                if c.isdigit():
+                    break
+                if i < len(keys[0]):
+                    sym_root = keys[0][:i - 1]
+                    if sym_root in self.instrument_meta.keys():
+                        self.instrument_meta[data_key] = self.instrument_meta[sym_root]
 
         self._data_feed.set_data_source(data_source)          # get iter(datetimeindex)
         self._data_board.initialize_hist_data(data_key, data_source)
