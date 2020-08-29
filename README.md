@@ -10,7 +10,7 @@ Backtest and live trading in 100% pure Python, open sourced [on GitHub](https://
 
 ### Live trading
 
-[Live Trading Video](https://youtu.be/CrsrTxqiXNY)
+[Live Trading demo video](https://youtu.be/CrsrTxqiXNY)
 
 [Live Trading code structure](https://letianzj.github.io/live-trading-ib-native-python.html)
 
