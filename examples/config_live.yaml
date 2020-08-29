@@ -17,7 +17,7 @@ strategy:
     active: False
     capital: 50000
     params:
-      tick_trigger_threshold: 5000
+      tick_trigger_threshold: 2000
     symbols:
       #- SPY STK SMART
       #- AAPL STK SMART

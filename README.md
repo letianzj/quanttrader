@@ -10,6 +10,8 @@ Backtest and live trading in 100% pure Python, open sourced [on GitHub](https://
 
 ### Live trading
 
+[Live Trading Video](https://youtu.be/CrsrTxqiXNY)
+
 [Live Trading code structure](https://letianzj.github.io/live-trading-ib-native-python.html)
 
 __Prerequisite__: download and install IB TWS or IB Gateway; enable API connection as described [here](https://interactivebrokers.github.io/tws-api/initial_setup.html).
