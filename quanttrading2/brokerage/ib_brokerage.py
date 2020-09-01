@@ -287,6 +287,29 @@ class InteractiveBrokers(BrokerageBase):
             ib_contract.secType = symbol_fields[1]      # FUT
             ib_contract.exchange = symbol_fields[2]     # GLOBEX
             ib_contract.currency = 'USD'
+        elif symbol_fields[1] == 'OPT':        # AAPL OPT 20201016 128.75 C SMART
+            ib_contract.symbol = symbol_fields[0]       # AAPL
+            ib_contract.secType = symbol_fields[1]        # OPT
+            ib_contract.lastTradeDateOrContractMonth = symbol_fields[2]  # 20201016
+            ib_contract.strike = float(symbol_fields[3]) if '.' in symbol_fields[3] else int(symbol_fields[3])      # 128.75
+            ib_contract.right = symbol_fields[4]      # C
+            ib_contract.exchange = symbol_fields[5]         # SMART
+            ib_contract.currency = 'USD'
+            ib_contract.multiplier = '100'
+        elif symbol_fields[1] == 'FOP':                 # ES FOP 20200911 3450 C 50 GLOBEX
+            ib_contract.symbol = symbol_fields[0]       # ES
+            ib_contract.secType = symbol_fields[1]        # FOP
+            ib_contract.lastTradeDateOrContractMonth = symbol_fields[2]  # 20200911
+            ib_contract.strike = float(symbol_fields[3]) if '.' in symbol_fields[3] else int(symbol_fields[3])      # 128.75
+            ib_contract.right = symbol_fields[4]      # C
+            ib_contract.multiplier = symbol_fields[5]        # 50
+            ib_contract.exchange = symbol_fields[6]         # GLOBEX
+            ib_contract.currency = 'USD'
+        elif symbol_fields[1] == 'CMDTY':               # XAUUSD CMDTY SMART
+            ib_contract.symbol = symbol_fields[0]           # XAUUSD
+            ib_contract.secType = symbol_fields[1]               # COMDTY
+            ib_contract.currency = 'USD'
+            ib_contract.exchange = symbol_fields[2]        # SMART
         else:
             _logger.error(f'invalid contract {symbol}')
 
@@ -303,6 +326,18 @@ class InteractiveBrokers(BrokerageBase):
             full_symbol = ' '.join([ib_contract.localSymbol, 'FUT',
                                     ib_contract.primaryExchange if ib_contract.primaryExchange != ''
                                     else ib_contract.exchange])
+        elif ib_contract.secType == 'OPT':
+            full_symbol = ' '.join([
+                ib_contract.symbol, 'OPT', ib_contract.lastTradeDateOrContractMonth,
+                str(ib_contract.strike), ib_contract.right, 'SMART'
+            ])
+        elif ib_contract.secType == 'FOP':
+            full_symbol = ' '.join([
+                ib_contract.symbol, 'FOP', ib_contract.lastTradeDateOrContractMonth,
+                str(ib_contract.strike), ib_contract.right, ib_contract.multiplier, ib_contract.exchange
+            ])
+        elif ib_contract.secType == 'COMDTY':
+            full_symbol = ' '.join([ib_contract.symbol, 'COMDTY', 'SMART'])
 
         return full_symbol
 

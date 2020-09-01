@@ -191,7 +191,7 @@ class StrategyManager(object):
         if sid in self._strategy_dict.keys():
             self._strategy_dict[sid].on_order_status(order_event)
         else:
-            _logger.info(f'strategy manager doesnt hold the oid {order_event.order_id}, possibly from outside of the system')
+            _logger.info(f'strategy manager doesnt hold the oid {order_event.order_id} to set status, possibly from outside of the system')
 
     def on_cancel(self, order_event):
         """
@@ -201,7 +201,7 @@ class StrategyManager(object):
         if sid in self._strategy_dict.keys():
             self._strategy_dict[sid].on_order_status(order_event)
         else:
-            _logger.info(f'strategy manager doesnt hold the oid {order_event.order_id}, possibly from outside of the system')
+            _logger.info(f'strategy manager doesnt hold the oid {order_event.order_id} to cancel, possibly from outside of the system')
 
     def on_fill(self, fill_event):
         """
@@ -212,4 +212,4 @@ class StrategyManager(object):
         if sid in self._strategy_dict.keys():
             self._strategy_dict[sid].on_fill(fill_event)
         else:
-            _logger.info(f'strategy manager doesnt hold the oid {fill_event.order_id}, possibly from outside of the system')
+            _logger.info(f'strategy manager doesnt hold the oid {fill_event.order_id} to fill, possibly from outside of the system')
