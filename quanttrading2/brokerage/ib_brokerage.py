@@ -279,13 +279,13 @@ class InteractiveBrokers(BrokerageBase):
             ib_contract.exchange = symbol_fields[2]
         elif symbol_fields[1] == 'CASH':
             ib_contract.symol = symbol_fields[0][0:3]     # EUR
-            ib_contract.secType = symbol_fields[1]
+            ib_contract.secType = symbol_fields[1]          # CASH
             ib_contract.currency = symbol_fields[0][3:]  # GBP
-            ib_contract.exchange = symbol_fields[2]
+            ib_contract.exchange = symbol_fields[2]      # IDEALPRO
         elif symbol_fields[1] == 'FUT':
             ib_contract.localSymbol = symbol_fields[0]   # ESM9
-            ib_contract.secType = symbol_fields[1]
-            ib_contract.exchange = symbol_fields[2]
+            ib_contract.secType = symbol_fields[1]      # FUT
+            ib_contract.exchange = symbol_fields[2]     # GLOBEX
             ib_contract.currency = 'USD'
         else:
             _logger.error(f'invalid contract {symbol}')
