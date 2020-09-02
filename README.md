@@ -36,6 +36,35 @@ cd where_the_files_are_saved
 python live_engine.py
 ```
 
+__Instruments Supported and Example__
+
+* __Stock__: AMZN STK SMART
+* __Foreign Exchange__: EURGBP CASH IDEALPRO
+* __Futures__: ESM9 FUT GLOBEX
+* __Options on Stock__: AAPL OPT 20201016 128.75 C SMART
+* __Options on Futures__: ES FOP 20200911 3450 C 50 GLOBEX
+* __Comdty__: XAUUSD CMDTY SMART
+
+__Order Type Supported__
+
+Basic order types. See [IB Doc](http://interactivebrokers.github.io/tws-api/basic_orders.html) for details.
+* Auction
+* Auction Limit
+* Market
+* Market If Touched
+* Market On Close
+* Market On Open
+* Market to Limit
+* Limit Order
+* Limit if Touched
+* Limit on Close
+* Limit on Open
+* Stop
+* Stop Limit
+* Trailing Stop
+* Trailing Stop Limit
+
+
 ![gui](https://github.com/letianzj/quanttrading2/blob/master/examples/gui.png)
 
 Why quantttrading2? There exists [QuantTrading(1)](https://github.com/letianzj/QuantTrading) in C#. So this one in Python gets suffix 2.

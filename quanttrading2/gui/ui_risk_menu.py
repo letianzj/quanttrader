@@ -1,10 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from PyQt5 import QtCore, QtWidgets, QtGui
-from datetime import datetime
-from ..order.order_type import OrderType
-from ..order.order_event import OrderEvent
-from ..event.event import LogEvent
 import logging
 
 _logger = logging.getLogger(__name__)
@@ -67,96 +63,152 @@ class RiskMenu(QtWidgets.QWidget):
     def load_config(self):
         sid = self.strategy_List.currentIndex()
         if sid == 0:
-            if 'total_trade_limit' in self.strategy_manager._config.kyes():
+            self.order_start_time.setText('')
+            self.order_end_time.setText('')
+            self.single_trade_limit.setText('')
+            if 'total_trade_limit' in self.strategy_manager._config.keys():
                 if self.strategy_manager._config['total_trade_limit'] is not None:
                     self.total_trade_limit.setText(str(self.strategy_manager._config['total_trade_limit']))
+                else:
+                    self.total_trade_limit.setText('')
+            else:
+                self.total_trade_limit.setText('')
 
-            if 'total_cancel_limit' in self.strategy_manager._config.kyes():
+            if 'total_cancel_limit' in self.strategy_manager._config.keys():
                 if self.strategy_manager._config['total_cancel_limit'] is not None:
                     self.total_cancel_limit.setText(str(self.strategy_manager._config['total_cancel_limit']))
+                else:
+                    self.total_cancel_limit.setText('')
+            else:
+                self.total_cancel_limit.setText('')
 
-            if 'total_active_limit' in self.strategy_manager._config.kyes():
+            if 'total_active_limit' in self.strategy_manager._config.keys():
                 if self.strategy_manager._config['total_active_limit'] is not None:
                     self.total_active_limit.setText(str(self.strategy_manager._config['total_active_limit']))
+                else:
+                    self.total_active_limit.setText('')
+            else:
+                self.total_active_limit.setText('')
 
-            if 'total_loss_limit' in self.strategy_manager._config.kyes():
+            if 'total_loss_limit' in self.strategy_manager._config.keys():
                 if self.strategy_manager._config['total_loss_limit'] is not None:
                     self.total_loss_limit.setText(str(self.strategy_manager._config['total_loss_limit']))
+                else:
+                    self.total_loss_limit.setText('')
+            else:
+                self.total_loss_limit.setText('')
         else:
             if 'order_start_time' in self.strategy_manager._config['strategy'][self.strategy_manager._strategy_dict[sid].name].keys():
                 if self.strategy_manager._config['strategy'][self.strategy_manager._strategy_dict[sid].name]['order_start_time'] is not None:
                     self.order_start_time.setText(self.strategy_manager._config['strategy'][self.strategy_manager._strategy_dict[sid].name]['order_start_time'])
+                else:
+                    self.order_start_time.setText('')
+            else:
+                self.order_start_time.setText('')
 
             if 'order_end_time' in self.strategy_manager._config['strategy'][self.strategy_manager._strategy_dict[sid].name].keys():
                 if self.strategy_manager._config['strategy'][self.strategy_manager._strategy_dict[sid].name]['order_end_time'] is not None:
                     self.order_end_time.setText(self.strategy_manager._config['strategy'][self.strategy_manager._strategy_dict[sid].name]['order_end_time'])
+                else:
+                    self.order_end_time.setText('')
+            else:
+                self.order_end_time.setText('')
 
             if 'single_trade_limit' in self.strategy_manager._config['strategy'][self.strategy_manager._strategy_dict[sid].name].keys():
                 if self.strategy_manager._config['strategy'][self.strategy_manager._strategy_dict[sid].name]['single_trade_limit'] is not None:
                     self.single_trade_limit.setText(str(self.strategy_manager._config['strategy'][self.strategy_manager._strategy_dict[sid].name]['single_trade_limit']))
+                else:
+                    self.single_trade_limit.setText('')
+            else:
+                self.single_trade_limit.setText('')
 
-            if 'total_trade_limit' in self.strategy_manager._config['strategy'][seglf.strategy_manager._strategy_dict[sid].name].keys():
+            if 'total_trade_limit' in self.strategy_manager._config['strategy'][self.strategy_manager._strategy_dict[sid].name].keys():
                 if self.strategy_manager._config['strategy'][self.strategy_manager._strategy_dict[sid].name]['total_trade_limit'] is not None:
                     self.total_trade_limit.setText(str(self.strategy_manager._config['strategy'][self.strategy_manager._strategy_dict[sid].name]['total_trade_limit']))
+                else:
+                    self.total_trade_limit.setText('')
+            else:
+                self.total_trade_limit.setText('')
 
             if 'total_cancel_limit' in self.strategy_manager._config['strategy'][self.strategy_manager._strategy_dict[sid].name].keys():
                 if self.strategy_manager._config['strategy'][self.strategy_manager._strategy_dict[sid].name]['total_cancel_limit'] is not None:
                     self.total_cancel_limit.setText(str(self.strategy_manager._config['strategy'][self.strategy_manager._strategy_dict[sid].name]['total_cancel_limit']))
+                else:
+                    self.total_cancel_limit.setText('')
+            else:
+                self.total_cancel_limit.setText('')
 
             if 'total_active_limit' in self.strategy_manager._config['strategy'][self.strategy_manager._strategy_dict[sid].name].keys():
                 if self.strategy_manager._config['strategy'][self.strategy_manager._strategy_dict[sid].name]['total_active_limit'] is not None:
                     self.total_active_limit.setText(str(self.strategy_manager._config['strategy'][self.strategy_manager._strategy_dict[sid].name]['total_active_limit']))
+                else:
+                    self.total_active_limit.setText('')
+            else:
+                self.total_active_limit.setText('')
 
             if 'total_loss_limit' in self.strategy_manager._config['strategy'][self.strategy_manager._strategy_dict[sid].name].keys():
                 if self.strategy_manager._config['strategy'][self.strategy_manager._strategy_dict[sid].name]['total_loss_limit'] is not None:
                     self.total_loss_limit.setText(str(self.strategy_manager._config['strategy'][self.strategy_manager._strategy_dict[sid].name]['total_loss_limit']))
+                else:
+                    self.total_loss_limit.setText('')
+            else:
+                self.total_loss_limit.setText('')
 
     def save_config(self):
         sid = self.strategy_List.currentIndex()
 
         if sid == 0:
-            if not self.total_trade_limit:
+            if not self.total_trade_limit.text():
+                self.strategy_manager._config['total_trade_limit'] = None
+            else:
                 self.strategy_manager._config['total_trade_limit'] = int(self.total_trade_limit.text())
+
+            if not self.total_cancel_limit.text():
+                self.strategy_manager._config['total_cancel_limit'] = None
             else:
-                self.strategy_manager._config['total_trade_limit'] = None
-            if not self.total_cancel_limit:
                 self.strategy_manager._config['total_cancel_limit'] = int(self.total_cancel_limit.text())
+
+            if not self.total_active_limit.text():
+                self.strategy_manager._config['total_active_limit'] = None
             else:
-                self.strategy_manager._config['total_cancel_limit'] = None
-            if not self.total_active_limit:
                 self.strategy_manager._config['total_active_limit'] = int(self.total_active_limit.text())
+
+            if not self.total_loss_limit.text():
+                self.strategy_manager._config['total_loss_limit'] = None
             else:
-                self.strategy_manager._config['total_active_limit'] = None
-            if not self.total_loss_limit:
                 self.strategy_manager._config['total_loss_limit'] = float(self.total_loss_limit.text())
-            else:
-                self.strategy_manager._config['total_loss_limit'] = None
         else:
-            if not self.order_start_time:
+            if not self.order_start_time.text():
+                self.strategy_manager._config['strategy'][self.strategy_manager._strategy_dict[sid].name]['order_start_time'] = None
+            else:
                 self.strategy_manager._config['strategy'][self.strategy_manager._strategy_dict[sid].name]['order_start_time'] = self.order_start_time.text()
+
+            if not self.order_end_time.text():
+                self.strategy_manager._config['strategy'][self.strategy_manager._strategy_dict[sid].name]['order_end_time'] = None
             else:
-                self.strategy_manager._config['order_start_time'] = None
-            if not self.order_end_time:
                 self.strategy_manager._config['strategy'][self.strategy_manager._strategy_dict[sid].name]['order_end_time'] = self.order_end_time.text()
+
+            if not self.single_trade_limit.text():
+                self.strategy_manager._config['strategy'][self.strategy_manager._strategy_dict[sid].name]['single_trade_limit'] = None
             else:
-                self.strategy_manager._config['order_end_time'] = None
-            if not self.single_trade_limit:
                 self.strategy_manager._config['strategy'][self.strategy_manager._strategy_dict[sid].name]['single_trade_limit'] = int(self.single_trade_limit.text())
+
+            if not self.total_trade_limit.text():
+                self.strategy_manager._config['strategy'][self.strategy_manager._strategy_dict[sid].name]['total_trade_limit'] = None
             else:
-                self.strategy_manager._config['single_trade_limit'] = None
-            if not self.total_trade_limit:
                 self.strategy_manager._config['strategy'][self.strategy_manager._strategy_dict[sid].name]['total_trade_limit'] = int(self.total_trade_limit.text())
+
+            if not self.total_cancel_limit.text():
+                self.strategy_manager._config['strategy'][self.strategy_manager._strategy_dict[sid].name]['total_cancel_limit'] = None
             else:
-                self.strategy_manager._config['total_trade_limit'] = None
-            if not self.total_cancel_limit:
                 self.strategy_manager._config['strategy'][self.strategy_manager._strategy_dict[sid].name]['total_cancel_limit'] = int(self.total_cancel_limit.text())
+
+            if not self.total_active_limit.text():
+                self.strategy_manager._config['strategy'][self.strategy_manager._strategy_dict[sid].name]['total_active_limit'] = None
             else:
-                self.strategy_manager._config['total_cancel_limit'] = None
-            if not self.total_active_limit:
                 self.strategy_manager._config['strategy'][self.strategy_manager._strategy_dict[sid].name]['total_active_limit'] = int(self.total_active_limit.text())
+
+            if not self.total_loss_limit.text():
+                self.strategy_manager._config['strategy'][self.strategy_manager._strategy_dict[sid].name]['total_loss_limit'] = None
             else:
-                self.strategy_manager._config['total_active_limit'] = None
-            if not self.total_loss_limit:
                 self.strategy_manager._config['strategy'][self.strategy_manager._strategy_dict[sid].name]['total_loss_limit'] = float(self.total_loss_limit.text())
-            else:
-                self.strategy_manager._config['total_loss_limit'] = None

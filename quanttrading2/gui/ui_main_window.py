@@ -18,7 +18,7 @@ from ..data.data_board import DataBoard
 from ..order.order_manager import OrderManager
 from ..strategy.strategy_manager import StrategyManager
 from ..position.position_manager import PositionManager
-from ..risk.risk_manager import PassThroughRiskManager
+from ..risk.risk_manager import RiskManager
 from ..account.account_manager import AccountManager
 from ..event.live_event_engine import LiveEventEngine
 from ..order.order_event import OrderEvent
@@ -60,7 +60,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._position_manager.set_instrument_meta(self.instrument_meta)
         self._order_manager = OrderManager('Global')          # global order manager
         self._data_board = DataBoard()
-        self.risk_manager = PassThroughRiskManager()
+        self.risk_manager = RiskManager()
         self.account_manager = AccountManager(self._config['account'])
 
         self._strategy_manager = StrategyManager(self._config, self._broker, self._order_manager, self._position_manager, self.risk_manager, self._data_board, self.instrument_meta)

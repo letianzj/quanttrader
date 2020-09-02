@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import logging
-from datetime import datetime
+from datetime import datetime, timedelta
 from ..order.order_status import OrderStatus
 from ..order.order_event import OrderEvent
 
@@ -45,6 +45,15 @@ class StrategyManager(object):
                 v.set_capital(self._config['strategy'][v.name]['capital'])  # float
                 v.set_params(self._config['strategy'][v.name]['params'])  # dict
                 v.set_symbols(self._config['strategy'][v.name]['symbols'])  # list
+
+                # yaml converts to seconds
+                if 'order_start_time' in self._config['strategy'][v.name].keys():
+                    if isinstance(self._config['strategy'][v.name]['order_start_time'], int):
+                        self._config['strategy'][v.name]['order_start_time'] = str(timedelta(seconds=self._config['strategy'][v.name]['order_start_time']))
+                if 'order_end_time' in self._config['strategy'][v.name].keys():
+                    if isinstance(self._config['strategy'][v.name]['order_end_time'], int):
+                        self._config['strategy'][v.name]['order_end_time'] = str(timedelta(seconds=self._config['strategy'][v.name]['order_end_time']))
+
             self._strategy_dict[v.id] = v
             self._sid_oid_dict[v.id] = []         # record its orders
             for sym in v.symbols:
