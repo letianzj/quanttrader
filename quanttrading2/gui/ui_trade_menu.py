@@ -3,6 +3,7 @@
 from PyQt5 import QtCore, QtWidgets, QtGui
 from datetime import datetime
 from ..order.order_type import OrderType
+from ..order.order_status import OrderStatus
 from ..order.order_event import OrderEvent
 from ..event.event import LogEvent
 import logging
@@ -11,11 +12,12 @@ _logger = logging.getLogger(__name__)
 
 
 class TradeMenu(QtWidgets.QWidget):
-    def __init__(self, broker, event_engine, instrument_meta):
+    def __init__(self, broker, event_engine, order_manager, instrument_meta):
         super(TradeMenu, self).__init__()
 
         self.broker = broker
         self.event_engine = event_engine
+        self.order_manager = order_manager
         self.instrument_meta = instrument_meta
 
         self.init_ui()
@@ -58,6 +60,10 @@ class TradeMenu(QtWidgets.QWidget):
         self.setLayout(place_order_layout)
 
     def place_order(self):
+        """
+        This is not tracked by strategy_manager; tracked by global order_manager
+        :return:
+        """
         s = str(self.sym.text())
         n = self.direction.currentIndex()
         p = str(self.order_price.text())
@@ -77,10 +83,13 @@ class TradeMenu(QtWidgets.QWidget):
         # to be checked by risk manger
         try:
             o = OrderEvent()
+            o.order_status = OrderStatus.NEWBORN
             o.full_symbol = s
             o.order_size = int(q) if (n == 0) else -1 * int(q)
             o.create_time = datetime.now().strftime('%H:%M:%S.%f')
             o.source = 0              # discretionary
+
+            self.order_manager.on_order_status(o)
 
             if (t == 0):
                 o.order_type = OrderType.MARKET

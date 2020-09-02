@@ -48,6 +48,14 @@ class PositionManager(object):
     def get_cash(self):
         return self.cash
 
+    def get_total_pnl(self):
+        total_pnl = 0
+        for s, pos in self.positions.items():
+            cp, op = pos.get_current_pnl()
+            total_pnl = total_pnl + cp + op
+        return total_pnl
+
+
     def on_contract(self, contract):
         if contract.full_symbol not in self.contracts:
             self.contracts[contract.full_symbol] = contract

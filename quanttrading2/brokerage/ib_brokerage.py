@@ -266,7 +266,14 @@ class InteractiveBrokers(BrokerageBase):
     def symbol_to_contract(symbol):
         """
         symbol string to ib contract
-        :param symbol: AMZN STK SMART; EURGBP CASH IDEALPRO; ESM9 FUT GLOBEX
+        :param symbol:      AMZN STK SMART;
+                            EURGBP CASH IDEALPRO
+                            ESM9 FUT GLOBEX
+                            AAPL OPT 20201016 128.75 C SMART
+                            ES FOP 20200911 3450 C 50 GLOBEX
+                            XAUUSD CMDTY SMART
+                            CL.BZ BAG 174230608 1 NYMEX 162929662 1 NYMEX NYMEX
+                            CL.HO BAG 174230608 1 NYMEX 257430162 1 NYMEX NYMEX
         :return: ib contract
         """
         symbol_fields = symbol.split(' ')
@@ -310,6 +317,28 @@ class InteractiveBrokers(BrokerageBase):
             ib_contract.secType = symbol_fields[1]               # COMDTY
             ib_contract.currency = 'USD'
             ib_contract.exchange = symbol_fields[2]        # SMART
+        elif symbol_fields[1] == 'BAG':
+            ib_contract.symbol = symbol_fields[0]       # CL.BZ
+            ib_contract.secType = symbol_fields[1]        # BAG
+
+            leg1 = ComboLeg()
+            leg1.conId = int(symbol_fields[2])          # 174230608
+            leg1.ratio = int(symbol_fields[3])          # 1
+            leg1.action = "BUY"
+            leg1.exchange = symbol_fields[4]            # NYMEX
+
+            leg2 = ComboLeg()
+            leg2.conId = int(symbol_fields[5])          # 162929662
+            leg2.ratio = int(symbol_fields[6])          # 1
+            leg2.action = "SELL"
+            leg2.exchange = symbol_fields[7]            # NYMEX
+
+            ib_contract.comboLegs = []
+            ib_contract.comboLegs.append(leg1)
+            ib_contract.comboLegs.append(leg2)
+
+            ib_contract.exchange = symbol_fields[8]         # NYMEX
+            ib_contract.currency = 'USD'
         else:
             _logger.error(f'invalid contract {symbol}')
 
@@ -337,6 +366,8 @@ class InteractiveBrokers(BrokerageBase):
                 str(ib_contract.strike), ib_contract.right, ib_contract.multiplier, ib_contract.exchange
             ])
         elif ib_contract.secType == 'COMDTY':
+            full_symbol = ' '.join([ib_contract.symbol, 'COMDTY', 'SMART'])
+        elif ib_contract.secType == 'BAG':
             full_symbol = ' '.join([ib_contract.symbol, 'COMDTY', 'SMART'])
 
         return full_symbol
@@ -448,6 +479,9 @@ class IBApi(EWrapper, EClient):
         self.broker.log(msg)
 
     def openOrder(self, orderId: OrderId, contract: Contract, order: Order, orderState: OrderState):
+        """
+        Currently IB sends out two openOrder and two OrderStatus; so there are four filled order_status sent out
+        """
         super().openOrder(orderId, contract, order, orderState)
         msg = f"OpenOrder. PermId: {order.permId}, ClientId:  {order.clientId}, OrderId: {orderId}, " \
               f"Account: {order.account}, Symbol: {contract.symbol}, SecType: {contract.secType}, " \

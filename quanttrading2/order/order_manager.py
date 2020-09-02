@@ -13,7 +13,8 @@ class OrderManager(object):
     '''
     Manage/track all the orders
     '''
-    def __init__(self):
+    def __init__(self, name='Global'):
+        self.name = name
         self.order_dict = {}              # order_id ==> order
         self.fill_dict = {}                # fill_id ==> fill
         self.standing_order_set = set()        # order_id of standing order for convenience
@@ -37,11 +38,11 @@ class OrderManager(object):
         """
         # there should be no negative order id if order is directly placed without queue.
         if order_event.order_id < 0:
-            _logger.error(f'received negative orderid {order_event.order_id}')
+            _logger.error(f'{self.name} OrderManager received negative orderid {order_event.order_id}')
 
         if order_event.order_id in self.order_dict:
             if (order_event.full_symbol != self.order_dict[order_event.order_id].full_symbol):
-                _logger.error("Error: orders dont match")
+                _logger.error(f"{self.name} OrderManager Error: orders dont match")
                 return False
             # only change status when it is logical
             elif self.order_dict[order_event.order_id].order_status.value <= order_event.order_status.value:
@@ -72,13 +73,14 @@ class OrderManager(object):
         :param o:
         :return:
         """
-        self.canceled_order_set.add(oid)
-        if oid in self.standing_order_set:
-            self.standing_order_set.remove(oid)
+        # Cancel will be handled in order_status
+        # self.canceled_order_set.add(oid)
+        # if oid in self.standing_order_set:
+        #     self.standing_order_set.remove(oid)
         if oid in self.order_dict.keys():
             self.order_dict[oid].order_status = OrderStatus.PENDING_CANCEL
         else:
-            _logger.error('cancel order is not registered')
+            _logger.error(f'{self.name} OrderManager cancel order is not registered')
 
     def on_fill(self, fill_event):
         """

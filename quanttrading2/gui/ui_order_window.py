@@ -88,5 +88,6 @@ class OrderWindow(QtWidgets.QTableWidget):
     def cancel_order(self,mi):
         row = mi.row()
         order_id = int(self.item(row, 0).text())
+        self._order_manager.on_cancel(order_id)
         self._broker.cancel_order(order_id)
 

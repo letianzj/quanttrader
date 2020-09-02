@@ -31,6 +31,7 @@ from .ui_strategy_window import StrategyWindow
 from .ui_log_window import LogWindow
 from .ui_trade_menu import TradeMenu
 from .ui_position_menu import PositionMenu
+from .ui_risk_menu import RiskMenu
 
 _logger = logging.getLogger(__name__)
 _logger_tick = logging.getLogger('tick_recorder')
@@ -57,7 +58,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._broker = InteractiveBrokers(self._msg_events_engine, self._tick_events_engine, self._config['account'])
         self._position_manager = PositionManager()      # global position manager
         self._position_manager.set_instrument_meta(self.instrument_meta)
-        self._order_manager = OrderManager()          # global order manager
+        self._order_manager = OrderManager('Global')          # global order manager
         self._data_board = DataBoard()
         self.risk_manager = PassThroughRiskManager()
         self.account_manager = AccountManager(self._config['account'])
@@ -107,7 +108,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def open_trade_widget(self):
         widget = self.widgets.get('trade_menu', None)
         if not widget:
-            widget = TradeMenu(self._broker, self._msg_events_engine, self._strategy_manager._instrument_meta)
+            widget = TradeMenu(self._broker, self._msg_events_engine, self._order_manager, self._strategy_manager._instrument_meta)
             self.widgets['trade_menu'] = widget
         widget.show()
 
@@ -116,6 +117,13 @@ class MainWindow(QtWidgets.QMainWindow):
         if not widget:
             widget = PositionMenu(self._strategy_manager)
             self.widgets['position_menu'] = widget
+        widget.show()
+
+    def open_risk_widget(self):
+        widget = self.widgets.get('risk_menu', None)
+        if not widget:
+            widget = RiskMenu(self._strategy_manager)
+            self.widgets['risk_menu'] = widget
         widget.show()
 
     def update_status_bar(self, message):
@@ -215,14 +223,21 @@ class MainWindow(QtWidgets.QMainWindow):
         menubar = self.menuBar()
 
         sysMenu = menubar.addMenu('Menu')
-        sys_positionAction = QtWidgets.QAction('CheckPos', self)
+        sys_positionAction = QtWidgets.QAction('Check Pos', self)
         sys_positionAction.setStatusTip('Check Positions')
         sys_positionAction.triggered.connect(self.open_position_widget)
         sysMenu.addAction(sys_positionAction)
 
         sysMenu.addSeparator()
 
-        sys_tradeAction = QtWidgets.QAction('Trade', self)
+        sys_riskAction = QtWidgets.QAction('Set Limit', self)
+        sys_riskAction.setStatusTip('Risk Limit')
+        sys_riskAction.triggered.connect(self.open_risk_widget)
+        sysMenu.addAction(sys_riskAction)
+
+        sysMenu.addSeparator()
+
+        sys_tradeAction = QtWidgets.QAction('Manual Trade', self)
         sys_tradeAction.setStatusTip('Manual Trade')
         sys_tradeAction.triggered.connect(self.open_trade_widget)
         sysMenu.addAction(sys_tradeAction)

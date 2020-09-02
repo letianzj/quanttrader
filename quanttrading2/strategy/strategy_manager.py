@@ -95,7 +95,7 @@ class StrategyManager(object):
         # 1. check with risk manager
         order_check = True
         if check_risk:
-            order_check = self._risk_manager.order_in_compliance(o)
+            order_check = self._risk_manager.order_in_compliance(o, self)
 
         # 2. if green light
         if not order_check:
@@ -107,14 +107,16 @@ class StrategyManager(object):
         o.order_id = oid
         o.order_status = OrderStatus.NEWBORN
         self._sid_oid_dict[o.source].append(oid)
+        # feedback newborn status
         self._order_manager.on_order_status(o)
-        self._strategy_dict[o.source].on_order_status(o)
+        self._strategy_dict[o.source].on_order_status(o)        # order for sure from strategy; having o.source
 
         # 2.b place order
         self._broker.place_order(o)
 
     def cancel_order(self, oid):
         self._order_manager.on_cancel(oid)
+        # self._strategy_dict[sid].on_cancel(oid)  # This is moved to strategy_base
         self._broker.cancel_order(oid)
 
     def cancel_strategy(self, sid):
@@ -146,7 +148,7 @@ class StrategyManager(object):
                 o.order_size = -pos.size
                 o.source = 0           # mannual flat
                 o.create_time = datetime.now().strftime('%H:%M:%S.%f')
-                self.place_order(o, check_risk=False)
+                self.place_order(o, check_risk=False)         # flat strategy doesnot cehck risk
 
     def flat_all(self):
         """
@@ -161,7 +163,7 @@ class StrategyManager(object):
                 o.order_size = -pos.size
                 o.source = 0
                 o.create_time = datetime.now().strftime('%H:%M:%S.%f')
-                self.place_order(o, check_risk=False)
+                self.place_order(o, check_risk=False)        # flat strategy doesnot cehck risk
 
     def on_tick(self, k):
         # print(k.full_symbol, k.price, k.size)
@@ -191,7 +193,7 @@ class StrategyManager(object):
         if sid in self._strategy_dict.keys():
             self._strategy_dict[sid].on_order_status(order_event)
         else:
-            _logger.info(f'strategy manager doesnt hold the oid {order_event.order_id} to set status, possibly from outside of the system')
+            _logger.info(f'strategy manager doesnt hold the oid {order_event.order_id} to set status {order_event.order_status}, possibly from outside of the system')
 
     def on_cancel(self, order_event):
         """

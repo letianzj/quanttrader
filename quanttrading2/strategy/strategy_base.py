@@ -27,7 +27,7 @@ class StrategyBase(metaclass=ABCMeta):
         self.strategy_manager = None     # to place order through strategy_manager
         self._data_board = None         # to get current data
         self._position_manager = PositionManager()    # track local positions and cash
-        self._order_manager = OrderManager()        # manage local (standing) orders and fills
+        self._order_manager = OrderManager(self.name)        # manage local (standing) orders and fills
 
         self.active = False
         self.initialized = False

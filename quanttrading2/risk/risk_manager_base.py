@@ -7,5 +7,5 @@ class RiskManagerBase(metaclass=ABCMeta):
     RiskManager base class
     """
     @abstractmethod
-    def order_in_compliance(self, original_order, env=None):
+    def order_in_compliance(self, o, strategy_manager=None):
         raise NotImplementedError("order_in_compliance should be implemented")
