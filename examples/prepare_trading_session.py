@@ -1,10 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-"""
-Making identical historical data requests within 15 seconds.
-Making six or more historical data requests for the same Contract, Exchange and Tick Type within two seconds.
-Making more than 60 requests within any ten minute period.
-"""
 import os
 import argparse
 import time
