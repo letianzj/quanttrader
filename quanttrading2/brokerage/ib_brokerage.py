@@ -295,7 +295,7 @@ class InteractiveBrokers(BrokerageBase):
             ib_contract.currency = symbol_fields[0][3:]  # GBP
             ib_contract.exchange = symbol_fields[2]      # IDEALPRO
         elif symbol_fields[1] == 'FUT':
-            ib_contract.localSymbol = symbol_fields[0]   # ESM9
+            ib_contract.localSymbol = symbol_fields[0].replace('_', ' ')   # ESM9, in case YM___SEP_20
             ib_contract.secType = symbol_fields[1]      # FUT
             ib_contract.exchange = symbol_fields[2]     # GLOBEX
             ib_contract.currency = 'USD'
@@ -357,7 +357,7 @@ class InteractiveBrokers(BrokerageBase):
         elif ib_contract.secType == 'CASH':
             full_symbol = ' '.join([ib_contract.symol+ib_contract.currency, 'CASH', ib_contract.exchange])
         elif ib_contract.secType == 'FUT':
-            full_symbol = ' '.join([ib_contract.localSymbol, 'FUT',
+            full_symbol = ' '.join([ib_contract.localSymbol.replace(' ', '_'), 'FUT',
                                     ib_contract.primaryExchange if ib_contract.primaryExchange != ''
                                     else ib_contract.exchange])
         elif ib_contract.secType == 'OPT':
