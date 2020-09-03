@@ -934,7 +934,7 @@ class IBApi(EWrapper, EClient):
 
     def contractDetails(self, reqId: int, contractDetails: ContractDetails):
         super().contractDetails(reqId, contractDetails)
-        _logger.info(f'Contract Detail: {contractDetails.contract.localSymbol}, {contractDetails.contract.primaryExchange}')
+        _logger.info(f'Contract Detail: {contractDetails.contract.symbol}, {contractDetails.contract.localSymbol}, {contractDetails.contract.primaryExchange}, {contractDetails.contract.exchange}, {contractDetails.contract.multiplier}')
         if reqId in self.broker.contract_detail_request_contract_dict.keys():
             self.broker.contract_detail_request_contract_dict[reqId] = contractDetails.contract
             self.broker.sym_contract_dict[self.broker.contract_detail_request_symbol_dict[reqId]] = contractDetails.contract

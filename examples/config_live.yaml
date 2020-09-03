@@ -17,6 +17,21 @@ strategy:
       G: 20
     symbols:
       - CLV0 FUT NYMEX
+  DualThrustStrategy:
+    active: False
+    capital: 10000
+    params:
+      G: 20
+    symbols:
+      - MES FUT GLOBEX
+  DoubleMovingAverageCrossStrategy:
+    active: False
+    capital: 10000
+    params:
+      n_fast_ma: 20
+      n_slow_ma: 200
+    symbols:
+      - NGV0 FUT NYMEX
   OrderPerIntervalStrategy:
     active: False
     capital: 50000
@@ -28,7 +43,7 @@ strategy:
     total_active_limit: 2
     total_loss_limit: 500
     params:
-      tick_trigger_threshold: 1000
+      tick_trigger_threshold: 6000
     symbols:
       #- SPY STK SMART
       #- AAPL STK SMART
