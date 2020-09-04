@@ -118,7 +118,8 @@ class StrategyManager(object):
         self._sid_oid_dict[o.source].append(oid)
         # feedback newborn status
         self._order_manager.on_order_status(o)
-        self._strategy_dict[o.source].on_order_status(o)        # order for sure from strategy; having o.source
+        if o.source in self._strategy_dict.keys():           # in case it is not placed by strategy
+            self._strategy_dict[o.source].on_order_status(o)
 
         # 2.b place order
         self._broker.place_order(o)
