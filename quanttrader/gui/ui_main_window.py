@@ -71,7 +71,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         # set up gui windows
         self.setGeometry(50, 50, 600, 400)
-        self.setWindowTitle('QuantTrading')
+        self.setWindowTitle('QuantTrader')
         self.setWindowIcon(QtGui.QIcon("gui/image/logo.ico"))
         self.init_menu()
         self.init_status_bar()
