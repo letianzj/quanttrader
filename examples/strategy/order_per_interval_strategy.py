@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from quanttrading2.strategy.strategy_base import StrategyBase
-from quanttrading2.order.order_event import OrderEvent
-from quanttrading2.order.order_type import OrderType
-from quanttrading2.data.tick_event import TickType
+from quanttrader.strategy.strategy_base import StrategyBase
+from quanttrader.order.order_event import OrderEvent
+from quanttrader.order.order_type import OrderType
+from quanttrader.data.tick_event import TickType
 import logging
 
 _logger = logging.getLogger('qtlive')

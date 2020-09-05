@@ -2,5 +2,5 @@
 tests
 ~~~~~
 
-Test suite for the quanttrading2 package.
+Test suite for the quanttrader package.
 """

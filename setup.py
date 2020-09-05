@@ -9,14 +9,14 @@ with open('README.md', 'r') as f:
 # package configuration - for reference see:
 # https://setuptools.readthedocs.io/en/latest/setuptools.html#id9
 setup(
-    name='quanttrading2',
-    description='quanttrading2 backtest live trading',
+    name='quanttrader',
+    description='quanttrader backtest and live trading library',
     long_description=readme,
     long_description_content_type='text/markdown',
     version='0.3.9',
     author='Letian Wang',
     author_email='letian.zj@gmail.com',
-    url='https://github.com/letianzj/quanttrading2',
+    url='https://github.com/letianzj/quanttrader',
     packages=find_packages(exclude=("tests",)),
     include_package_data=True,
     python_requires=">=3.7.*",
@@ -41,5 +41,5 @@ setup(
         'ibapi>=9.76.1',
         'gym>=0.17.0'
     ],
-    keywords='quanttrading2 backtest live trading'
+    keywords='quanttrader strategy backtest live trading'
 )

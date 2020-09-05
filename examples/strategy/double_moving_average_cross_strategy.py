@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from quanttrading2.strategy.strategy_base import StrategyBase
-from quanttrading2.data.tick_event import TickType
-from quanttrading2.order.order_event import OrderEvent
-from quanttrading2.order.order_status import OrderStatus
-from quanttrading2.order.order_type import OrderType
+from quanttrader.strategy.strategy_base import StrategyBase
+from quanttrader.data.tick_event import TickType
+from quanttrader.order.order_event import OrderEvent
+from quanttrader.order.order_status import OrderStatus
+from quanttrader.order.order_type import OrderType
 from datetime import datetime
 import numpy as np
 import talib

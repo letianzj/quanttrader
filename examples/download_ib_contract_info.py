@@ -9,9 +9,9 @@ import numpy as np
 from ibapi.contract import Contract
 from signal import signal, SIGINT, SIG_DFL
 import logging
-from quanttrading2.event.event import EventType
-from quanttrading2.event.live_event_engine import LiveEventEngine
-from quanttrading2.brokerage.ib_brokerage import InteractiveBrokers
+from quanttrader.event.event import EventType
+from quanttrader.event.live_event_engine import LiveEventEngine
+from quanttrader.brokerage.ib_brokerage import InteractiveBrokers
 
 signal(SIGINT, SIG_DFL)
 
@@ -19,7 +19,7 @@ def log_event_handler(log_event):
     print(f'{log_event.timestamp}: {log_event.content}')
 
 def run(args):
-    _logger = logging.getLogger('quanttrading2')
+    _logger = logging.getLogger('quanttrader')
     _logger.setLevel(logging.DEBUG)
     handler1 = logging.StreamHandler()
     formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')

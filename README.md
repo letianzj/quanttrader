@@ -1,6 +1,6 @@
-# quanttrading2
+# quanttrader
 
-Backtest and live trading in 100% pure Python, open sourced [on GitHub](https://github.com/letianzj/quanttrading2).
+Backtest and live trading in 100% pure Python, open sourced [on GitHub](https://github.com/letianzj/quanttrader).
 
 ### Backtest
 
@@ -21,14 +21,14 @@ __Installation__
 Step 1
 
 ```shell
-pip install quanttrading2
+pip install quanttrader
 ```
 
 Alternatively, download or git the source code and include unzipped path in PYTHONPATH environment variable.
 
 step 2
 
-Download [live_engine.py](https://github.com/letianzj/quanttrading2/blob/master/examples/live_engine.py), [config_live.yaml](https://github.com/letianzj/quanttrading2/blob/master/examples/config_live.yaml), [order_per_interval_strategy.py](order_per_interval_strategy.py) by clicking Raw button, right clicking save as, and then change the file extension to .py or .yaml.
+Download [live_engine.py](https://github.com/letianzj/quanttrader/blob/master/examples/live_engine.py), [config_live.yaml](https://github.com/letianzj/quanttrader/blob/master/examples/config_live.yaml), [order_per_interval_strategy.py](order_per_interval_strategy.py) by clicking Raw button, right clicking save as, and then change the file extension to .py or .yaml.
 
 step 3
 ```shell
@@ -65,9 +65,8 @@ Basic order types. See [IB Doc](http://interactivebrokers.github.io/tws-api/basi
 * Trailing Stop Limit
 
 
-![gui](https://github.com/letianzj/quanttrading2/blob/master/examples/gui.png)
+![gui](https://github.com/letianzj/quanttrader/blob/master/examples/gui.png)
 
-Why quantttrading2? There exists [QuantTrading(1)](https://github.com/letianzj/QuantTrading) in C#. So this one in Python gets suffix 2.
 
 **DISCLAIMER**
 Open source, free to use, free to contribute, use at own risk. No promise of future profits nor responsibility of future loses.

@@ -3,9 +3,9 @@
 import os
 import pytest
 
-from quanttrading2.util import read_ohlcv_csv
-from quanttrading2.strategy import StrategyBase
-from quanttrading2 import BacktestEngine
+from quanttrader.util import read_ohlcv_csv
+from quanttrader.strategy import StrategyBase
+from quanttrader import BacktestEngine
 
 
 class BuyAndHoldStrategy(StrategyBase):

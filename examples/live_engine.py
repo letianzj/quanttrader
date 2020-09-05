@@ -7,7 +7,7 @@ import importlib
 from datetime import datetime
 import yaml
 from PyQt5 import QtCore, QtWidgets, QtGui
-from quanttrading2.gui.ui_main_window import MainWindow
+from quanttrader.gui.ui_main_window import MainWindow
 import atexit
 from signal import signal, SIGINT, SIG_DFL
 from os import kill
@@ -41,7 +41,7 @@ def main(config_file, instrument_meta_file):
         if not os.path.exists(d):
             os.makedirs(d)
 
-    _logger = logging.getLogger('quanttrading2')
+    _logger = logging.getLogger('quanttrader')
     _logger.setLevel(logging.DEBUG)
     handler1 = logging.StreamHandler()
     handler2 = logging.FileHandler(f"./log/{today}.log")

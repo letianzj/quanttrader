@@ -2,9 +2,9 @@
 # -*- coding: utf-8 -*-
 from datetime import datetime
 import pytz
-from quanttrading2.util import read_ohlcv_csv
-from quanttrading2.strategy import StrategyBase
-from quanttrading2 import BacktestGymEngine, BacktestEngine
+from quanttrader.util import read_ohlcv_csv
+from quanttrader.strategy import StrategyBase
+from quanttrader import BacktestGymEngine, BacktestEngine
 
 
 class BuyAndHoldStrategy(StrategyBase):
