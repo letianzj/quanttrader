@@ -11,6 +11,8 @@ Welcome to quanttrader documentation!
    installation.md
    backtest.md
    livetrading.md
+   instrument.md
+   ordertype.md
 
 .. toctree::
    :maxdepth: 2

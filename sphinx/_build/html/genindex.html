@@ -86,6 +86,8 @@
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="backtest.html">Backtest</a></li>
 <li class="toctree-l1"><a class="reference internal" href="livetrading.html">Live Trading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="instrument.html">Instruments Supported</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ordertype.html">Orders Supported</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Codes</span></p>
 <ul>
@@ -173,6 +175,7 @@
  | <a href="#D"><strong>D</strong></a>
  | <a href="#F"><strong>F</strong></a>
  | <a href="#G"><strong>G</strong></a>
+ | <a href="#H"><strong>H</strong></a>
  | <a href="#I"><strong>I</strong></a>
  | <a href="#L"><strong>L</strong></a>
  | <a href="#M"><strong>M</strong></a>
@@ -239,6 +242,8 @@
       </ul></li>
       <li><a href="brokerage.html#quanttrader.brokerage.ib_brokerage.InteractiveBrokers.cancel_all_orders">cancel_all_orders() (quanttrader.brokerage.ib_brokerage.InteractiveBrokers method)</a>
 </li>
+      <li><a href="brokerage.html#quanttrader.brokerage.ib_brokerage.InteractiveBrokers.cancel_historical_data">cancel_historical_data() (quanttrader.brokerage.ib_brokerage.InteractiveBrokers method)</a>
+</li>
       <li><a href="brokerage.html#quanttrader.brokerage.backtest_brokerage.BacktestBrokerage.cancel_order">cancel_order() (quanttrader.brokerage.backtest_brokerage.BacktestBrokerage method)</a>
 
       <ul>
@@ -258,6 +263,8 @@
       <li><a href="brokerage.html#quanttrader.brokerage.ib_brokerage.InteractiveBrokers.connect">connect() (quanttrader.brokerage.ib_brokerage.InteractiveBrokers method)</a>
 </li>
       <li><a href="tradingengine.html#quanttrader.gui.ui_main_window.MainWindow.connect_to_broker">connect_to_broker() (quanttrader.gui.ui_main_window.MainWindow method)</a>
+</li>
+      <li><a href="brokerage.html#quanttrader.brokerage.ib_brokerage.InteractiveBrokers.contract_to_symbol">contract_to_symbol() (quanttrader.brokerage.ib_brokerage.InteractiveBrokers static method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -306,15 +313,25 @@
   </ul></td>
 </tr></table>
 
+<h2 id="H">H</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="brokerage.html#quanttrader.brokerage.ib_brokerage.InteractiveBrokers.heartbeat">heartbeat() (quanttrader.brokerage.ib_brokerage.InteractiveBrokers method)</a>
+</li>
+  </ul></td>
+</tr></table>
+
 <h2 id="I">I</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="tradingengine.html#quanttrader.gui.ui_main_window.MainWindow.init_central_area">init_central_area() (quanttrader.gui.ui_main_window.MainWindow method)</a>
+      <li><a href="brokerage.html#quanttrader.brokerage.ib_brokerage.InteractiveBrokers.ib_order_to_order">ib_order_to_order() (quanttrader.brokerage.ib_brokerage.InteractiveBrokers static method)</a>
 </li>
-      <li><a href="tradingengine.html#quanttrader.gui.ui_main_window.MainWindow.init_menu">init_menu() (quanttrader.gui.ui_main_window.MainWindow method)</a>
+      <li><a href="tradingengine.html#quanttrader.gui.ui_main_window.MainWindow.init_central_area">init_central_area() (quanttrader.gui.ui_main_window.MainWindow method)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="tradingengine.html#quanttrader.gui.ui_main_window.MainWindow.init_menu">init_menu() (quanttrader.gui.ui_main_window.MainWindow method)</a>
+</li>
       <li><a href="tradingengine.html#quanttrader.gui.ui_main_window.MainWindow.init_status_bar">init_status_bar() (quanttrader.gui.ui_main_window.MainWindow method)</a>
 </li>
       <li><a href="brokerage.html#quanttrader.brokerage.ib_brokerage.InteractiveBrokers">InteractiveBrokers (class in quanttrader.brokerage.ib_brokerage)</a>
@@ -336,6 +353,8 @@
       <li><a href="event.html#quanttrader.event.live_event_engine.LiveEventEngine">LiveEventEngine (class in quanttrader.event.live_event_engine)</a>
 </li>
       <li><a href="strategy.html#quanttrader.strategy.strategy_manager.StrategyManager.load_strategy">load_strategy() (quanttrader.strategy.strategy_manager.StrategyManager method)</a>
+</li>
+      <li><a href="brokerage.html#quanttrader.brokerage.ib_brokerage.InteractiveBrokers.log">log() (quanttrader.brokerage.ib_brokerage.InteractiveBrokers method)</a>
 </li>
       <li><a href="gui.html#quanttrader.gui.ui_log_window.LogWindow">LogWindow (class in quanttrader.gui.ui_log_window)</a>
 </li>
@@ -442,10 +461,10 @@
 </li>
       <li><a href="strategy.html#quanttrader.strategy.strategy_base.StrategyBase.on_start">on_start() (quanttrader.strategy.strategy_base.StrategyBase method)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="strategy.html#quanttrader.strategy.strategy_base.StrategyBase.on_stop">on_stop() (quanttrader.strategy.strategy_base.StrategyBase method)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="brokerage.html#quanttrader.brokerage.backtest_brokerage.BacktestBrokerage.on_tick">on_tick() (quanttrader.brokerage.backtest_brokerage.BacktestBrokerage method)</a>
 
       <ul>
@@ -468,6 +487,8 @@
         <li><a href="risk.html#quanttrader.risk.risk_manager.RiskManager.order_in_compliance">(quanttrader.risk.risk_manager.RiskManager method)</a>
 </li>
       </ul></li>
+      <li><a href="brokerage.html#quanttrader.brokerage.ib_brokerage.InteractiveBrokers.order_to_ib_order">order_to_ib_order() (quanttrader.brokerage.ib_brokerage.InteractiveBrokers static method)</a>
+</li>
       <li><a href="order.html#quanttrader.order.order_manager.OrderManager">OrderManager (class in quanttrader.order.order_manager)</a>
 </li>
       <li><a href="gui.html#quanttrader.gui.ui_order_window.OrderWindow">OrderWindow (class in quanttrader.gui.ui_order_window)</a>
@@ -684,12 +705,16 @@
         <li><a href="event.html#quanttrader.event.live_event_engine.LiveEventEngine.register_handler">(quanttrader.event.live_event_engine.LiveEventEngine method)</a>
 </li>
       </ul></li>
+      <li><a href="brokerage.html#quanttrader.brokerage.ib_brokerage.InteractiveBrokers.reqCurrentTime">reqCurrentTime() (quanttrader.brokerage.ib_brokerage.InteractiveBrokers method)</a>
+</li>
       <li><a href="brokerage.html#quanttrader.brokerage.ib_brokerage.InteractiveBrokers.request_historical_data">request_historical_data() (quanttrader.brokerage.ib_brokerage.InteractiveBrokers method)</a>
 </li>
-      <li><a href="brokerage.html#quanttrader.brokerage.backtest_brokerage.BacktestBrokerage.reset">reset() (quanttrader.brokerage.backtest_brokerage.BacktestBrokerage method)</a>
+      <li><a href="brokerage.html#quanttrader.brokerage.ib_brokerage.InteractiveBrokers.request_historical_ticks">request_historical_ticks() (quanttrader.brokerage.ib_brokerage.InteractiveBrokers method)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="brokerage.html#quanttrader.brokerage.backtest_brokerage.BacktestBrokerage.reset">reset() (quanttrader.brokerage.backtest_brokerage.BacktestBrokerage method)</a>
+</li>
       <li><a href="risk.html#quanttrader.risk.risk_manager.RiskManager">RiskManager (class in quanttrader.risk.risk_manager)</a>
 </li>
       <li><a href="gui.html#quanttrader.gui.ui_risk_menu.RiskMenu">RiskMenu (class in quanttrader.gui.ui_risk_menu)</a>
@@ -722,6 +747,8 @@
 </li>
       <li><a href="strategy.html#quanttrader.strategy.strategy_base.StrategyBase.set_symbols">set_symbols() (quanttrader.strategy.strategy_base.StrategyBase method)</a>
 </li>
+      <li><a href="brokerage.html#quanttrader.brokerage.ib_brokerage.InteractiveBrokers.setServerLogLevel">setServerLogLevel() (quanttrader.brokerage.ib_brokerage.InteractiveBrokers method)</a>
+</li>
       <li><a href="event.html#quanttrader.event.live_event_engine.LiveEventEngine.start">start() (quanttrader.event.live_event_engine.LiveEventEngine method)</a>
 </li>
       <li><a href="strategy.html#quanttrader.strategy.strategy_manager.StrategyManager.start_all">start_all() (quanttrader.strategy.strategy_manager.StrategyManager method)</a>
@@ -738,12 +765,12 @@
 </li>
       <li><a href="tradingengine.html#quanttrader.gui.ui_main_window.StatusThread">StatusThread (class in quanttrader.gui.ui_main_window)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="event.html#quanttrader.event.live_event_engine.LiveEventEngine.stop">stop() (quanttrader.event.live_event_engine.LiveEventEngine method)</a>
 </li>
       <li><a href="strategy.html#quanttrader.strategy.strategy_manager.StrategyManager.stop_all">stop_all() (quanttrader.strategy.strategy_manager.StrategyManager method)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="tradingengine.html#quanttrader.gui.ui_main_window.MainWindow.stop_all_strategy">stop_all_strategy() (quanttrader.gui.ui_main_window.MainWindow method)</a>
 </li>
       <li><a href="tradingengine.html#quanttrader.gui.ui_main_window.MainWindow.stop_strategy">stop_strategy() (quanttrader.gui.ui_main_window.MainWindow method)</a>
@@ -764,12 +791,20 @@
         <li><a href="data.html#quanttrader.data.live_data_feed.LiveDataFeed.stream_next">(quanttrader.data.live_data_feed.LiveDataFeed method)</a>
 </li>
       </ul></li>
+      <li><a href="brokerage.html#quanttrader.brokerage.ib_brokerage.InteractiveBrokers.subscribe_account_summary">subscribe_account_summary() (quanttrader.brokerage.ib_brokerage.InteractiveBrokers method)</a>
+</li>
       <li><a href="brokerage.html#quanttrader.brokerage.ib_brokerage.InteractiveBrokers.subscribe_market_data">subscribe_market_data() (quanttrader.brokerage.ib_brokerage.InteractiveBrokers method)</a>
 
       <ul>
         <li><a href="data.html#quanttrader.data.backtest_data_feed.BacktestDataFeed.subscribe_market_data">(quanttrader.data.backtest_data_feed.BacktestDataFeed method)</a>
 </li>
       </ul></li>
+      <li><a href="brokerage.html#quanttrader.brokerage.ib_brokerage.InteractiveBrokers.subscribe_market_datas">subscribe_market_datas() (quanttrader.brokerage.ib_brokerage.InteractiveBrokers method)</a>
+</li>
+      <li><a href="brokerage.html#quanttrader.brokerage.ib_brokerage.InteractiveBrokers.subscribe_market_depth">subscribe_market_depth() (quanttrader.brokerage.ib_brokerage.InteractiveBrokers method)</a>
+</li>
+      <li><a href="brokerage.html#quanttrader.brokerage.ib_brokerage.InteractiveBrokers.subscribe_positions">subscribe_positions() (quanttrader.brokerage.ib_brokerage.InteractiveBrokers method)</a>
+</li>
       <li><a href="data.html#quanttrader.data.live_data_feed.LiveDataFeed.subscribe_ticker">subscribe_ticker() (quanttrader.data.live_data_feed.LiveDataFeed method)</a>
 </li>
       <li><a href="brokerage.html#quanttrader.brokerage.ib_brokerage.InteractiveBrokers.symbol_to_contract">symbol_to_contract() (quanttrader.brokerage.ib_brokerage.InteractiveBrokers static method)</a>
@@ -794,14 +829,24 @@
         <li><a href="event.html#quanttrader.event.live_event_engine.LiveEventEngine.unregister_handler">(quanttrader.event.live_event_engine.LiveEventEngine method)</a>
 </li>
       </ul></li>
-      <li><a href="data.html#quanttrader.data.backtest_data_feed.BacktestDataFeed.unsubscribe_market_data">unsubscribe_market_data() (quanttrader.data.backtest_data_feed.BacktestDataFeed method)</a>
+      <li><a href="brokerage.html#quanttrader.brokerage.ib_brokerage.InteractiveBrokers.unsubscribe_account_summary">unsubscribe_account_summary() (quanttrader.brokerage.ib_brokerage.InteractiveBrokers method)</a>
 </li>
+      <li><a href="brokerage.html#quanttrader.brokerage.ib_brokerage.InteractiveBrokers.unsubscribe_market_data">unsubscribe_market_data() (quanttrader.brokerage.ib_brokerage.InteractiveBrokers method)</a>
+
+      <ul>
+        <li><a href="data.html#quanttrader.data.backtest_data_feed.BacktestDataFeed.unsubscribe_market_data">(quanttrader.data.backtest_data_feed.BacktestDataFeed method)</a>
+</li>
+      </ul></li>
+      <li><a href="brokerage.html#quanttrader.brokerage.ib_brokerage.InteractiveBrokers.unsubscribe_market_depth">unsubscribe_market_depth() (quanttrader.brokerage.ib_brokerage.InteractiveBrokers method)</a>
+</li>
+      <li><a href="brokerage.html#quanttrader.brokerage.ib_brokerage.InteractiveBrokers.unsubscribe_positions">unsubscribe_positions() (quanttrader.brokerage.ib_brokerage.InteractiveBrokers method)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="gui.html#quanttrader.gui.ui_order_window.OrderWindow.update_order_status">update_order_status() (quanttrader.gui.ui_order_window.OrderWindow method)</a>
 </li>
       <li><a href="performance.html#quanttrader.performance.performance_manager.PerformanceManager.update_performance">update_performance() (quanttrader.performance.performance_manager.PerformanceManager method)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="tradingengine.html#quanttrader.gui.ui_main_window.MainWindow.update_status_bar">update_status_bar() (quanttrader.gui.ui_main_window.MainWindow method)</a>
 </li>
       <li><a href="gui.html#quanttrader.gui.ui_account_window.AccountWindow.update_table">update_table() (quanttrader.gui.ui_account_window.AccountWindow method)</a>

@@ -172,7 +172,7 @@ class InteractiveBrokers(BrokerageBase):
 
     def subscribe_market_data(self, sym):
         """
-        Subscribe market data. Market data for this symbol will then be streamed to client.
+        Subscribe market L1 data. Market data for this symbol will then be streamed to client.
 
         :param sym: the symbol to be subscribed.
         """
@@ -201,11 +201,20 @@ class InteractiveBrokers(BrokerageBase):
         self.reqid += 1
 
     def subscribe_market_datas(self):
+        """
+        Subscribe market L1 data for all symbols used in strategies. Market data for this symbol will then be streamed to client.
+
+        """
         syms = list(self.market_data_subscription_reverse_dict.keys())
         for sym in syms:
             self.subscribe_market_data(sym)
 
     def unsubscribe_market_data(self, sym):
+        """
+        Unsubscribe market L1 data. Market data for this symbol will stop streaming to client.
+
+        :param sym: the symbol to be subscribed.
+        """
         if not self.api.connected:
             return
 
@@ -215,6 +224,11 @@ class InteractiveBrokers(BrokerageBase):
         self.api.cancelMktData(self.market_data_subscription_reverse_dict[sym])
 
     def subscribe_market_depth(self, sym):
+        """
+        Subscribe market L2 data. Market data for this symbol will then be streamed to client.
+
+        :param sym: the symbol to be subscribed.
+        """
         if not self.api.connected:
             return
 
@@ -232,6 +246,11 @@ class InteractiveBrokers(BrokerageBase):
         self.market_depth_subscription_reverse_dict[sym] = self.reqid
 
     def unsubscribe_market_depth(self, sym):
+        """
+        Unsubscribe market L2 data. Market data for this symbol will stop streaming to client.
+
+        :param sym: the symbol to be subscribed.
+        """
         if not self.api.connected:
             return
 
@@ -241,6 +260,9 @@ class InteractiveBrokers(BrokerageBase):
         self.api.cancelMktDepth(self.market_depth_subscription_reverse_dict[sym], True)
 
     def subscribe_account_summary(self):
+        """
+        Request account summary from broker
+        """
         if not self.api.connected:
             return
 
@@ -252,6 +274,9 @@ class InteractiveBrokers(BrokerageBase):
         self.reqid += 1
 
     def unsubscribe_account_summary(self):
+        """
+        Stop receiving account summary from broker
+        """
         if not self.api.connected:
             return
 
@@ -262,15 +287,24 @@ class InteractiveBrokers(BrokerageBase):
         self.account_summary_reqid = -1
 
     def subscribe_positions(self):
+        """
+        Request existing positions from broker
+        """
         self.api.reqPositions()
 
     def unsubscribe_positions(self):
+        """
+        Stop receiving existing position message from broker.
+        """
         self.api.cancelPositions()
 
     def request_historical_data(self, symbol, end=None):
         """
-        1800 S (30 mins)
-        1 sec - 30 mins
+        Request 1800 S (30 mins) historical bar data from Interactive Brokers.
+
+        :param symbol: the contract whose historical data is requested
+        :param end: the end time of the historical data
+        :return: no returns; data is broadcasted through message queue
         """
         ib_contract = InteractiveBrokers.symbol_to_contract(symbol)
 
@@ -284,21 +318,60 @@ class InteractiveBrokers(BrokerageBase):
         self.reqid += 1
 
     def cancel_historical_data(self, reqid):
+        """
+        Cancel historical data request. Usually not necessary.
+
+        :param reqid: the historical data request id
+        """
         self.api.cancelHistoricalData(reqid)
 
+    def request_historical_ticks(self, symbol, start_time, reqtype='TICKS'):
+        """
+        Request historical time and sales data from Interactive Brokers.
+        See here https://interactivebrokers.github.io/tws-api/historical_time_and_sales.html
+
+        :param symbol: the contract whose historical data is requested
+        :param start_time:  i.e. "20170701 12:01:00". Uses TWS timezone specified at login
+        :param reqtype: TRADES, BID_ASK, or MIDPOINT
+        :return: no returns; data is broadcasted through message queue
+        """
+        ib_contract = InteractiveBrokers.symbol_to_contract(symbol)
+        useRth = 1
+        self.hist_data_request_dict[self.reqid] = symbol
+        self.api.reqHistoricalTicks(self.reqid, ib_contract, start_time, "", 1000, reqtype, useRth, True, [])
+        self.reqid += 1
+
+
     def reqCurrentTime(self):
+        """
+        Request server time on broker side
+        """
         self.api.reqCurrentTime()
 
     def setServerLogLevel(self, level=1):
+        """
+        Set server side log level or the log messages received from server.
+
+        :param level: log level
+        """
         self.api.setServerLogLevel(level)
 
     def heartbeat(self):
+        """
+        Request server time as heartbeat
+        """
         if self.api.isConnected():
             _logger.info('reqPositions')
             # self.api.reqPositions()
             self.reqCurrentTime()     # EWrapper::currentTime
 
     def log(self, msg):
+        """
+        Broadcast server log message through message queue
+
+        :param msg: message to be broadcast
+        :return: no return; log meesage is placed into message queue
+        """
         timestamp = datetime.now().strftime("%H:%M:%S.%f")
         log_event = LogEvent()
         log_event.timestamp = timestamp
@@ -308,22 +381,15 @@ class InteractiveBrokers(BrokerageBase):
     @staticmethod
     def symbol_to_contract(symbol):
         """
-        symbol string to ib contract
-        AMZN STK SMART;
-        EURGBP CASH IDEALPRO
-        ESM9 FUT GLOBEX
-        AAPL OPT 20201016 128.75 C SMART
-        ES FOP 20200911 3450 C 50 GLOBEX
-        XAUUSD CMDTY SMART
-        SPY BAG 398943121 1 SMART 398943218 1 SMART SMART # straddle; option combo
-        SPY,AAPL BAG 756733 1 SMART 265598 1 SMART SMART    # stock pairs; stock combo
-        CL BAG 174230608 1 NYMEX 174230606 1 NYMEX NYMEX       # calendar spread; futures combo
-        CL.BZ BAG 174230606 1 NYMEX 162929662 1 NYMEX NYMEX     # Inter-comdty spread
+        Convert fulll symbol string to IB contract
+
+        TODO
         CL.HO BAG 174230608 1 NYMEX 257430162 1 NYMEX NYMEX     # Inter-comdty
         ES.NQ BAG 371749798 1 GLOBEX 371749745 1 GLOBEX GLOBEX     # Inter-comdty
         CL.HO BAG 257430162 1 NYMEX 174230608 1 NYMEX NYMEX
-        :param symbol:
-        :return: ib contract
+
+        :param symbol: full symbol, e.g. AMZN STK SMART
+        :return: IB contract
         """
         symbol_fields = symbol.split(' ')
         ib_contract = Contract()
@@ -395,6 +461,12 @@ class InteractiveBrokers(BrokerageBase):
 
     @staticmethod
     def contract_to_symbol(ib_contract):
+        """
+        Convert IB contract to full symbol
+
+        :param ib_contract: IB contract
+        :return: full symbol
+        """
         full_symbol = ''
         if ib_contract.secType == 'STK':
             full_symbol = ' '.join([ib_contract.localSymbol, 'STK', 'SMART'])    # or ib_contract.primaryExchange?
@@ -424,6 +496,12 @@ class InteractiveBrokers(BrokerageBase):
 
     @staticmethod
     def order_to_ib_order(order_event):
+        """
+        Convert order event to IB order
+
+        :param order_event: internal representation of order
+        :return:  IB representation of order
+        """
         ib_order = Order()
         ib_order.action = 'BUY' if order_event.order_size > 0 else 'SELL'
         ib_order.totalQuantity = abs(order_event.order_size)
@@ -446,6 +524,12 @@ class InteractiveBrokers(BrokerageBase):
 
     @staticmethod
     def ib_order_to_order(ib_order):
+        """
+        Convert IB order to order event
+
+        :param ib_order: IB representation of order
+        :return: internal representation of order
+        """
         order_event = OrderEvent()
         # order_event.order_id = orderId
         # order_event.order_status = orderState.status

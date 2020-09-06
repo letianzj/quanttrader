@@ -37,7 +37,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Data" href="data.html" />
-    <link rel="prev" title="Live Trading" href="livetrading.html" /> 
+    <link rel="prev" title="Orders Supported" href="ordertype.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -82,14 +82,16 @@
               
             
             
-              <p class="caption"><span class="caption-text">Content</span></p>
+              <p class="caption"><span class="caption-text">Contents</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="backtest.html">Backtest</a></li>
 <li class="toctree-l1"><a class="reference internal" href="livetrading.html">Live Trading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="instrument.html">Instruments Supported</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ordertype.html">Orders Supported</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Code Structure</span></p>
+<p class="caption"><span class="caption-text">Codes</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Brokerage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="data.html">Data</a></li>
@@ -278,6 +280,17 @@ e.g. client calls broker.place_order to place order directly.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt id="quanttrader.brokerage.ib_brokerage.InteractiveBrokers.cancel_historical_data">
+<code class="sig-name descname">cancel_historical_data</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">reqid</span></em><span class="sig-paren">)</span><a class="headerlink" href="#quanttrader.brokerage.ib_brokerage.InteractiveBrokers.cancel_historical_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Cancel historical data request. Usually not necessary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>reqid</strong> – the historical data request id</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt id="quanttrader.brokerage.ib_brokerage.InteractiveBrokers.cancel_order">
 <code class="sig-name descname">cancel_order</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">order_id</span></em><span class="sig-paren">)</span><a class="headerlink" href="#quanttrader.brokerage.ib_brokerage.InteractiveBrokers.cancel_order" title="Permalink to this definition">¶</a></dt>
 <dd><p>Cancel client order.</p>
@@ -307,9 +320,57 @@ e.g. client calls broker.place_order to place order directly.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt id="quanttrader.brokerage.ib_brokerage.InteractiveBrokers.contract_to_symbol">
+<em class="property">static </em><code class="sig-name descname">contract_to_symbol</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ib_contract</span></em><span class="sig-paren">)</span><a class="headerlink" href="#quanttrader.brokerage.ib_brokerage.InteractiveBrokers.contract_to_symbol" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert IB contract to full symbol</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>ib_contract</strong> – IB contract</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>full symbol</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt id="quanttrader.brokerage.ib_brokerage.InteractiveBrokers.disconnect">
 <code class="sig-name descname">disconnect</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#quanttrader.brokerage.ib_brokerage.InteractiveBrokers.disconnect" title="Permalink to this definition">¶</a></dt>
 <dd><p>Disconnect from IB</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="quanttrader.brokerage.ib_brokerage.InteractiveBrokers.heartbeat">
+<code class="sig-name descname">heartbeat</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#quanttrader.brokerage.ib_brokerage.InteractiveBrokers.heartbeat" title="Permalink to this definition">¶</a></dt>
+<dd><p>Request server time as heartbeat</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="quanttrader.brokerage.ib_brokerage.InteractiveBrokers.ib_order_to_order">
+<em class="property">static </em><code class="sig-name descname">ib_order_to_order</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ib_order</span></em><span class="sig-paren">)</span><a class="headerlink" href="#quanttrader.brokerage.ib_brokerage.InteractiveBrokers.ib_order_to_order" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert IB order to order event</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>ib_order</strong> – IB representation of order</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>internal representation of order</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="quanttrader.brokerage.ib_brokerage.InteractiveBrokers.log">
+<code class="sig-name descname">log</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">msg</span></em><span class="sig-paren">)</span><a class="headerlink" href="#quanttrader.brokerage.ib_brokerage.InteractiveBrokers.log" title="Permalink to this definition">¶</a></dt>
+<dd><p>Broadcast server log message through message queue</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>msg</strong> – message to be broadcast</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>no return; log meesage is placed into message queue</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -319,6 +380,20 @@ e.g. client calls broker.place_order to place order directly.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>next order id available for next orders</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="quanttrader.brokerage.ib_brokerage.InteractiveBrokers.order_to_ib_order">
+<em class="property">static </em><code class="sig-name descname">order_to_ib_order</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">order_event</span></em><span class="sig-paren">)</span><a class="headerlink" href="#quanttrader.brokerage.ib_brokerage.InteractiveBrokers.order_to_ib_order" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert order event to IB order</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>order_event</strong> – internal representation of order</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>IB representation of order</p>
 </dd>
 </dl>
 </dd></dl>
@@ -338,16 +413,68 @@ e.g. client calls broker.place_order to place order directly.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt id="quanttrader.brokerage.ib_brokerage.InteractiveBrokers.reqCurrentTime">
+<code class="sig-name descname">reqCurrentTime</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#quanttrader.brokerage.ib_brokerage.InteractiveBrokers.reqCurrentTime" title="Permalink to this definition">¶</a></dt>
+<dd><p>Request server time on broker side</p>
+</dd></dl>
+
+<dl class="py method">
 <dt id="quanttrader.brokerage.ib_brokerage.InteractiveBrokers.request_historical_data">
 <code class="sig-name descname">request_historical_data</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">symbol</span></em>, <em class="sig-param"><span class="n">end</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#quanttrader.brokerage.ib_brokerage.InteractiveBrokers.request_historical_data" title="Permalink to this definition">¶</a></dt>
-<dd><p>1800 S (30 mins)
-1 sec - 30 mins</p>
+<dd><p>Request 1800 S (30 mins) historical bar data from Interactive Brokers.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>symbol</strong> – the contract whose historical data is requested</p></li>
+<li><p><strong>end</strong> – the end time of the historical data</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>no returns; data is broadcasted through message queue</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="quanttrader.brokerage.ib_brokerage.InteractiveBrokers.request_historical_ticks">
+<code class="sig-name descname">request_historical_ticks</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">symbol</span></em>, <em class="sig-param"><span class="n">start_time</span></em>, <em class="sig-param"><span class="n">reqtype</span><span class="o">=</span><span class="default_value">'TICKS'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#quanttrader.brokerage.ib_brokerage.InteractiveBrokers.request_historical_ticks" title="Permalink to this definition">¶</a></dt>
+<dd><p>Request historical time and sales data from Interactive Brokers.
+See here <a class="reference external" href="https://interactivebrokers.github.io/tws-api/historical_time_and_sales.html">https://interactivebrokers.github.io/tws-api/historical_time_and_sales.html</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>symbol</strong> – the contract whose historical data is requested</p></li>
+<li><p><strong>start_time</strong> – i.e. “20170701 12:01:00”. Uses TWS timezone specified at login</p></li>
+<li><p><strong>reqtype</strong> – TRADES, BID_ASK, or MIDPOINT</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>no returns; data is broadcasted through message queue</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="quanttrader.brokerage.ib_brokerage.InteractiveBrokers.setServerLogLevel">
+<code class="sig-name descname">setServerLogLevel</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">level</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="headerlink" href="#quanttrader.brokerage.ib_brokerage.InteractiveBrokers.setServerLogLevel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set server side log level or the log messages received from server.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>level</strong> – log level</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="quanttrader.brokerage.ib_brokerage.InteractiveBrokers.subscribe_account_summary">
+<code class="sig-name descname">subscribe_account_summary</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#quanttrader.brokerage.ib_brokerage.InteractiveBrokers.subscribe_account_summary" title="Permalink to this definition">¶</a></dt>
+<dd><p>Request account summary from broker</p>
 </dd></dl>
 
 <dl class="py method">
 <dt id="quanttrader.brokerage.ib_brokerage.InteractiveBrokers.subscribe_market_data">
 <code class="sig-name descname">subscribe_market_data</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sym</span></em><span class="sig-paren">)</span><a class="headerlink" href="#quanttrader.brokerage.ib_brokerage.InteractiveBrokers.subscribe_market_data" title="Permalink to this definition">¶</a></dt>
-<dd><p>Subscribe market data. Market data for this symbol will then be streamed to client.</p>
+<dd><p>Subscribe market L1 data. Market data for this symbol will then be streamed to client.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>sym</strong> – the symbol to be subscribed.</p>
@@ -356,24 +483,78 @@ e.g. client calls broker.place_order to place order directly.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt id="quanttrader.brokerage.ib_brokerage.InteractiveBrokers.subscribe_market_datas">
+<code class="sig-name descname">subscribe_market_datas</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#quanttrader.brokerage.ib_brokerage.InteractiveBrokers.subscribe_market_datas" title="Permalink to this definition">¶</a></dt>
+<dd><p>Subscribe market L1 data for all symbols used in strategies. Market data for this symbol will then be streamed to client.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="quanttrader.brokerage.ib_brokerage.InteractiveBrokers.subscribe_market_depth">
+<code class="sig-name descname">subscribe_market_depth</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sym</span></em><span class="sig-paren">)</span><a class="headerlink" href="#quanttrader.brokerage.ib_brokerage.InteractiveBrokers.subscribe_market_depth" title="Permalink to this definition">¶</a></dt>
+<dd><p>Subscribe market L2 data. Market data for this symbol will then be streamed to client.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>sym</strong> – the symbol to be subscribed.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="quanttrader.brokerage.ib_brokerage.InteractiveBrokers.subscribe_positions">
+<code class="sig-name descname">subscribe_positions</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#quanttrader.brokerage.ib_brokerage.InteractiveBrokers.subscribe_positions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Request existing positions from broker</p>
+</dd></dl>
+
+<dl class="py method">
 <dt id="quanttrader.brokerage.ib_brokerage.InteractiveBrokers.symbol_to_contract">
 <em class="property">static </em><code class="sig-name descname">symbol_to_contract</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">symbol</span></em><span class="sig-paren">)</span><a class="headerlink" href="#quanttrader.brokerage.ib_brokerage.InteractiveBrokers.symbol_to_contract" title="Permalink to this definition">¶</a></dt>
-<dd><p>symbol string to ib contract
-AMZN STK SMART;
-EURGBP CASH IDEALPRO
-ESM9 FUT GLOBEX
-AAPL OPT 20201016 128.75 C SMART
-ES FOP 20200911 3450 C 50 GLOBEX
-XAUUSD CMDTY SMART
-SPY BAG 398943121 1 SMART 398943218 1 SMART SMART # straddle; option combo
-SPY,AAPL BAG 756733 1 SMART 265598 1 SMART SMART    # stock pairs; stock combo
-CL BAG 174230608 1 NYMEX 174230606 1 NYMEX NYMEX       # calendar spread; futures combo
-CL.BZ BAG 174230606 1 NYMEX 162929662 1 NYMEX NYMEX     # Inter-comdty spread
+<dd><p>Convert fulll symbol string to IB contract</p>
+<p>TODO
 CL.HO BAG 174230608 1 NYMEX 257430162 1 NYMEX NYMEX     # Inter-comdty
 ES.NQ BAG 371749798 1 GLOBEX 371749745 1 GLOBEX GLOBEX     # Inter-comdty
-CL.HO BAG 257430162 1 NYMEX 174230608 1 NYMEX NYMEX
-:param symbol:
-:return: ib contract</p>
+CL.HO BAG 257430162 1 NYMEX 174230608 1 NYMEX NYMEX</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>symbol</strong> – full symbol, e.g. AMZN STK SMART</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>IB contract</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="quanttrader.brokerage.ib_brokerage.InteractiveBrokers.unsubscribe_account_summary">
+<code class="sig-name descname">unsubscribe_account_summary</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#quanttrader.brokerage.ib_brokerage.InteractiveBrokers.unsubscribe_account_summary" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stop receiving account summary from broker</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="quanttrader.brokerage.ib_brokerage.InteractiveBrokers.unsubscribe_market_data">
+<code class="sig-name descname">unsubscribe_market_data</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sym</span></em><span class="sig-paren">)</span><a class="headerlink" href="#quanttrader.brokerage.ib_brokerage.InteractiveBrokers.unsubscribe_market_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Unsubscribe market L1 data. Market data for this symbol will stop streaming to client.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>sym</strong> – the symbol to be subscribed.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="quanttrader.brokerage.ib_brokerage.InteractiveBrokers.unsubscribe_market_depth">
+<code class="sig-name descname">unsubscribe_market_depth</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sym</span></em><span class="sig-paren">)</span><a class="headerlink" href="#quanttrader.brokerage.ib_brokerage.InteractiveBrokers.unsubscribe_market_depth" title="Permalink to this definition">¶</a></dt>
+<dd><p>Unsubscribe market L2 data. Market data for this symbol will stop streaming to client.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>sym</strong> – the symbol to be subscribed.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="quanttrader.brokerage.ib_brokerage.InteractiveBrokers.unsubscribe_positions">
+<code class="sig-name descname">unsubscribe_positions</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#quanttrader.brokerage.ib_brokerage.InteractiveBrokers.unsubscribe_positions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stop receiving existing position message from broker.</p>
 </dd></dl>
 
 </dd></dl>
@@ -391,7 +572,7 @@ CL.HO BAG 257430162 1 NYMEX 174230608 1 NYMEX NYMEX
         <a href="data.html" class="btn btn-neutral float-right" title="Data" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="livetrading.html" class="btn btn-neutral float-left" title="Live Trading" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="ordertype.html" class="btn btn-neutral float-left" title="Orders Supported" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
