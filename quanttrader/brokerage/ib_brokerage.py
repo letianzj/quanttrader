@@ -266,19 +266,20 @@ class InteractiveBrokers(BrokerageBase):
     def symbol_to_contract(symbol):
         """
         symbol string to ib contract
-        :param symbol:      AMZN STK SMART;
-                            EURGBP CASH IDEALPRO
-                            ESM9 FUT GLOBEX
-                            AAPL OPT 20201016 128.75 C SMART
-                            ES FOP 20200911 3450 C 50 GLOBEX
-                            XAUUSD CMDTY SMART
-                            SPY BAG 398943121 1 SMART 398943218 1 SMART SMART # straddle; option combo
-                            SPY,AAPL BAG 756733 1 SMART 265598 1 SMART SMART    # stock pairs; stock combo
-                            CL BAG 174230608 1 NYMEX 174230606 1 NYMEX NYMEX       # calendar spread; futures combo
-                            CL.BZ BAG 174230606 1 NYMEX 162929662 1 NYMEX NYMEX     # Inter-comdty spread
-                            CL.HO BAG 174230608 1 NYMEX 257430162 1 NYMEX NYMEX     # Inter-comdty
-                            ES.NQ BAG 371749798 1 GLOBEX 371749745 1 GLOBEX GLOBEX     # Inter-comdty
-                            CL.HO BAG 257430162 1 NYMEX 174230608 1 NYMEX NYMEX
+        AMZN STK SMART;
+        EURGBP CASH IDEALPRO
+        ESM9 FUT GLOBEX
+        AAPL OPT 20201016 128.75 C SMART
+        ES FOP 20200911 3450 C 50 GLOBEX
+        XAUUSD CMDTY SMART
+        SPY BAG 398943121 1 SMART 398943218 1 SMART SMART # straddle; option combo
+        SPY,AAPL BAG 756733 1 SMART 265598 1 SMART SMART    # stock pairs; stock combo
+        CL BAG 174230608 1 NYMEX 174230606 1 NYMEX NYMEX       # calendar spread; futures combo
+        CL.BZ BAG 174230606 1 NYMEX 162929662 1 NYMEX NYMEX     # Inter-comdty spread
+        CL.HO BAG 174230608 1 NYMEX 257430162 1 NYMEX NYMEX     # Inter-comdty
+        ES.NQ BAG 371749798 1 GLOBEX 371749745 1 GLOBEX GLOBEX     # Inter-comdty
+        CL.HO BAG 257430162 1 NYMEX 174230608 1 NYMEX NYMEX
+        :param symbol:
         :return: ib contract
         """
         symbol_fields = symbol.split(' ')
