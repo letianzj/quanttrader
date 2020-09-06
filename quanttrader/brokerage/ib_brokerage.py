@@ -38,7 +38,14 @@ _logger = logging.getLogger(__name__)
 class InteractiveBrokers(BrokerageBase):
     def __init__(self, msg_event_engine, tick_event_engine, account: str):
         """
-        Initialises the handler, setting the event queue
+        Initialize InteractiveBrokers brokerage.
+
+        Currently, the client is strongly coupled to broker without an incoming queue,
+        e.g. client calls broker.place_order to place order directly.
+
+        :param msg_event_engine:  used to broadcast messages the broker generates back to client
+        :param tick_event_engine:  used to broadcast market data back to client
+        :param account: the IB account
         """
         self.event_engine = msg_event_engine          # save events to event queue
         self.tick_event_engine = tick_event_engine
@@ -64,6 +71,13 @@ class InteractiveBrokers(BrokerageBase):
         self.orderid = 0         # next/available orderid
 
     def connect(self, host='127.0.0.1', port=7497, clientId=0):
+        """
+        Connect to IB. Request open orders under clientid upon successful connection.
+
+        :param host: host address
+        :param port: socket port
+        :param clientId: client id
+        """
         self.clientid = clientId
         if self.api.connected:
             return
@@ -77,6 +91,9 @@ class InteractiveBrokers(BrokerageBase):
             self.api.reqAutoOpenOrders(True)
 
     def disconnect(self):
+        """
+        Disconnect from IB
+        """
         if not self.api.isConnected():
             return
 
@@ -90,9 +107,20 @@ class InteractiveBrokers(BrokerageBase):
         pass
 
     def next_order_id(self):
+        """
+        Return next available order id
+
+        :return: next order id available for next orders
+        """
         return self.orderid
 
     def place_order(self, order_event):
+        """
+        Place order to IB
+
+        :param order_event: client order to be placed
+        :return: no return. An order event is pushed to message queue with order status Acknowledged
+        """
         if not self.api.connected:
             return
 
@@ -118,6 +146,12 @@ class InteractiveBrokers(BrokerageBase):
         self.api.placeOrder(order_event.order_id, ib_contract, ib_order)
 
     def cancel_order(self, order_id):
+        """
+        Cancel client order.
+
+        :param order_id: order id of the order to be canceled
+        :return: no return. If order is successfully canceled, IB will return an orderstatus message.
+        """
         if not self.api.connected:
             return
 
@@ -130,9 +164,18 @@ class InteractiveBrokers(BrokerageBase):
         self.api.cancelOrder(order_id)
 
     def cancel_all_orders(self):
+        """
+        Cancel all standing orders, for example, before one wants to shut down completely for some reasons.
+
+        """
         self.api.reqGlobalCancel()
 
     def subscribe_market_data(self, sym):
+        """
+        Subscribe market data. Market data for this symbol will then be streamed to client.
+
+        :param sym: the symbol to be subscribed.
+        """
         if not self.api.connected:
             return
 

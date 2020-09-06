@@ -1,8 +1,12 @@
 Brokerage
 ==================
 
-.. automodule:: quanttrader.brokerage.backtest_brokerage
+.. autoclass:: quanttrader.brokerage.backtest_brokerage.BacktestBrokerage
     :members:
 
-.. automodule:: quanttrader.brokerage.ib_brokerage
+    .. automethod:: __init__
+
+.. autoclass:: quanttrader.brokerage.ib_brokerage.InteractiveBrokers
     :members:
+
+    .. automethod:: __init__

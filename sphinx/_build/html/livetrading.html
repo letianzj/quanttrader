@@ -82,14 +82,14 @@
               
             
             
-              <p class="caption"><span class="caption-text">Content</span></p>
+              <p class="caption"><span class="caption-text">Contents</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="backtest.html">Backtest</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Live Trading</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Code Structure</span></p>
+<p class="caption"><span class="caption-text">Codes</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="brokerage.html">Brokerage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="data.html">Data</a></li>
@@ -168,7 +168,14 @@
             
   <div class="section" id="live-trading">
 <h1>Live Trading<a class="headerlink" href="#live-trading" title="Permalink to this headline">¶</a></h1>
-<p>This is live trading</p>
+<p><a class="reference external" href="https://t.co/rXdW8EIbWw?amp=1">This youtube video</a> and <a class="reference external" href="https://letianzj.github.io/live-trading-ib-native-python.html">accompanying document</a> demonstrates step-by-step how to set up quanttrader for live trading. Currently quanttrader only supports Interactive Brokers.</p>
+<p>Files used for live Trading are</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://github.com/letianzj/quanttrader/blob/master/examples/live_engine.py">live_engine.py</a> - the main entry point</p></li>
+<li><p><a class="reference external" href="https://github.com/letianzj/quanttrader/blob/master/examples/config_live.yaml">config_live.yaml</a> - config file for live session</p></li>
+<li><p><a class="reference external" href="https://github.com/letianzj/quanttrader/blob/master/examples/instrument_meta.yaml">instrument_meta.yaml</a> - meta data for instruments to be traded</p></li>
+<li><p><a class="reference external" href="https://github.com/letianzj/quanttrader/blob/master/examples/prepare_trading_session.py">prepare_trading_session.yaml</a> - an example to demonstrate how to prepare data and strategy parameters before today’s live session</p></li>
+</ul>
 </div>
 
 

@@ -80,14 +80,14 @@
               
             
             
-              <p class="caption"><span class="caption-text">Content</span></p>
+              <p class="caption"><span class="caption-text">Contents</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="backtest.html">Backtest</a></li>
 <li class="toctree-l1"><a class="reference internal" href="livetrading.html">Live Trading</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Code Structure</span></p>
+<p class="caption"><span class="caption-text">Codes</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="brokerage.html">Brokerage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="data.html">Data</a></li>
@@ -166,7 +166,8 @@
 <h1 id="index">Index</h1>
 
 <div class="genindex-jumpbox">
- <a href="#A"><strong>A</strong></a>
+ <a href="#_"><strong>_</strong></a>
+ | <a href="#A"><strong>A</strong></a>
  | <a href="#B"><strong>B</strong></a>
  | <a href="#C"><strong>C</strong></a>
  | <a href="#D"><strong>D</strong></a>
@@ -175,6 +176,7 @@
  | <a href="#I"><strong>I</strong></a>
  | <a href="#L"><strong>L</strong></a>
  | <a href="#M"><strong>M</strong></a>
+ | <a href="#N"><strong>N</strong></a>
  | <a href="#O"><strong>O</strong></a>
  | <a href="#P"><strong>P</strong></a>
  | <a href="#Q"><strong>Q</strong></a>
@@ -184,6 +186,18 @@
  | <a href="#U"><strong>U</strong></a>
  
 </div>
+<h2 id="_">_</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="brokerage.html#quanttrader.brokerage.backtest_brokerage.BacktestBrokerage.__init__">__init__() (quanttrader.brokerage.backtest_brokerage.BacktestBrokerage method)</a>
+
+      <ul>
+        <li><a href="brokerage.html#quanttrader.brokerage.ib_brokerage.InteractiveBrokers.__init__">(quanttrader.brokerage.ib_brokerage.InteractiveBrokers method)</a>
+</li>
+      </ul></li>
+  </ul></td>
+</tr></table>
+
 <h2 id="A">A</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
@@ -223,9 +237,15 @@
         <li><a href="strategy.html#quanttrader.strategy.strategy_manager.StrategyManager.cancel_all">(quanttrader.strategy.strategy_manager.StrategyManager method)</a>
 </li>
       </ul></li>
-      <li><a href="strategy.html#quanttrader.strategy.strategy_base.StrategyBase.cancel_order">cancel_order() (quanttrader.strategy.strategy_base.StrategyBase method)</a>
+      <li><a href="brokerage.html#quanttrader.brokerage.ib_brokerage.InteractiveBrokers.cancel_all_orders">cancel_all_orders() (quanttrader.brokerage.ib_brokerage.InteractiveBrokers method)</a>
+</li>
+      <li><a href="brokerage.html#quanttrader.brokerage.backtest_brokerage.BacktestBrokerage.cancel_order">cancel_order() (quanttrader.brokerage.backtest_brokerage.BacktestBrokerage method)</a>
 
       <ul>
+        <li><a href="brokerage.html#quanttrader.brokerage.ib_brokerage.InteractiveBrokers.cancel_order">(quanttrader.brokerage.ib_brokerage.InteractiveBrokers method)</a>
+</li>
+        <li><a href="strategy.html#quanttrader.strategy.strategy_base.StrategyBase.cancel_order">(quanttrader.strategy.strategy_base.StrategyBase method)</a>
+</li>
         <li><a href="strategy.html#quanttrader.strategy.strategy_manager.StrategyManager.cancel_order">(quanttrader.strategy.strategy_manager.StrategyManager method)</a>
 </li>
       </ul></li>
@@ -234,6 +254,8 @@
       <li><a href="strategy.html#quanttrader.strategy.strategy_manager.StrategyManager.cancel_strategy">cancel_strategy() (quanttrader.strategy.strategy_manager.StrategyManager method)</a>
 </li>
       <li><a href="tradingengine.html#quanttrader.gui.ui_main_window.MainWindow.closeEvent">closeEvent() (quanttrader.gui.ui_main_window.MainWindow method)</a>
+</li>
+      <li><a href="brokerage.html#quanttrader.brokerage.ib_brokerage.InteractiveBrokers.connect">connect() (quanttrader.brokerage.ib_brokerage.InteractiveBrokers method)</a>
 </li>
       <li><a href="tradingengine.html#quanttrader.gui.ui_main_window.MainWindow.connect_to_broker">connect_to_broker() (quanttrader.gui.ui_main_window.MainWindow method)</a>
 </li>
@@ -247,6 +269,8 @@
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="brokerage.html#quanttrader.brokerage.ib_brokerage.InteractiveBrokers.disconnect">disconnect() (quanttrader.brokerage.ib_brokerage.InteractiveBrokers method)</a>
+</li>
       <li><a href="tradingengine.html#quanttrader.gui.ui_main_window.MainWindow.disconnect_from_broker">disconnect_from_broker() (quanttrader.gui.ui_main_window.MainWindow method)</a>
 </li>
   </ul></td>
@@ -329,10 +353,6 @@
       <ul>
         <li><a href="tradingengine.html#module-quanttrader.backtest_engine">quanttrader.backtest_engine</a>
 </li>
-        <li><a href="brokerage.html#module-quanttrader.brokerage.backtest_brokerage">quanttrader.brokerage.backtest_brokerage</a>
-</li>
-        <li><a href="brokerage.html#module-quanttrader.brokerage.ib_brokerage">quanttrader.brokerage.ib_brokerage</a>
-</li>
         <li><a href="data.html#module-quanttrader.data.backtest_data_feed">quanttrader.data.backtest_data_feed</a>
 </li>
         <li><a href="data.html#module-quanttrader.data.data_board">quanttrader.data.data_board</a>
@@ -379,6 +399,18 @@
   </ul></td>
 </tr></table>
 
+<h2 id="N">N</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="brokerage.html#quanttrader.brokerage.backtest_brokerage.BacktestBrokerage.next_order_id">next_order_id() (quanttrader.brokerage.backtest_brokerage.BacktestBrokerage method)</a>
+
+      <ul>
+        <li><a href="brokerage.html#quanttrader.brokerage.ib_brokerage.InteractiveBrokers.next_order_id">(quanttrader.brokerage.ib_brokerage.InteractiveBrokers method)</a>
+</li>
+      </ul></li>
+  </ul></td>
+</tr></table>
+
 <h2 id="O">O</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
@@ -414,9 +446,11 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="strategy.html#quanttrader.strategy.strategy_base.StrategyBase.on_stop">on_stop() (quanttrader.strategy.strategy_base.StrategyBase method)</a>
 </li>
-      <li><a href="order.html#quanttrader.order.order_manager.OrderManager.on_tick">on_tick() (quanttrader.order.order_manager.OrderManager method)</a>
+      <li><a href="brokerage.html#quanttrader.brokerage.backtest_brokerage.BacktestBrokerage.on_tick">on_tick() (quanttrader.brokerage.backtest_brokerage.BacktestBrokerage method)</a>
 
       <ul>
+        <li><a href="order.html#quanttrader.order.order_manager.OrderManager.on_tick">(quanttrader.order.order_manager.OrderManager method)</a>
+</li>
         <li><a href="strategy.html#quanttrader.strategy.strategy_base.StrategyBase.on_tick">(quanttrader.strategy.strategy_base.StrategyBase method)</a>
 </li>
         <li><a href="strategy.html#quanttrader.strategy.strategy_manager.StrategyManager.on_tick">(quanttrader.strategy.strategy_manager.StrategyManager method)</a>
@@ -453,6 +487,8 @@
       <li><a href="brokerage.html#quanttrader.brokerage.backtest_brokerage.BacktestBrokerage.place_order">place_order() (quanttrader.brokerage.backtest_brokerage.BacktestBrokerage method)</a>
 
       <ul>
+        <li><a href="brokerage.html#quanttrader.brokerage.ib_brokerage.InteractiveBrokers.place_order">(quanttrader.brokerage.ib_brokerage.InteractiveBrokers method)</a>
+</li>
         <li><a href="gui.html#quanttrader.gui.ui_trade_menu.TradeMenu.place_order">(quanttrader.gui.ui_trade_menu.TradeMenu method)</a>
 </li>
         <li><a href="strategy.html#quanttrader.strategy.strategy_base.StrategyBase.place_order">(quanttrader.strategy.strategy_base.StrategyBase method)</a>
@@ -485,20 +521,6 @@
 
       <ul>
         <li><a href="tradingengine.html#module-quanttrader.backtest_engine">module</a>
-</li>
-      </ul></li>
-      <li>
-    quanttrader.brokerage.backtest_brokerage
-
-      <ul>
-        <li><a href="brokerage.html#module-quanttrader.brokerage.backtest_brokerage">module</a>
-</li>
-      </ul></li>
-      <li>
-    quanttrader.brokerage.ib_brokerage
-
-      <ul>
-        <li><a href="brokerage.html#module-quanttrader.brokerage.ib_brokerage">module</a>
 </li>
       </ul></li>
       <li>
@@ -564,8 +586,6 @@
         <li><a href="tradingengine.html#module-quanttrader.gui.ui_main_window">module</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     quanttrader.gui.ui_order_window
 
@@ -573,6 +593,8 @@
         <li><a href="gui.html#module-quanttrader.gui.ui_order_window">module</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     quanttrader.gui.ui_position_menu
 
@@ -664,10 +686,12 @@
       </ul></li>
       <li><a href="brokerage.html#quanttrader.brokerage.ib_brokerage.InteractiveBrokers.request_historical_data">request_historical_data() (quanttrader.brokerage.ib_brokerage.InteractiveBrokers method)</a>
 </li>
-      <li><a href="risk.html#quanttrader.risk.risk_manager.RiskManager">RiskManager (class in quanttrader.risk.risk_manager)</a>
+      <li><a href="brokerage.html#quanttrader.brokerage.backtest_brokerage.BacktestBrokerage.reset">reset() (quanttrader.brokerage.backtest_brokerage.BacktestBrokerage method)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="risk.html#quanttrader.risk.risk_manager.RiskManager">RiskManager (class in quanttrader.risk.risk_manager)</a>
+</li>
       <li><a href="gui.html#quanttrader.gui.ui_risk_menu.RiskMenu">RiskMenu (class in quanttrader.gui.ui_risk_menu)</a>
 </li>
       <li><a href="tradingengine.html#quanttrader.backtest_engine.BacktestEngine.run">run() (quanttrader.backtest_engine.BacktestEngine method)</a>
@@ -740,8 +764,12 @@
         <li><a href="data.html#quanttrader.data.live_data_feed.LiveDataFeed.stream_next">(quanttrader.data.live_data_feed.LiveDataFeed method)</a>
 </li>
       </ul></li>
-      <li><a href="data.html#quanttrader.data.backtest_data_feed.BacktestDataFeed.subscribe_market_data">subscribe_market_data() (quanttrader.data.backtest_data_feed.BacktestDataFeed method)</a>
+      <li><a href="brokerage.html#quanttrader.brokerage.ib_brokerage.InteractiveBrokers.subscribe_market_data">subscribe_market_data() (quanttrader.brokerage.ib_brokerage.InteractiveBrokers method)</a>
+
+      <ul>
+        <li><a href="data.html#quanttrader.data.backtest_data_feed.BacktestDataFeed.subscribe_market_data">(quanttrader.data.backtest_data_feed.BacktestDataFeed method)</a>
 </li>
+      </ul></li>
       <li><a href="data.html#quanttrader.data.live_data_feed.LiveDataFeed.subscribe_ticker">subscribe_ticker() (quanttrader.data.live_data_feed.LiveDataFeed method)</a>
 </li>
       <li><a href="brokerage.html#quanttrader.brokerage.ib_brokerage.InteractiveBrokers.symbol_to_contract">symbol_to_contract() (quanttrader.brokerage.ib_brokerage.InteractiveBrokers static method)</a>

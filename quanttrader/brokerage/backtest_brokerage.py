@@ -10,13 +10,15 @@ from ..order.order_status import OrderStatus
 
 class BacktestBrokerage(BrokerageBase):
     """
-    Backtest brokerage: market order will be immediately filled.
-            limit/stop order will be saved to _active_orders for next tick
+    Market order is immediately filled.
+    Limit or stop order is saved to _active_orders for next tick
     """
     def __init__(self, events_engine, data_board):
         """
-        Initialises the handler, setting the event queue
-        as well as access to local pricing.
+        Initialize Backtest Brokerage.
+
+        :param events_engine: send fill_event to event engine
+        :param data_board: retrieve latest price from data_board
         """
         self._events_engine = events_engine
         self._data_board = data_board              # retrieve price against order
@@ -26,7 +28,13 @@ class BacktestBrokerage(BrokerageBase):
 
     # ------------------------------------ private functions -----------------------------#
     def _calculate_commission(self, full_symbol, fill_price, fill_size):
-        # take ib commission as example
+        """
+        Calculate commision. By default it uses IB commission charges.
+
+        :param full_symbol: contract symbol
+        :param fill_price: order fill price
+        :param fill_size: order fill size
+        """
         if 'STK' in full_symbol:
             commission = max(0.005*abs(fill_size), 1)     # per share
         elif 'FUT' in full_symbol:
@@ -41,6 +49,12 @@ class BacktestBrokerage(BrokerageBase):
         return commission
 
     def _try_cross_order(self, order_event, current_price):
+        """
+        Cross standing order against current price.
+
+        :param order_event: order to be crossed
+        :param current_price: current market price
+        """
         if order_event.order_type == OrderType.MARKET:
             order_event.order_status = OrderStatus.FILLED
         # stop limit, if buy, limit price < market price < stop price;
@@ -61,10 +75,21 @@ class BacktestBrokerage(BrokerageBase):
 
     # -------------------------------------- public functions -------------------------------#
     def reset(self):
+        """
+        Reset Backtest Brokerage.
+        """
         self._active_orders.clear()
         self.orderid = 1
 
     def on_tick(self, tick_event):
+        """
+        Cross standing orders against new tick_event
+
+        Market order can be potentially saved and then filled here against tomorrow's open price
+
+        :param tick_event: new tick just came in
+        :return: no return; if orders are filled, they are pushed into message queue
+        """
         # check standing (stop) orders
         # put trigged into queue
         # and remove from standing order list
@@ -105,8 +130,13 @@ class BacktestBrokerage(BrokerageBase):
 
     def place_order(self, order_event):
         """
-        try immediate fill, no latency or slippage
-        the alternative is to save the orders and fill on_tick
+        Place and fill client order; return fill event.
+
+        Market order is immediately filled, no latency or slippage
+        the alternative is to save the orders and fill in on_tick function
+
+        :param order_event: client order received
+        :return: no return; fill_event is pushed into message queue
         """
         # current_price = self._data_board.get_last_price(order_event.full_symbol)      # last price is not updated yet
         timestamp = order_event.create_time
@@ -136,8 +166,19 @@ class BacktestBrokerage(BrokerageBase):
 
 
     def cancel_order(self, order_id):
+        """
+        Handle cancel order request from client.
+
+        :param order_id: order id of the order to be canceled
+        :return: no return; cancel feedback is pushed into message queue
+        """
         self._active_orders = {k: v for k, v in self._active_orders if k != order_id}
 
     def next_order_id(self):
+        """
+        Return next available order id for client to use.
+
+        :return: next available new order id
+        """
         return self.orderid
     # ------------------------------- end of public functions -----------------------------#

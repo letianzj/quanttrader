@@ -5,7 +5,7 @@ Welcome to quanttrader documentation!
 
 .. toctree::
    :maxdepth: 2
-   :caption: Content
+   :caption: Contents
 
    introduction.md
    installation.md
@@ -14,7 +14,7 @@ Welcome to quanttrader documentation!
 
 .. toctree::
    :maxdepth: 2
-   :caption: Code Structure
+   :caption: Codes
 
    brokerage
    data

@@ -82,14 +82,14 @@
               
             
             
-              <p class="caption"><span class="caption-text">Content</span></p>
+              <p class="caption"><span class="caption-text">Contents</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Backtest</a></li>
 <li class="toctree-l1"><a class="reference internal" href="livetrading.html">Live Trading</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Code Structure</span></p>
+<p class="caption"><span class="caption-text">Codes</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="brokerage.html">Brokerage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="data.html">Data</a></li>
@@ -168,7 +168,16 @@
             
   <div class="section" id="backtest">
 <h1>Backtest<a class="headerlink" href="#backtest" title="Permalink to this headline">¶</a></h1>
-<p>This is backtest</p>
+<p><a class="reference external" href="https://letianzj.github.io/quanttrading-backtest.html">This document</a> explains quanttrader backtest framework and code structure.</p>
+<p><a class="reference external" href="https://github.com/letianzj/QuantResearch/tree/master/backtest">This repository</a> contains examples of some classical strategies and their Sharpe ratios, as well as grid-search based parameter optimization. The backtest is designed to be working together with the <a class="reference external" href="https://github.com/quantopian/pyfolio">pyfolio</a> library.</p>
+<p>One distinctive design in backtest is that it fills market order right away instead of filling against tomorrow’s open price. After all, in the daily bar setting, it is better to send out order at 15:59:59 than waiting overnight for next day’ open. If you disagree, simply save the market order similar to limit or stop order in the BacktestBrokerage class and then fill it on next tick.</p>
+<p>Currently backtest accepts three data feeds.</p>
+<ul class="simple">
+<li><p>Daily bar or intraday bar from Yahoo Finance. See <a class="reference external" href="https://medium.com/&#64;letian.zj/free-historical-market-data-download-in-python-74e8edd462cf?source=friends_link&amp;sk=5af814910524a593353ed3146290d50e">here</a> for how to download.</p></li>
+<li><p>Historical intraday bar from Interactive Brokers. Use <a class="reference external" href="https://github.com/letianzj/quanttrader/blob/master/examples/download_historical_data_from_ib.py">this script</a> to download.</p></li>
+<li><p>Live tick recorded from live trading session. <a class="reference external" href="https://t.co/rXdW8EIbWw?amp=1">This video</a> demonstrates how to do it in live session.</p></li>
+</ul>
+<p>It is possible to load your own data source by following the above examples.</p>
 </div>
 
 

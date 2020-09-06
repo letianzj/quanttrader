@@ -166,32 +166,193 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="module-quanttrader.brokerage.backtest_brokerage">
-<span id="brokerage"></span><h1>Brokerage<a class="headerlink" href="#module-quanttrader.brokerage.backtest_brokerage" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="brokerage">
+<h1>Brokerage<a class="headerlink" href="#brokerage" title="Permalink to this headline">¶</a></h1>
 <dl class="py class">
 <dt id="quanttrader.brokerage.backtest_brokerage.BacktestBrokerage">
 <em class="property">class </em><code class="sig-prename descclassname">quanttrader.brokerage.backtest_brokerage.</code><code class="sig-name descname">BacktestBrokerage</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">events_engine</span></em>, <em class="sig-param"><span class="n">data_board</span></em><span class="sig-paren">)</span><a class="headerlink" href="#quanttrader.brokerage.backtest_brokerage.BacktestBrokerage" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="simple">
-<dt>Backtest brokerage: market order will be immediately filled.</dt><dd><p>limit/stop order will be saved to _active_orders for next tick</p>
+<dd><p>Market order is immediately filled.
+Limit or stop order is saved to _active_orders for next tick</p>
+<dl class="py method">
+<dt id="quanttrader.brokerage.backtest_brokerage.BacktestBrokerage.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">events_engine</span></em>, <em class="sig-param"><span class="n">data_board</span></em><span class="sig-paren">)</span><a class="headerlink" href="#quanttrader.brokerage.backtest_brokerage.BacktestBrokerage.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize Backtest Brokerage.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>events_engine</strong> – send fill_event to event engine</p></li>
+<li><p><strong>data_board</strong> – retrieve latest price from data_board</p></li>
+</ul>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="quanttrader.brokerage.backtest_brokerage.BacktestBrokerage.cancel_order">
+<code class="sig-name descname">cancel_order</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">order_id</span></em><span class="sig-paren">)</span><a class="headerlink" href="#quanttrader.brokerage.backtest_brokerage.BacktestBrokerage.cancel_order" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handle cancel order request from client.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>order_id</strong> – order id of the order to be canceled</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>no return; cancel feedback is pushed into message queue</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="quanttrader.brokerage.backtest_brokerage.BacktestBrokerage.next_order_id">
+<code class="sig-name descname">next_order_id</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#quanttrader.brokerage.backtest_brokerage.BacktestBrokerage.next_order_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return next available order id for client to use.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>next available new order id</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="quanttrader.brokerage.backtest_brokerage.BacktestBrokerage.on_tick">
+<code class="sig-name descname">on_tick</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">tick_event</span></em><span class="sig-paren">)</span><a class="headerlink" href="#quanttrader.brokerage.backtest_brokerage.BacktestBrokerage.on_tick" title="Permalink to this definition">¶</a></dt>
+<dd><p>Cross standing orders against new tick_event</p>
+<p>Market order can be potentially saved and then filled here against tomorrow’s open price</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>tick_event</strong> – new tick just came in</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>no return; if orders are filled, they are pushed into message queue</p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py method">
 <dt id="quanttrader.brokerage.backtest_brokerage.BacktestBrokerage.place_order">
 <code class="sig-name descname">place_order</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">order_event</span></em><span class="sig-paren">)</span><a class="headerlink" href="#quanttrader.brokerage.backtest_brokerage.BacktestBrokerage.place_order" title="Permalink to this definition">¶</a></dt>
-<dd><p>try immediate fill, no latency or slippage
-the alternative is to save the orders and fill on_tick</p>
+<dd><p>Place and fill client order; return fill event.</p>
+<p>Market order is immediately filled, no latency or slippage
+the alternative is to save the orders and fill in on_tick function</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>order_event</strong> – client order received</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>no return; fill_event is pushed into message queue</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="quanttrader.brokerage.backtest_brokerage.BacktestBrokerage.reset">
+<code class="sig-name descname">reset</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#quanttrader.brokerage.backtest_brokerage.BacktestBrokerage.reset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reset Backtest Brokerage.</p>
 </dd></dl>
 
 </dd></dl>
 
-<span class="target" id="module-quanttrader.brokerage.ib_brokerage"></span><dl class="py class">
+<dl class="py class">
 <dt id="quanttrader.brokerage.ib_brokerage.InteractiveBrokers">
 <em class="property">class </em><code class="sig-prename descclassname">quanttrader.brokerage.ib_brokerage.</code><code class="sig-name descname">InteractiveBrokers</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">msg_event_engine</span></em>, <em class="sig-param"><span class="n">tick_event_engine</span></em>, <em class="sig-param"><span class="n">account</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span><a class="headerlink" href="#quanttrader.brokerage.ib_brokerage.InteractiveBrokers" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="py method">
+<dt id="quanttrader.brokerage.ib_brokerage.InteractiveBrokers.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">msg_event_engine</span></em>, <em class="sig-param"><span class="n">tick_event_engine</span></em>, <em class="sig-param"><span class="n">account</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span><a class="headerlink" href="#quanttrader.brokerage.ib_brokerage.InteractiveBrokers.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize InteractiveBrokers brokerage.</p>
+<p>Currently, the client is strongly coupled to broker without an incoming queue,
+e.g. client calls broker.place_order to place order directly.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>msg_event_engine</strong> – used to broadcast messages the broker generates back to client</p></li>
+<li><p><strong>tick_event_engine</strong> – used to broadcast market data back to client</p></li>
+<li><p><strong>account</strong> – the IB account</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="quanttrader.brokerage.ib_brokerage.InteractiveBrokers.cancel_all_orders">
+<code class="sig-name descname">cancel_all_orders</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#quanttrader.brokerage.ib_brokerage.InteractiveBrokers.cancel_all_orders" title="Permalink to this definition">¶</a></dt>
+<dd><p>Cancel all standing orders, for example, before one wants to shut down completely for some reasons.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="quanttrader.brokerage.ib_brokerage.InteractiveBrokers.cancel_order">
+<code class="sig-name descname">cancel_order</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">order_id</span></em><span class="sig-paren">)</span><a class="headerlink" href="#quanttrader.brokerage.ib_brokerage.InteractiveBrokers.cancel_order" title="Permalink to this definition">¶</a></dt>
+<dd><p>Cancel client order.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>order_id</strong> – order id of the order to be canceled</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>no return. If order is successfully canceled, IB will return an orderstatus message.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="quanttrader.brokerage.ib_brokerage.InteractiveBrokers.connect">
+<code class="sig-name descname">connect</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">host</span><span class="o">=</span><span class="default_value">'127.0.0.1'</span></em>, <em class="sig-param"><span class="n">port</span><span class="o">=</span><span class="default_value">7497</span></em>, <em class="sig-param"><span class="n">clientId</span><span class="o">=</span><span class="default_value">0</span></em><span class="sig-paren">)</span><a class="headerlink" href="#quanttrader.brokerage.ib_brokerage.InteractiveBrokers.connect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Connect to IB. Request open orders under clientid upon successful connection.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>host</strong> – host address</p></li>
+<li><p><strong>port</strong> – socket port</p></li>
+<li><p><strong>clientId</strong> – client id</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="quanttrader.brokerage.ib_brokerage.InteractiveBrokers.disconnect">
+<code class="sig-name descname">disconnect</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#quanttrader.brokerage.ib_brokerage.InteractiveBrokers.disconnect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Disconnect from IB</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="quanttrader.brokerage.ib_brokerage.InteractiveBrokers.next_order_id">
+<code class="sig-name descname">next_order_id</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#quanttrader.brokerage.ib_brokerage.InteractiveBrokers.next_order_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return next available order id</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>next order id available for next orders</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="quanttrader.brokerage.ib_brokerage.InteractiveBrokers.place_order">
+<code class="sig-name descname">place_order</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">order_event</span></em><span class="sig-paren">)</span><a class="headerlink" href="#quanttrader.brokerage.ib_brokerage.InteractiveBrokers.place_order" title="Permalink to this definition">¶</a></dt>
+<dd><p>Place order to IB</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>order_event</strong> – client order to be placed</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>no return. An order event is pushed to message queue with order status Acknowledged</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt id="quanttrader.brokerage.ib_brokerage.InteractiveBrokers.request_historical_data">
 <code class="sig-name descname">request_historical_data</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">symbol</span></em>, <em class="sig-param"><span class="n">end</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#quanttrader.brokerage.ib_brokerage.InteractiveBrokers.request_historical_data" title="Permalink to this definition">¶</a></dt>
 <dd><p>1800 S (30 mins)
 1 sec - 30 mins</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="quanttrader.brokerage.ib_brokerage.InteractiveBrokers.subscribe_market_data">
+<code class="sig-name descname">subscribe_market_data</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sym</span></em><span class="sig-paren">)</span><a class="headerlink" href="#quanttrader.brokerage.ib_brokerage.InteractiveBrokers.subscribe_market_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Subscribe market data. Market data for this symbol will then be streamed to client.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>sym</strong> – the symbol to be subscribed.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
