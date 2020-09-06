@@ -1,0 +1,261 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Order &mdash; quanttrader 0.5.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Performance" href="performance.html" />
+    <link rel="prev" title="GUI" href="gui.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> quanttrader
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Content</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="backtest.html">Backtest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="livetrading.html">Live Trading</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Code Structure</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="brokerage.html">Brokerage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data.html">Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="event.html">Event</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gui.html">GUI</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Order</a></li>
+<li class="toctree-l1"><a class="reference internal" href="performance.html">Performance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="position.html">Position</a></li>
+<li class="toctree-l1"><a class="reference internal" href="risk.html">Risk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="strategy.html">Strategy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tradingengine.html">Trading Engine</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">quanttrader</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Order</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/order.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-quanttrader.order.order_manager">
+<span id="order"></span><h1>Order<a class="headerlink" href="#module-quanttrader.order.order_manager" title="Permalink to this headline">¶</a></h1>
+<dl class="py class">
+<dt id="quanttrader.order.order_manager.OrderManager">
+<em class="property">class </em><code class="sig-prename descclassname">quanttrader.order.order_manager.</code><code class="sig-name descname">OrderManager</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span><span class="o">=</span><span class="default_value">'Global'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#quanttrader.order.order_manager.OrderManager" title="Permalink to this definition">¶</a></dt>
+<dd><p>Manage/track all the orders</p>
+<dl class="py method">
+<dt id="quanttrader.order.order_manager.OrderManager.on_cancel">
+<code class="sig-name descname">on_cancel</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">oid</span></em><span class="sig-paren">)</span><a class="headerlink" href="#quanttrader.order.order_manager.OrderManager.on_cancel" title="Permalink to this definition">¶</a></dt>
+<dd><p>This proactively set order status to PENDING_CANCEL
+:param o:
+:return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="quanttrader.order.order_manager.OrderManager.on_fill">
+<code class="sig-name descname">on_fill</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">fill_event</span></em><span class="sig-paren">)</span><a class="headerlink" href="#quanttrader.order.order_manager.OrderManager.on_fill" title="Permalink to this definition">¶</a></dt>
+<dd><p>on receive fill_event from broker</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="quanttrader.order.order_manager.OrderManager.on_order_status">
+<code class="sig-name descname">on_order_status</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">order_event</span></em><span class="sig-paren">)</span><a class="headerlink" href="#quanttrader.order.order_manager.OrderManager.on_order_status" title="Permalink to this definition">¶</a></dt>
+<dd><p>on order status change from broker
+including canceled status</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="quanttrader.order.order_manager.OrderManager.on_tick">
+<code class="sig-name descname">on_tick</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">tick_event</span></em><span class="sig-paren">)</span><a class="headerlink" href="#quanttrader.order.order_manager.OrderManager.on_tick" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="performance.html" class="btn btn-neutral float-right" title="Performance" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="gui.html" class="btn btn-neutral float-left" title="GUI" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Letian Wang
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

@@ -1,0 +1,320 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>GUI &mdash; quanttrader 0.5.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Order" href="order.html" />
+    <link rel="prev" title="Event" href="event.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> quanttrader
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Content</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="backtest.html">Backtest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="livetrading.html">Live Trading</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Code Structure</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="brokerage.html">Brokerage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data.html">Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="event.html">Event</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">GUI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="order.html">Order</a></li>
+<li class="toctree-l1"><a class="reference internal" href="performance.html">Performance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="position.html">Position</a></li>
+<li class="toctree-l1"><a class="reference internal" href="risk.html">Risk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="strategy.html">Strategy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tradingengine.html">Trading Engine</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">quanttrader</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>GUI</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/gui.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-quanttrader.gui.ui_account_window">
+<span id="gui"></span><h1>GUI<a class="headerlink" href="#module-quanttrader.gui.ui_account_window" title="Permalink to this headline">¶</a></h1>
+<dl class="py class">
+<dt id="quanttrader.gui.ui_account_window.AccountWindow">
+<em class="property">class </em><code class="sig-prename descclassname">quanttrader.gui.ui_account_window.</code><code class="sig-name descname">AccountWindow</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">account_manager</span></em>, <em class="sig-param"><span class="n">parent</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#quanttrader.gui.ui_account_window.AccountWindow" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="py method">
+<dt id="quanttrader.gui.ui_account_window.AccountWindow.update_table">
+<code class="sig-name descname">update_table</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">account_event</span></em><span class="sig-paren">)</span><a class="headerlink" href="#quanttrader.gui.ui_account_window.AccountWindow.update_table" title="Permalink to this definition">¶</a></dt>
+<dd><p>Only add row</p>
+</dd></dl>
+
+</dd></dl>
+
+<span class="target" id="module-quanttrader.gui.ui_fill_window"></span><dl class="py class">
+<dt id="quanttrader.gui.ui_fill_window.FillWindow">
+<em class="property">class </em><code class="sig-prename descclassname">quanttrader.gui.ui_fill_window.</code><code class="sig-name descname">FillWindow</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">parent</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#quanttrader.gui.ui_fill_window.FillWindow" title="Permalink to this definition">¶</a></dt>
+<dd><p>present fills</p>
+<dl class="py method">
+<dt id="quanttrader.gui.ui_fill_window.FillWindow.update_table">
+<code class="sig-name descname">update_table</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">fill_event</span></em><span class="sig-paren">)</span><a class="headerlink" href="#quanttrader.gui.ui_fill_window.FillWindow.update_table" title="Permalink to this definition">¶</a></dt>
+<dd><p>Only add row</p>
+</dd></dl>
+
+</dd></dl>
+
+<span class="target" id="module-quanttrader.gui.ui_log_window"></span><dl class="py class">
+<dt id="quanttrader.gui.ui_log_window.LogWindow">
+<em class="property">class </em><code class="sig-prename descclassname">quanttrader.gui.ui_log_window.</code><code class="sig-name descname">LogWindow</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">parent</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#quanttrader.gui.ui_log_window.LogWindow" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="py method">
+<dt id="quanttrader.gui.ui_log_window.LogWindow.update_table">
+<code class="sig-name descname">update_table</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">geneal_event</span></em><span class="sig-paren">)</span><a class="headerlink" href="#quanttrader.gui.ui_log_window.LogWindow.update_table" title="Permalink to this definition">¶</a></dt>
+<dd><p>Only add row</p>
+</dd></dl>
+
+</dd></dl>
+
+<span class="target" id="module-quanttrader.gui.ui_order_window"></span><dl class="py class">
+<dt id="quanttrader.gui.ui_order_window.OrderWindow">
+<em class="property">class </em><code class="sig-prename descclassname">quanttrader.gui.ui_order_window.</code><code class="sig-name descname">OrderWindow</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">order_manager</span></em>, <em class="sig-param"><span class="n">broker</span></em>, <em class="sig-param"><span class="n">parent</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#quanttrader.gui.ui_order_window.OrderWindow" title="Permalink to this definition">¶</a></dt>
+<dd><p>Order Monitor</p>
+<dl class="py method">
+<dt id="quanttrader.gui.ui_order_window.OrderWindow.update_order_status">
+<code class="sig-name descname">update_order_status</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">order_id</span></em><span class="sig-paren">)</span><a class="headerlink" href="#quanttrader.gui.ui_order_window.OrderWindow.update_order_status" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is called by fill handler to update order status</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="quanttrader.gui.ui_order_window.OrderWindow.update_table">
+<code class="sig-name descname">update_table</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">order_event</span></em><span class="sig-paren">)</span><a class="headerlink" href="#quanttrader.gui.ui_order_window.OrderWindow.update_table" title="Permalink to this definition">¶</a></dt>
+<dd><p>If order id exist, update status
+else append one row</p>
+</dd></dl>
+
+</dd></dl>
+
+<span class="target" id="module-quanttrader.gui.ui_position_menu"></span><dl class="py class">
+<dt id="quanttrader.gui.ui_position_menu.PositionMenu">
+<em class="property">class </em><code class="sig-prename descclassname">quanttrader.gui.ui_position_menu.</code><code class="sig-name descname">PositionMenu</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">staretgy_manager</span></em><span class="sig-paren">)</span><a class="headerlink" href="#quanttrader.gui.ui_position_menu.PositionMenu" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py class">
+<dt id="quanttrader.gui.ui_position_menu.PositionMenuBottom">
+<em class="property">class </em><code class="sig-prename descclassname">quanttrader.gui.ui_position_menu.</code><code class="sig-name descname">PositionMenuBottom</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">strategy_manager</span></em>, <em class="sig-param"><span class="n">parent</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#quanttrader.gui.ui_position_menu.PositionMenuBottom" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<span class="target" id="module-quanttrader.gui.ui_position_window"></span><dl class="py class">
+<dt id="quanttrader.gui.ui_position_window.PositionWindow">
+<em class="property">class </em><code class="sig-prename descclassname">quanttrader.gui.ui_position_window.</code><code class="sig-name descname">PositionWindow</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">parent</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#quanttrader.gui.ui_position_window.PositionWindow" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<span class="target" id="module-quanttrader.gui.ui_risk_menu"></span><dl class="py class">
+<dt id="quanttrader.gui.ui_risk_menu.RiskMenu">
+<em class="property">class </em><code class="sig-prename descclassname">quanttrader.gui.ui_risk_menu.</code><code class="sig-name descname">RiskMenu</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">strategy_manager</span></em><span class="sig-paren">)</span><a class="headerlink" href="#quanttrader.gui.ui_risk_menu.RiskMenu" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<span class="target" id="module-quanttrader.gui.ui_strategy_window"></span><dl class="py class">
+<dt id="quanttrader.gui.ui_strategy_window.StrategyWindow">
+<em class="property">class </em><code class="sig-prename descclassname">quanttrader.gui.ui_strategy_window.</code><code class="sig-name descname">StrategyWindow</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">strategy_manager</span></em>, <em class="sig-param"><span class="n">parent</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#quanttrader.gui.ui_strategy_window.StrategyWindow" title="Permalink to this definition">¶</a></dt>
+<dd><p>Strategy Monitor</p>
+</dd></dl>
+
+<span class="target" id="module-quanttrader.gui.ui_trade_menu"></span><dl class="py class">
+<dt id="quanttrader.gui.ui_trade_menu.TradeMenu">
+<em class="property">class </em><code class="sig-prename descclassname">quanttrader.gui.ui_trade_menu.</code><code class="sig-name descname">TradeMenu</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">broker</span></em>, <em class="sig-param"><span class="n">event_engine</span></em>, <em class="sig-param"><span class="n">order_manager</span></em>, <em class="sig-param"><span class="n">instrument_meta</span></em><span class="sig-paren">)</span><a class="headerlink" href="#quanttrader.gui.ui_trade_menu.TradeMenu" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="py method">
+<dt id="quanttrader.gui.ui_trade_menu.TradeMenu.place_order">
+<code class="sig-name descname">place_order</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#quanttrader.gui.ui_trade_menu.TradeMenu.place_order" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is not tracked by strategy_manager; tracked by global order_manager
+:return:</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="order.html" class="btn btn-neutral float-right" title="Order" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="event.html" class="btn btn-neutral float-left" title="Event" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Letian Wang
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

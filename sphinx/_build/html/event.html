@@ -1,0 +1,296 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Event &mdash; quanttrader 0.5.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="GUI" href="gui.html" />
+    <link rel="prev" title="Data" href="data.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> quanttrader
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Content</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="backtest.html">Backtest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="livetrading.html">Live Trading</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Code Structure</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="brokerage.html">Brokerage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data.html">Data</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Event</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gui.html">GUI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="order.html">Order</a></li>
+<li class="toctree-l1"><a class="reference internal" href="performance.html">Performance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="position.html">Position</a></li>
+<li class="toctree-l1"><a class="reference internal" href="risk.html">Risk</a></li>
+<li class="toctree-l1"><a class="reference internal" href="strategy.html">Strategy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tradingengine.html">Trading Engine</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">quanttrader</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Event</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/event.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-quanttrader.event.backtest_event_engine">
+<span id="event"></span><h1>Event<a class="headerlink" href="#module-quanttrader.event.backtest_event_engine" title="Permalink to this headline">¶</a></h1>
+<dl class="py class">
+<dt id="quanttrader.event.backtest_event_engine.BacktestEventEngine">
+<em class="property">class </em><code class="sig-prename descclassname">quanttrader.event.backtest_event_engine.</code><code class="sig-name descname">BacktestEventEngine</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">datafeed</span></em><span class="sig-paren">)</span><a class="headerlink" href="#quanttrader.event.backtest_event_engine.BacktestEventEngine" title="Permalink to this definition">¶</a></dt>
+<dd><p>Event queue + a while loop to dispatch events</p>
+<dl class="py method">
+<dt id="quanttrader.event.backtest_event_engine.BacktestEventEngine.put">
+<code class="sig-name descname">put</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">event</span></em><span class="sig-paren">)</span><a class="headerlink" href="#quanttrader.event.backtest_event_engine.BacktestEventEngine.put" title="Permalink to this definition">¶</a></dt>
+<dd><p>put event in the queue; call from outside</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="quanttrader.event.backtest_event_engine.BacktestEventEngine.register_handler">
+<code class="sig-name descname">register_handler</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">type_</span></em>, <em class="sig-param"><span class="n">handler</span></em><span class="sig-paren">)</span><a class="headerlink" href="#quanttrader.event.backtest_event_engine.BacktestEventEngine.register_handler" title="Permalink to this definition">¶</a></dt>
+<dd><p>register handler/subscriber</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="quanttrader.event.backtest_event_engine.BacktestEventEngine.run">
+<code class="sig-name descname">run</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">nSteps</span><span class="o">=</span><span class="default_value">- 1</span></em><span class="sig-paren">)</span><a class="headerlink" href="#quanttrader.event.backtest_event_engine.BacktestEventEngine.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>run backtest,
+if nSteps = -1, run to the end; else run nSteps</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="quanttrader.event.backtest_event_engine.BacktestEventEngine.unregister_handler">
+<code class="sig-name descname">unregister_handler</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">type_</span></em>, <em class="sig-param"><span class="n">handler</span></em><span class="sig-paren">)</span><a class="headerlink" href="#quanttrader.event.backtest_event_engine.BacktestEventEngine.unregister_handler" title="Permalink to this definition">¶</a></dt>
+<dd><p>unregister handler/subscriber</p>
+</dd></dl>
+
+</dd></dl>
+
+<span class="target" id="module-quanttrader.event.live_event_engine"></span><dl class="py class">
+<dt id="quanttrader.event.live_event_engine.LiveEventEngine">
+<em class="property">class </em><code class="sig-prename descclassname">quanttrader.event.live_event_engine.</code><code class="sig-name descname">LiveEventEngine</code><a class="headerlink" href="#quanttrader.event.live_event_engine.LiveEventEngine" title="Permalink to this definition">¶</a></dt>
+<dd><p>Event queue + a thread to dispatch events</p>
+<dl class="py method">
+<dt id="quanttrader.event.live_event_engine.LiveEventEngine.put">
+<code class="sig-name descname">put</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">event</span></em><span class="sig-paren">)</span><a class="headerlink" href="#quanttrader.event.live_event_engine.LiveEventEngine.put" title="Permalink to this definition">¶</a></dt>
+<dd><p>put event in the queue; call from outside</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="quanttrader.event.live_event_engine.LiveEventEngine.register_handler">
+<code class="sig-name descname">register_handler</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">type_</span></em>, <em class="sig-param"><span class="n">handler</span></em><span class="sig-paren">)</span><a class="headerlink" href="#quanttrader.event.live_event_engine.LiveEventEngine.register_handler" title="Permalink to this definition">¶</a></dt>
+<dd><p>register handler/subscriber</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="quanttrader.event.live_event_engine.LiveEventEngine.start">
+<code class="sig-name descname">start</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">timer</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#quanttrader.event.live_event_engine.LiveEventEngine.start" title="Permalink to this definition">¶</a></dt>
+<dd><p>start the dispatcher thread</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="quanttrader.event.live_event_engine.LiveEventEngine.stop">
+<code class="sig-name descname">stop</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#quanttrader.event.live_event_engine.LiveEventEngine.stop" title="Permalink to this definition">¶</a></dt>
+<dd><p>stop the dispatcher thread</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="quanttrader.event.live_event_engine.LiveEventEngine.unregister_handler">
+<code class="sig-name descname">unregister_handler</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">type_</span></em>, <em class="sig-param"><span class="n">handler</span></em><span class="sig-paren">)</span><a class="headerlink" href="#quanttrader.event.live_event_engine.LiveEventEngine.unregister_handler" title="Permalink to this definition">¶</a></dt>
+<dd><p>unregister handler/subscriber</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="gui.html" class="btn btn-neutral float-right" title="GUI" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="data.html" class="btn btn-neutral float-left" title="Data" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Letian Wang
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

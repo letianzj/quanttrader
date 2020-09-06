@@ -1,0 +1,421 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Strategy &mdash; quanttrader 0.5.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Trading Engine" href="tradingengine.html" />
+    <link rel="prev" title="Risk" href="risk.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> quanttrader
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Content</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="backtest.html">Backtest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="livetrading.html">Live Trading</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Code Structure</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="brokerage.html">Brokerage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data.html">Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="event.html">Event</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gui.html">GUI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="order.html">Order</a></li>
+<li class="toctree-l1"><a class="reference internal" href="performance.html">Performance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="position.html">Position</a></li>
+<li class="toctree-l1"><a class="reference internal" href="risk.html">Risk</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Strategy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tradingengine.html">Trading Engine</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">quanttrader</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Strategy</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/strategy.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-quanttrader.strategy.strategy_base">
+<span id="strategy"></span><h1>Strategy<a class="headerlink" href="#module-quanttrader.strategy.strategy_base" title="Permalink to this headline">¶</a></h1>
+<dl class="py class">
+<dt id="quanttrader.strategy.strategy_base.StrategyBase">
+<em class="property">class </em><code class="sig-prename descclassname">quanttrader.strategy.strategy_base.</code><code class="sig-name descname">StrategyBase</code><a class="headerlink" href="#quanttrader.strategy.strategy_base.StrategyBase" title="Permalink to this definition">¶</a></dt>
+<dd><p>Base strategy class</p>
+<dl class="py method">
+<dt id="quanttrader.strategy.strategy_base.StrategyBase.adjust_position">
+<code class="sig-name descname">adjust_position</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sym</span></em>, <em class="sig-param"><span class="n">size_from</span></em>, <em class="sig-param"><span class="n">size_to</span></em>, <em class="sig-param"><span class="n">timestamp</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#quanttrader.strategy.strategy_base.StrategyBase.adjust_position" title="Permalink to this definition">¶</a></dt>
+<dd><p>use market order to adjust position
+:param sym:
+:param size_from:
+:param size_to:
+:param timestamp: used by backtest broker to get price on timestamp
+:return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="quanttrader.strategy.strategy_base.StrategyBase.cancel_all">
+<code class="sig-name descname">cancel_all</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#quanttrader.strategy.strategy_base.StrategyBase.cancel_all" title="Permalink to this definition">¶</a></dt>
+<dd><p>cancel all standing orders from this strategy id
+:return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="quanttrader.strategy.strategy_base.StrategyBase.cancel_order">
+<code class="sig-name descname">cancel_order</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">oid</span></em><span class="sig-paren">)</span><a class="headerlink" href="#quanttrader.strategy.strategy_base.StrategyBase.cancel_order" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="quanttrader.strategy.strategy_base.StrategyBase.on_fill">
+<code class="sig-name descname">on_fill</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">fill_event</span></em><span class="sig-paren">)</span><a class="headerlink" href="#quanttrader.strategy.strategy_base.StrategyBase.on_fill" title="Permalink to this definition">¶</a></dt>
+<dd><p>on order filled
+derived class call super().on_fill first</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="quanttrader.strategy.strategy_base.StrategyBase.on_init">
+<code class="sig-name descname">on_init</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">strategy_manager</span></em>, <em class="sig-param"><span class="n">data_board</span></em>, <em class="sig-param"><span class="n">instrument_meta</span></em><span class="sig-paren">)</span><a class="headerlink" href="#quanttrader.strategy.strategy_base.StrategyBase.on_init" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="quanttrader.strategy.strategy_base.StrategyBase.on_order_status">
+<code class="sig-name descname">on_order_status</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">order_event</span></em><span class="sig-paren">)</span><a class="headerlink" href="#quanttrader.strategy.strategy_base.StrategyBase.on_order_status" title="Permalink to this definition">¶</a></dt>
+<dd><p>on order acknowledged
+:return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="quanttrader.strategy.strategy_base.StrategyBase.on_start">
+<code class="sig-name descname">on_start</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#quanttrader.strategy.strategy_base.StrategyBase.on_start" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="quanttrader.strategy.strategy_base.StrategyBase.on_stop">
+<code class="sig-name descname">on_stop</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#quanttrader.strategy.strategy_base.StrategyBase.on_stop" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="quanttrader.strategy.strategy_base.StrategyBase.on_tick">
+<code class="sig-name descname">on_tick</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">tick_event</span></em><span class="sig-paren">)</span><a class="headerlink" href="#quanttrader.strategy.strategy_base.StrategyBase.on_tick" title="Permalink to this definition">¶</a></dt>
+<dd><p>Respond to tick</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="quanttrader.strategy.strategy_base.StrategyBase.place_order">
+<code class="sig-name descname">place_order</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">o</span></em><span class="sig-paren">)</span><a class="headerlink" href="#quanttrader.strategy.strategy_base.StrategyBase.place_order" title="Permalink to this definition">¶</a></dt>
+<dd><p>expect user to set up order type, order size and order price</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="quanttrader.strategy.strategy_base.StrategyBase.set_capital">
+<code class="sig-name descname">set_capital</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">capital</span></em><span class="sig-paren">)</span><a class="headerlink" href="#quanttrader.strategy.strategy_base.StrategyBase.set_capital" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="quanttrader.strategy.strategy_base.StrategyBase.set_params">
+<code class="sig-name descname">set_params</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">params_dict</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#quanttrader.strategy.strategy_base.StrategyBase.set_params" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="quanttrader.strategy.strategy_base.StrategyBase.set_symbols">
+<code class="sig-name descname">set_symbols</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">symbols</span></em><span class="sig-paren">)</span><a class="headerlink" href="#quanttrader.strategy.strategy_base.StrategyBase.set_symbols" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<span class="target" id="module-quanttrader.strategy.strategy_manager"></span><dl class="py class">
+<dt id="quanttrader.strategy.strategy_manager.StrategyManager">
+<em class="property">class </em><code class="sig-prename descclassname">quanttrader.strategy.strategy_manager.</code><code class="sig-name descname">StrategyManager</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">config</span></em>, <em class="sig-param"><span class="n">broker</span></em>, <em class="sig-param"><span class="n">order_manager</span></em>, <em class="sig-param"><span class="n">position_manager</span></em>, <em class="sig-param"><span class="n">risk_manager</span></em>, <em class="sig-param"><span class="n">data_board</span></em>, <em class="sig-param"><span class="n">instrument_meta</span></em><span class="sig-paren">)</span><a class="headerlink" href="#quanttrader.strategy.strategy_manager.StrategyManager" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="py method">
+<dt id="quanttrader.strategy.strategy_manager.StrategyManager.cancel_all">
+<code class="sig-name descname">cancel_all</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#quanttrader.strategy.strategy_manager.StrategyManager.cancel_all" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="quanttrader.strategy.strategy_manager.StrategyManager.cancel_order">
+<code class="sig-name descname">cancel_order</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">oid</span></em><span class="sig-paren">)</span><a class="headerlink" href="#quanttrader.strategy.strategy_manager.StrategyManager.cancel_order" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="quanttrader.strategy.strategy_manager.StrategyManager.cancel_strategy">
+<code class="sig-name descname">cancel_strategy</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sid</span></em><span class="sig-paren">)</span><a class="headerlink" href="#quanttrader.strategy.strategy_manager.StrategyManager.cancel_strategy" title="Permalink to this definition">¶</a></dt>
+<dd><p>call strategy cancel to take care of strategy order_manager</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="quanttrader.strategy.strategy_manager.StrategyManager.flat_all">
+<code class="sig-name descname">flat_all</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#quanttrader.strategy.strategy_manager.StrategyManager.flat_all" title="Permalink to this definition">¶</a></dt>
+<dd><p>flat all according to position_manager
+TODO: should turn off all strategies?
+:return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="quanttrader.strategy.strategy_manager.StrategyManager.flat_strategy">
+<code class="sig-name descname">flat_strategy</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sid</span></em><span class="sig-paren">)</span><a class="headerlink" href="#quanttrader.strategy.strategy_manager.StrategyManager.flat_strategy" title="Permalink to this definition">¶</a></dt>
+<dd><p>flat with MARKET order (default)
+Assume each strategy track its own positions
+TODO: should turn off strategy?</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="quanttrader.strategy.strategy_manager.StrategyManager.load_strategy">
+<code class="sig-name descname">load_strategy</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">strat_dict</span></em><span class="sig-paren">)</span><a class="headerlink" href="#quanttrader.strategy.strategy_manager.StrategyManager.load_strategy" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="quanttrader.strategy.strategy_manager.StrategyManager.on_cancel">
+<code class="sig-name descname">on_cancel</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">order_event</span></em><span class="sig-paren">)</span><a class="headerlink" href="#quanttrader.strategy.strategy_manager.StrategyManager.on_cancel" title="Permalink to this definition">¶</a></dt>
+<dd><p>TODO no need for this</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="quanttrader.strategy.strategy_manager.StrategyManager.on_fill">
+<code class="sig-name descname">on_fill</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">fill_event</span></em><span class="sig-paren">)</span><a class="headerlink" href="#quanttrader.strategy.strategy_manager.StrategyManager.on_fill" title="Permalink to this definition">¶</a></dt>
+<dd><p>assign fill ordering to order id ==&gt; strategy id
+TODO: check fill_event source; if not, fix it or use fill_event.order_id</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="quanttrader.strategy.strategy_manager.StrategyManager.on_order_status">
+<code class="sig-name descname">on_order_status</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">order_event</span></em><span class="sig-paren">)</span><a class="headerlink" href="#quanttrader.strategy.strategy_manager.StrategyManager.on_order_status" title="Permalink to this definition">¶</a></dt>
+<dd><p>TODO: check if source is working
+:param order_event:
+:return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="quanttrader.strategy.strategy_manager.StrategyManager.on_position">
+<code class="sig-name descname">on_position</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">pos</span></em><span class="sig-paren">)</span><a class="headerlink" href="#quanttrader.strategy.strategy_manager.StrategyManager.on_position" title="Permalink to this definition">¶</a></dt>
+<dd><p>get initial position
+read from config file instead
+:param pos:
+:return:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="quanttrader.strategy.strategy_manager.StrategyManager.on_tick">
+<code class="sig-name descname">on_tick</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">k</span></em><span class="sig-paren">)</span><a class="headerlink" href="#quanttrader.strategy.strategy_manager.StrategyManager.on_tick" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="quanttrader.strategy.strategy_manager.StrategyManager.pause_strategy">
+<code class="sig-name descname">pause_strategy</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sid</span></em><span class="sig-paren">)</span><a class="headerlink" href="#quanttrader.strategy.strategy_manager.StrategyManager.pause_strategy" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="quanttrader.strategy.strategy_manager.StrategyManager.place_order">
+<code class="sig-name descname">place_order</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">o</span></em>, <em class="sig-param"><span class="n">check_risk</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#quanttrader.strategy.strategy_manager.StrategyManager.place_order" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="quanttrader.strategy.strategy_manager.StrategyManager.start_all">
+<code class="sig-name descname">start_all</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#quanttrader.strategy.strategy_manager.StrategyManager.start_all" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="quanttrader.strategy.strategy_manager.StrategyManager.start_strategy">
+<code class="sig-name descname">start_strategy</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sid</span></em><span class="sig-paren">)</span><a class="headerlink" href="#quanttrader.strategy.strategy_manager.StrategyManager.start_strategy" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="quanttrader.strategy.strategy_manager.StrategyManager.stop_all">
+<code class="sig-name descname">stop_all</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#quanttrader.strategy.strategy_manager.StrategyManager.stop_all" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="quanttrader.strategy.strategy_manager.StrategyManager.stop_strategy">
+<code class="sig-name descname">stop_strategy</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sid</span></em><span class="sig-paren">)</span><a class="headerlink" href="#quanttrader.strategy.strategy_manager.StrategyManager.stop_strategy" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="tradingengine.html" class="btn btn-neutral float-right" title="Trading Engine" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="risk.html" class="btn btn-neutral float-left" title="Risk" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Letian Wang
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
