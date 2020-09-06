@@ -100,12 +100,24 @@ class MainWindow(QtWidgets.QMainWindow):
     # -------------------------------- Event Handler   --------------------------------------------#
     #################################################################################################
     def connect_to_broker(self):
+        """
+        Connect to broker
+        :return: None
+        """
         self._broker.connect(self._config['host'], self._config['port'], self._config['client_id'])
 
     def disconnect_from_broker(self):
+        """
+        Disconnect from broker
+        :return: None
+        """
         self._broker.disconnect()
 
     def open_trade_widget(self):
+        """
+        Open discretionary trade window
+        :return: None
+        """
         widget = self.widgets.get('trade_menu', None)
         if not widget:
             widget = TradeMenu(self._broker, self._msg_events_engine, self._order_manager, self._strategy_manager._instrument_meta)
@@ -113,6 +125,10 @@ class MainWindow(QtWidgets.QMainWindow):
         widget.show()
 
     def open_position_widget(self):
+        """
+        Open position monitor for strategies
+        :return: None
+        """
         widget = self.widgets.get('position_menu', None)
         if not widget:
             widget = PositionMenu(self._strategy_manager)
@@ -120,13 +136,22 @@ class MainWindow(QtWidgets.QMainWindow):
         widget.show()
 
     def open_risk_widget(self):
+        """
+        Open risk manager monitor for strategies
+        :return: None
+        """
         widget = self.widgets.get('risk_menu', None)
         if not widget:
             widget = RiskMenu(self._strategy_manager)
             self.widgets['risk_menu'] = widget
         widget.show()
 
-    def update_status_bar(self, message):
+    def update_status_bar(self, message: str):
+        """
+        Update status bar with message
+        :param message: message to be shown in the status bar
+        :return: None
+        """
         self.statusBar().showMessage(message)
         self.strategy_window.update_pnl()        # pnl update
         # self._broker.heartbeat()

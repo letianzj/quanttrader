@@ -131,15 +131,3 @@ class StrategyBase(metaclass=ABCMeta):
         for oid in self._order_manager.standing_order_set:
             self._order_manager.on_cancel(oid)
             self.strategy_manager.cancel_order(oid)
-
-class Strategies(StrategyBase):
-    """
-    Strategies is a collection of strategy
-    Usage e.g.: strategy = Strategies(strategyA, DisplayStrategy())
-    """
-    def __init__(self, *strategies):
-        self._strategies_collection = strategies
-
-    def on_tick(self, event):
-        for strategy in self._strategies_collection:
-            strategy.on_tick(event)
