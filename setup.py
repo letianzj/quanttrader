@@ -13,7 +13,7 @@ setup(
     description='quanttrader backtest and live trading library',
     long_description=readme,
     long_description_content_type='text/markdown',
-    version='0.5.0',
+    version='0.5.1',
     author='Letian Wang',
     author_email='letian.zj@gmail.com',
     url='https://github.com/letianzj/quanttrader',
