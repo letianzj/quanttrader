@@ -13,7 +13,7 @@ setup(
     description='quanttrader backtest and live trading library',
     long_description=readme,
     long_description_content_type='text/markdown',
-    version='0.5.1',
+    version='0.5.2',
     author='Letian Wang',
     author_email='letian.zj@gmail.com',
     url='https://github.com/letianzj/quanttrader',
@@ -37,7 +37,7 @@ setup(
         'scikit-learn>=0.22.1',
         'seaborn>=0.10.1',
         'pytest>=3.6.4',
-        'PyQt5>=5.13.0',
+        'PyQt5>=5.10.1',
         'QDarkStyle>=2.8',
         'ibapi>=9.76.1',
         'gym>=0.17.0'
