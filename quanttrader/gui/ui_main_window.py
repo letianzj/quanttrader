@@ -4,6 +4,7 @@
 import sys
 import os
 import webbrowser
+import pandas as pd
 import psutil
 from queue import Queue, Empty
 from copy import copy
@@ -146,6 +147,57 @@ class MainWindow(QtWidgets.QMainWindow):
             self.widgets['risk_menu'] = widget
         widget.show()
 
+    def save_orders_and_trades(self):
+        today = datetime.today().strftime('%Y%m%d')
+        df_orders = pd.DataFrame(columns=['OrderID', 'SID', 'Symbol', 'Type', 'Limit', 'Stop', 'Quantity', 'Filled', 'Status', 'OrderTime', 'CancelTime', 'Account'], index=range(len(self._order_manager.order_dict.keys())))
+        i = 0
+        for k, v in self._order_manager.order_dict.items():
+            df_orders.iloc[i]['OrderID'] = v.order_id
+            df_orders.iloc[i]['SID'] = v.source
+            df_orders.iloc[i]['Symbol'] = v.full_symbol
+            df_orders.iloc[i]['Type'] = v.order_type
+            df_orders.iloc[i]['Limit'] = v.limit_price
+            df_orders.iloc[i]['Stop'] = v.stop_price
+            df_orders.iloc[i]['Quantity'] = v.order_size
+            df_orders.iloc[i]['Filled'] = v.fill_size
+            df_orders.iloc[i]['Status'] = v.order_status
+            df_orders.iloc[i]['OrderTime'] = v.create_time
+            df_orders.iloc[i]['CancelTime'] = v.cancel_time
+            df_orders.iloc[i]['Account'] = v.account
+
+            i += 1
+            if i >= df_orders.shape[0]:
+                break
+
+        try:
+            df_orders.to_csv(os.path.join(self._config['root_path'], f'log/orders_{today}.csv'), index=False)
+        except:
+            pass
+
+        df_fill = pd.DataFrame(
+            columns=['OrderID', 'FillID', 'SID', 'Symbol', 'FillPrice', 'FillSize', 'FillTime', 'Exchange', 'Account'],
+            index=range(len(self._order_manager.fill_dict.keys())))
+
+        i = 0
+        for k, v in self._order_manager.fill_dict.items():
+            df_fill.iloc[i]['OrderID'] = v.order_id
+            df_fill.iloc[i]['FillID'] = v.fill_id
+            df_fill.iloc[i]['SID'] = v.source
+            df_fill.iloc[i]['Symbol'] = v.full_symbol
+            df_fill.iloc[i]['FillPrice'] = v.fill_price
+            df_fill.iloc[i]['FillSize'] = v.fill_size
+            df_fill.iloc[i]['FillTime'] = v.fill_time
+            df_fill.iloc[i]['Exchange'] = v.exchange
+            df_fill.iloc[i]['Account'] = v.account
+
+            i += 1
+            if i >= df_fill.shape[0]:
+                break
+        try:
+            df_fill.to_csv(os.path.join(self._config['root_path'], f'log/trades_{today}.csv'), index=False)
+        except:
+            pass
+
     def update_status_bar(self, message: str):
         """
         Update status bar with message
@@ -266,6 +318,13 @@ class MainWindow(QtWidgets.QMainWindow):
         sys_tradeAction.setStatusTip('Manual Trade')
         sys_tradeAction.triggered.connect(self.open_trade_widget)
         sysMenu.addAction(sys_tradeAction)
+
+        sysMenu.addSeparator()
+
+        sys_saveAction = QtWidgets.QAction('Save Trades', self)
+        sys_saveAction.setStatusTip('Save Trades')
+        sys_saveAction.triggered.connect(self.save_orders_and_trades)
+        sysMenu.addAction(sys_saveAction)
 
         sysMenu.addSeparator()
 

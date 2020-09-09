@@ -19,7 +19,7 @@ signal(SIGINT, SIG_DFL)
 
 
 def main(config_file, instrument_meta_file):
-    config = None
+    config = {}
     today =  datetime.today().strftime('%Y%m%d')
     try:
         # path = os.path.abspath(os.path.dirname(__file__))
@@ -28,6 +28,7 @@ def main(config_file, instrument_meta_file):
             config = yaml.safe_load(fd)
     except IOError:
         print("config.yaml is missing")
+    config['root_path'] = os.getcwd()
 
     instrument_meta = {}
     try:

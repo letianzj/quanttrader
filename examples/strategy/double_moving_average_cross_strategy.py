@@ -44,6 +44,9 @@ class DoubleMovingAverageCrossStrategy(StrategyBase):
 
         print(k)
 
+        if k.timestamp >= self.end_time:          # don't add to new bar
+            return
+
         seconds =  (k.timestamp - self.start_time).seconds
 
         if seconds == self.df_bar_idx:          # same bar

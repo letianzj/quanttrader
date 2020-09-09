@@ -51,6 +51,7 @@ class OrderManager(object):
                     self.standing_order_set.add(order_event.order_id)
                 elif order_event.order_status == OrderStatus.CANCELED:
                     self.canceled_order_set.add(order_event.order_id)
+                    self.order_dict[order_event.order_id].cancel_time = order_event.cancel_time
                     if order_event.order_id in self.standing_order_set:
                         self.standing_order_set.remove(order_event.order_id)
                 return True

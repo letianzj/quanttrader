@@ -56,6 +56,7 @@ class MovingAverageCrossStrategy(StrategyBase):
                 # elif it is a sell order; cancel the order
                 # TODO it's possible that order fails to be placed due to connection issue; and order status is kept as acknowledged
                 # TODO it's also possible to cancel a partially filled order
+                # TODO: also see cancel placed on 10:07:21.771; openorder pending cancel on 10:07:21.918; execDetails filled on 10:07:21.958; orderstatus filled on 10:07:21.992; error message cancel rejected on 10:07:22.112
                 standing_oids = self._order_manager.retrieve_standing_orders()
                 if len(standing_oids) > 0:
                     _logger.info(f"MovingAverageCrossStrategy standing orders: {','.join(map(str, standing_oids))}")
