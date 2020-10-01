@@ -30,14 +30,14 @@ class Position(object):
         # else if short or size < 0, pnl is positive if last_price < average_price
         self.unrealized_pnl = (last_price - self.average_price) * self.size * multiplier
 
-    def on_fill(self, fill_event, multiplier):
+    def on_fill(self, fill_event, multiplier, parent_name):
         """
         adjust average_price and size according to new fill/trade/transaction
         """
         if self.full_symbol != fill_event.full_symbol:
             _logger.error(
-                "Position symbol %s and fill event symbol %s do not match. "
-                % (self.full_symbol, fill_event.full_symbol)
+                "%s Position symbol %s and fill event symbol %s do not match. "
+                % (parent_name, self.full_symbol, fill_event.full_symbol)
             )
 
         if self.size > 0:        # existing long
@@ -46,7 +46,7 @@ class Position(object):
                                       + fill_event.commission / multiplier) \
                                      // (self.size + fill_event.fill_size)
             else:        # flat long
-                #_logger.info(f'flat long realized_pnl {self.realized_pnl}, avg {self.average_price}, fill {fill_event.fill_price}, {fill_event.fill_size}, {multiplier}, {fill_event.commission}')
+                #_logger.info(f'{parent_name} flat long realized_pnl {self.realized_pnl}, avg {self.average_price}, fill {fill_event.fill_price}, {fill_event.fill_size}, {multiplier}, {fill_event.commission}')
                 if abs(self.size) >= abs(fill_event.fill_size):   # stay long
                     self.realized_pnl += (self.average_price - fill_event.fill_price) * fill_event.fill_size \
                                          * multiplier - fill_event.commission
@@ -60,7 +60,7 @@ class Position(object):
                                       + fill_event.commission / multiplier) \
                                      // (self.size + fill_event.fill_size)
             else:          # flat short
-                #_logger.info(f'flat short realized_pnl {self.realized_pnl}, avg {self.average_price}, fill {fill_event.fill_price}, {fill_event.fill_size}, {multiplier}, {fill_event.commission}')
+                #_logger.info(f'{parent_name} flat short realized_pnl {self.realized_pnl}, avg {self.average_price}, fill {fill_event.fill_price}, {fill_event.fill_size}, {multiplier}, {fill_event.commission}')
                 if abs(self.size) >= abs(fill_event.fill_size):  # stay short
                     self.realized_pnl += (self.average_price - fill_event.fill_price) * fill_event.fill_size \
                                          * multiplier - fill_event.commission
@@ -72,3 +72,5 @@ class Position(object):
             self.average_price = fill_event.fill_price + fill_event.commission / multiplier /fill_event.fill_size
 
         self.size += fill_event.fill_size
+
+        _logger.info(f"{parent_name} Position Fill: sym {self.full_symbol}, avg price {self.average_price}, fill price {fill_event.fill_price}, fill size {fill_event.fill_size}, after size {self.size}, close pnl {self.realized_pnl}")

@@ -189,6 +189,7 @@ class InteractiveBrokers(BrokerageBase):
             return
 
         self.api.reqContractDetails(self.reqid, contract)
+        _logger.info(f'Requesting market data {self.reqid} {sym}')
         self.contract_detail_request_contract_dict[self.reqid] = contract
         self.contract_detail_request_symbol_dict[self.reqid] = sym
         self.reqid +=1
@@ -723,6 +724,9 @@ class IBApi(EWrapper, EClient):
 
     def updateAccountValue(self, key: str, val: str, currency: str,
                            accountName: str):
+        """
+        Just as with the TWS' Account Window, unless there is a position change this information is updated at a fixed interval of three minutes.
+        """
         super().updateAccountValue(key, val, currency, accountName)
         msg = f'UpdateAccountValue. Key: {key}, Value: {val},  Currency: {currency}, AccountName: {accountName}'
         _logger.info(msg)
@@ -748,6 +752,9 @@ class IBApi(EWrapper, EClient):
                         marketPrice: float, marketValue: float,
                         averageCost: float, unrealizedPNL: float,
                         realizedPNL: float, accountName: str):
+        """
+        Just as with the TWS' Account Window, unless there is a position change this information is updated at a fixed interval of three minutes.
+        """
         super().updatePortfolio(contract, position, marketPrice, marketValue,
                                 averageCost, unrealizedPNL, realizedPNL, accountName)
         msg = f'UpdatePortfolio. Symbol: {contract.symbol}, SecType: {contract.secType}, Exchange: {contract.exchange}, ' \

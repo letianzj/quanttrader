@@ -57,7 +57,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._msg_events_engine = LiveEventEngine()  # msg engine
         self._tick_events_engine = LiveEventEngine()  # tick data engine
         self._broker = InteractiveBrokers(self._msg_events_engine, self._tick_events_engine, self._config['account'])
-        self._position_manager = PositionManager()      # global position manager
+        self._position_manager = PositionManager('Global')      # global position manager
         self._position_manager.set_instrument_meta(self.instrument_meta)
         self._order_manager = OrderManager('Global')          # global order manager
         self._data_board = DataBoard()

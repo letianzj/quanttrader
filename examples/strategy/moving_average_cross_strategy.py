@@ -55,6 +55,7 @@ class MovingAverageCrossStrategy(StrategyBase):
                 # check standing orders; if it is also a buy order, do nothing
                 # elif it is a sell order; cancel the order
                 # TODO it's possible that order fails to be placed due to connection issue; and order status is kept as acknowledged
+                # TODO it's possible that IB side failed to recoginize the order:  Error. id: 14071, Code: 200, Msg: No security definition has been found for the request (valid security, later another order accepted)
                 # TODO it's also possible to cancel a partially filled order
                 # TODO: also see cancel placed on 10:07:21.771; openorder pending cancel on 10:07:21.918; execDetails filled on 10:07:21.958; orderstatus filled on 10:07:21.992; error message cancel rejected on 10:07:22.112
                 standing_oids = self._order_manager.retrieve_standing_orders()

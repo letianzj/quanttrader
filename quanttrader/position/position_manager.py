@@ -8,9 +8,10 @@ _logger = logging.getLogger(__name__)
 
 
 class PositionManager(object):
-    def __init__(self):
+    def __init__(self, name):
         """
         """
+        self.name = name
         self.initial_capital = 0
         self.cash = 0
         # current total value after market to market, before trades from strategy.
@@ -59,9 +60,9 @@ class PositionManager(object):
     def on_contract(self, contract):
         if contract.full_symbol not in self.contracts:
             self.contracts[contract.full_symbol] = contract
-            _logger.info("Contract %s information received. " % contract.full_symbol)
+            _logger.info(f"{self.name} Contract {contract.full_symbol} information received. ")
         else:
-            _logger.info("Contract %s information already exists " % contract.full_symbol)
+            _logger.info(f"{self.name} Contract {contract.full_symbol} information already exists ")
 
     def on_position(self, pos_event):
         """respond to updatePortfolio; global position_manager only"""
@@ -83,7 +84,7 @@ class PositionManager(object):
         self.current_total_capital -= fill_event.commission                   # commission is a cost
 
         if fill_event.full_symbol in self.positions:      # adjust existing position
-            self.positions[fill_event.full_symbol].on_fill(fill_event, multiplier)
+            self.positions[fill_event.full_symbol].on_fill(fill_event, multiplier, self.name)
         else:
             self.positions[fill_event.full_symbol] = fill_event.to_position(multiplier)
 

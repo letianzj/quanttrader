@@ -77,6 +77,7 @@ def main(config_file, instrument_meta_file):
                         if ('Strategy' in k) and ('Abstract' not in k) and (k in config['strategy']):
                             v = module.__getattribute__(k)
                             _strategy = v()
+                            _strategy.set_name(k)
                             strategy_dict[k] = _strategy
                 except Exception as e:
                     _logger2.error(f'Unable to load strategy {s}: {str(e)}')

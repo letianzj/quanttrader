@@ -26,7 +26,7 @@ class StrategyBase(metaclass=ABCMeta):
         self.symbols = []               # symbols interested
         self.strategy_manager = None     # to place order through strategy_manager
         self._data_board = None         # to get current data
-        self._position_manager = PositionManager()    # track local positions and cash
+        self._position_manager = PositionManager(self.name)    # track local positions and cash
         self._order_manager = OrderManager(self.name)        # manage local (standing) orders and fills
 
         self.active = False
@@ -37,6 +37,11 @@ class StrategyBase(metaclass=ABCMeta):
 
     def set_symbols(self, symbols):
         self.symbols = symbols
+
+    def set_name(self, name):
+        self.name = name
+        self._position_manager.name = name
+        self._order_manager.name = name
 
     def set_params(self, params_dict=None):
         if params_dict is not None:

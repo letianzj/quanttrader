@@ -34,9 +34,9 @@ class BacktestEngine(object):
         self._data_feed = BacktestDataFeed(self._start_date, self._end_date)
         self._data_board = DataBoard()
         self._performance_manager = PerformanceManager(self.instrument_meta) # send dict pointer
-        self._position_manager = PositionManager()
+        self._position_manager = PositionManager('Global')
         self._position_manager.set_instrument_meta(self.instrument_meta)
-        self._order_manager = OrderManager()
+        self._order_manager = OrderManager('Global')
         self._events_engine = BacktestEventEngine(self._data_feed)
         self._backtest_brokerage = BacktestBrokerage(self._events_engine, self._data_board)
         self._risk_manager = PassThroughRiskManager()

@@ -56,7 +56,7 @@ class BacktestGymEngine(gym.Env):
         self._data_feed = BacktestDataFeed(self._start_date, self._end_date)
         self._data_board = DataBoard()
         self._performance_manager = PerformanceManager(self.multiplier_dict)
-        self._position_manager = PositionManager()
+        self._position_manager = PositionManager('Global')
         self._position_manager.set_multiplier(self.multiplier_dict)
         self._risk_manager = PassThroughRiskManager()
         self._strategy = None           # no strategy; strategy is to be learned

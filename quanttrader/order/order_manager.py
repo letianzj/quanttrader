@@ -88,7 +88,7 @@ class OrderManager(object):
         on receive fill_event from broker
         """
         if fill_event.fill_id in self.fill_dict.keys():
-            _logger.error('fill exists')
+            _logger.error(f'{self.name} fill exists')
         else:
             self.fill_dict[fill_event.fill_id] = fill_event
 
@@ -105,7 +105,7 @@ class OrderManager(object):
                 else:
                     self.order_dict[fill_event.order_id].order_status = OrderStatus.PARTIALLY_FILLED
             else:
-                _logger.error(f'Fill event {fill_event.fill_id} has no matching order {fill_event.order_id}')
+                _logger.error(f'{self.name} Fill event {fill_event.fill_id} has no matching order {fill_event.order_id}')
 
     def retrieve_order(self, order_id):
         try:
