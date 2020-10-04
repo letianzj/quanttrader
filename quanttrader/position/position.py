@@ -44,7 +44,7 @@ class Position(object):
             if fill_event.fill_size > 0:        # long more
                 self.average_price = (self.average_price * self.size + fill_event.fill_price * fill_event.fill_size
                                       + fill_event.commission / multiplier) \
-                                     // (self.size + fill_event.fill_size)
+                                     / (self.size + fill_event.fill_size)
             else:        # flat long
                 #_logger.info(f'{parent_name} flat long realized_pnl {self.realized_pnl}, avg {self.average_price}, fill {fill_event.fill_price}, {fill_event.fill_size}, {multiplier}, {fill_event.commission}')
                 if abs(self.size) >= abs(fill_event.fill_size):   # stay long
@@ -58,7 +58,7 @@ class Position(object):
             if fill_event.fill_size < 0:         # short more
                 self.average_price = (self.average_price * self.size + fill_event.fill_price * fill_event.fill_size
                                       + fill_event.commission / multiplier) \
-                                     // (self.size + fill_event.fill_size)
+                                     / (self.size + fill_event.fill_size)
             else:          # flat short
                 #_logger.info(f'{parent_name} flat short realized_pnl {self.realized_pnl}, avg {self.average_price}, fill {fill_event.fill_price}, {fill_event.fill_size}, {multiplier}, {fill_event.commission}')
                 if abs(self.size) >= abs(fill_event.fill_size):  # stay short
