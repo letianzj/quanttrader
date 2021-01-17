@@ -85,7 +85,7 @@ class RiskManager(RiskManagerBase):
                     _logger.error(f"Order global total active limit breach {o.source}: {a} / {strategy_manager._config['total_active_limit']}")
                     return False
 
-        # pnl
+        # pnl; note that total loss includes open pnl from existing positions (e.g. bought yesterday, carried overnight)
         if 'total_loss_limit' in strategy_manager._config['strategy'][strategy_manager._strategy_dict[o.source].name].keys():
             if not strategy_manager._config['strategy'][strategy_manager._strategy_dict[o.source].name]['total_loss_limit'] is None:
                 a = strategy_manager._strategy_dict[o.source]._position_manager.get_total_pnl() * (-1.0)
