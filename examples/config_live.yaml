@@ -10,7 +10,15 @@ strategy:
       n_fast_ma: 20
       n_slow_ma: 200
     symbols:
-    - NGX0 FUT NYMEX
+    - NGZ0 FUT NYMEX
+  DualTimeFrameStrategy:
+    active: false
+    capital: 10000
+    params:
+      lookback_5sec: 20
+      lookback_15sec: 20
+    symbols:
+    - ESM1 FUT GLOBEX
   DualThrustStrategy:
     active: false
     capital: 10000
@@ -24,7 +32,7 @@ strategy:
     params:
       G: 20
     symbols:
-    - CLX0 FUT NYMEX
+    - CLZ0 FUT NYMEX
   ActiveBuySellStrengthStrategy:
     active: false
     capital: 10000
@@ -41,7 +49,7 @@ strategy:
       tick_trigger_threshold: 6000
     single_trade_limit: 3
     symbols:
-    - ESZ0 FUT GLOBEX
+    - ESM1 FUT GLOBEX
     total_active_limit: 2
     total_cancel_limit: 5
     total_loss_limit: 500
