@@ -25,9 +25,10 @@ class DualTimeFrameStrategy(StrategyBase):
     """
     def __init__(self):
         super(DualTimeFrameStrategy, self).__init__()
-        self.start_time = '09:30:00'        # 9:30
-        self.end_time = '16:15:00'          # 16:15; instead, stocks close at 16:00
-        self.shutdown_time = '16:14:58'     # 16:14:58
+        self.bar_start_time = '08:30:00'        # bar starts earlier
+        self.bar_end_time = '16:15:00'          # 16:15; instead, stocks close at 16:00
+        self.start_time = '09:30:00'     # trading starts
+        self.end_time = '16:14:58'       # 16:14:58
         self.current_pos = 0               # flat
         self.lookback_5sec = 20            # lookback period
         self.lookback_15sec = 20           # lookback period
@@ -47,17 +48,18 @@ class DualTimeFrameStrategy(StrategyBase):
         super(DualTimeFrameStrategy, self).set_params(params_dict)
 
         today = datetime.today()
-        self.start_time = today.replace(hour=int(self.start_time[:2]), minute=int(self.start_time[3:5]), second=int(self.start_time[7:]), microsecond=0)        
-        self.end_time = today.replace(hour=int(self.end_time[:2]), minute=int(self.end_time[3:5]), second=int(self.end_time[7:]), microsecond=0)       
-        self.shutdown_time = today.replace(hour=int(self.shutdown_time[:2]), minute=int(self.shutdown_time[3:5]), second=int(self.shutdown_time[7:]), microsecond=0)          
+        self.bar_start_time = today.replace(hour=int(self.bar_start_time[:2]), minute=int(self.bar_start_time[3:5]), second=int(self.bar_start_time[6:]), microsecond=0)        
+        self.bar_end_time = today.replace(hour=int(self.bar_end_time[:2]), minute=int(self.bar_end_time[3:5]), second=int(self.bar_end_time[6:]), microsecond=0)    
+        self.start_time = today.replace(hour=int(self.start_time[:2]), minute=int(self.start_time[3:5]), second=int(self.start_time[6:]), microsecond=0)      
+        self.end_time = today.replace(hour=int(self.end_time[:2]), minute=int(self.end_time[3:5]), second=int(self.end_time[6:]), microsecond=0)          
 
-        dt_5sec = np.arange(0, (self.end_time-self.start_time).seconds, 5) 
-        idx_5sec = self.start_time + dt_5sec * timedelta(seconds=1)
+        dt_5sec = np.arange(0, (self.bar_end_time-self.bar_start_time).seconds, 5) 
+        idx_5sec = self.bar_start_time + dt_5sec * timedelta(seconds=1)
         self.df_5sec_bar = pd.DataFrame(np.zeros_like(idx_5sec, dtype=[('Open', np.float64), ('High', np.float64), ('Low', np.float64), ('Close', np.float64), ('Volume', np.uint8)]))
         self.df_5sec_bar.index = idx_5sec
 
-        dt_15sec = np.arange(0, (self.end_time-self.start_time).seconds, 15)
-        idx_15sec = self.start_time + dt_15sec * timedelta(seconds=1)
+        dt_15sec = np.arange(0, (self.bar_end_time-self.bar_start_time).seconds, 15)
+        idx_15sec = self.bar_start_time + dt_15sec * timedelta(seconds=1)
         self.df_15sec_bar = pd.DataFrame(np.zeros_like(idx_15sec, dtype=[('Open', np.float64), ('High', np.float64), ('Low', np.float64), ('Close', np.float64), ('Volume', np.uint8)]))
         self.df_15sec_bar.index = idx_15sec
 
@@ -79,10 +81,10 @@ class DualTimeFrameStrategy(StrategyBase):
         if k.tick_type != TickType.TRADE:        # only trace trade bars
             return
 
-        if k.timestamp < self.start_time:
+        if k.timestamp < self.bar_start_time:     # bar_start_time < start_time
             return
 
-        if k.timestamp > self.shutdown_time:          # flat and shutdown
+        if k.timestamp > self.end_time:          # flat and shutdown
             if self.current_pos != 0:
                 o = OrderEvent()
                 o.full_symbol = self.symbols[0]
@@ -142,7 +144,7 @@ class DualTimeFrameStrategy(StrategyBase):
                 self.sidx_15sec += 1
 
             #--- on 15sec bar ---#
-            if (self.nbars_5sec >= self.lookback_5sec) and (self.nbars_15sec >= self.lookback_15sec):
+            if (self.nbars_5sec >= self.lookback_5sec) and (self.nbars_15sec >= self.lookback_15sec) and (k.timestamp > self.start_time):
                 self.dual_time_frame_rule(k.timestamp)
             else:
                 _logger.info(f'DualTimeFrameStrategy wait for enough bars, { self.nbars_5sec } / { self.nbars_15sec }')
@@ -163,6 +165,8 @@ class DualTimeFrameStrategy(StrategyBase):
                 _logger.info(f'DualTimeFrameStrategy long order placed, on tick time {t}, current size {self.current_pos}, order size {o.order_size}, ma_fast {self.sma_5sec}, ma_slow {self.sma_15sec}')
                 self.current_pos = 1
                 self.place_order(o)
+            else:
+                _logger.info(f'DualTimeFrameStrategy keeps long, on tick time {t}, current size {self.current_pos}, ma_fast {self.sma_5sec}, ma_slow {self.sma_15sec}')
         elif self.sma_5sec < self.sma_15sec:
             if self.current_pos >= 0:
                 o = OrderEvent()
@@ -172,3 +176,5 @@ class DualTimeFrameStrategy(StrategyBase):
                 _logger.info(f'DualTimeFrameStrategy short order placed, on tick time {t}, current size {self.current_pos}, order size {o.order_size}, ma_fast {self.sma_5sec}, ma_slow {self.sma_15sec}')
                 self.current_pos = -1
                 self.place_order(o)
+            else:
+                _logger.info(f'DualTimeFrameStrategy keeps short, on tick time {t}, current size {self.current_pos}, ma_fast {self.sma_5sec}, ma_slow {self.sma_15sec}')
