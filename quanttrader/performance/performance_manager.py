@@ -34,12 +34,12 @@ class PerformanceManager(object):
         self._realized_pnl = 0.0
         self._unrealized_pnl = 0.0
 
-        self._equity = pd.Series()      # equity line
+        self._equity = pd.Series(dtype=np.float64)      # equity line
         self._equity.name = 'total'
 
-        self._df_positions = pd.DataFrame(columns=self._symbols + ['cash'])
-        self._df_trades = pd.DataFrame(columns=['amount', 'price', 'symbol'])
-        self._df_trades.amount = self._df_trades.amount.astype(int)     # pyfolio transactions
+        self._df_positions = pd.DataFrame(columns=self._symbols + ['cash'], dtype=np.float64)
+        self._df_trades = pd.DataFrame(np.empty(0, dtype=np.dtype([('amount', np.int64), ('price', np.float64), ('symbol', np.str)])))
+        # self._df_trades.amount = self._df_trades.amount.astype(int)     # pyfolio transactions
 
     def on_fill(self, fill_event):
         # self._df_trades.loc[fill_event.timestamp] = [fill_event.fill_size, fill_event.fill_price, fill_event.full_symbol]
