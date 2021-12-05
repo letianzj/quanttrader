@@ -98,7 +98,7 @@ class PositionManager(object):
                     multiplier = self.instrument_meta[sym]['Multiplier']
                 else:
                     multiplier = 1
-                real_last_price = data_board.get_hist_price(sym, time_stamp).Close.iloc[-1]         # not PLACEHOLDER
+                real_last_price = data_board.get_current_price(sym, time_stamp)         # not PLACEHOLDER
                 pos.mark_to_market(real_last_price, multiplier)
                 # data board not updated yet; get_last_time return previous time_stamp
                 self.current_total_capital += self.positions[sym].size * (real_last_price - data_board.get_last_price(sym)) * multiplier

@@ -134,6 +134,8 @@ class InteractiveBrokers(BrokerageBase):
             _logger.error(f'Failed to create order to place {order_event.full_symbol}')
             return
 
+        ib_order.eTradeOnly = False             # The EtradeOnly IBApi.Order attribute is no longer supported. Error received with TWS versions 983+
+        ib_order.firmQuoteOnly = False          # The firmQuoteOnly IBApi.Order attribute is no longer supported. Error received with TWS versions 983+
         if order_event.order_id < 0:
             order_event.order_id = self.orderid
             self.orderid += 1

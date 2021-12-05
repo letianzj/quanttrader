@@ -72,6 +72,8 @@ class PerformanceManager(object):
                 multiplier = 1
 
             # data_board (timestamp) hasn't been updated yet
+            if pos.size == 0:    # skip empty size
+                continue
             equity += pos.size * data_board.get_last_price(sym) * multiplier
             self._df_positions.loc[performance_time, sym] = pos.size * data_board.get_last_price(sym) * multiplier
 

@@ -98,7 +98,7 @@ class BacktestBrokerage(BrokerageBase):
         for oid, order_event in self._active_orders.items():
             # this should be after data board is updated
             # current_price = self._data_board.get_last_price(tick_event.full_symbol)      # last price is not updated yet
-            current_price = self._data_board.get_hist_price(order_event.full_symbol, timestamp).iloc[-1].Close
+            current_price = self._data_board.get_current_price(order_event.full_symbol, timestamp)
             self._try_cross_order(order_event, current_price)
 
             if order_event.order_status == OrderStatus.FILLED:
@@ -140,7 +140,7 @@ class BacktestBrokerage(BrokerageBase):
         """
         # current_price = self._data_board.get_last_price(order_event.full_symbol)      # last price is not updated yet
         timestamp = order_event.create_time
-        current_price = self._data_board.get_hist_price(order_event.full_symbol, timestamp).iloc[-1].Close
+        current_price = self._data_board.get_current_price(order_event.full_symbol, timestamp)
         self._try_cross_order(order_event, current_price)
 
         if order_event.order_status == OrderStatus.FILLED:

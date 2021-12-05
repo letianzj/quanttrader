@@ -27,14 +27,22 @@ class DataBoard(object):
 
     def get_last_price(self, symbol):
         """
+        Returns last price for a given ticker
+        because self._current_time has not been updated by current tick
+        """
+        return self.get_current_price(symbol, self._current_time)
+    
+    def get_current_price(self, symbol, timestamp):
+        """
         Returns the most recent price for a given ticker
+        based on current timestamp updated outside of data_board
         """
         if symbol in self._current_data_dict.keys():
             return self._current_data_dict[symbol].price
         elif symbol in self._hist_data_dict.keys():
-            return self._hist_data_dict[symbol].loc[self._current_time, 'Close']
-        elif symbol[:2] in self._hist_data_dict.keys():       # FUT root symbol e.g. CL
-            return self._hist_data_dict[symbol[:2]].loc[self._current_time, symbol]      # column series up to timestamp inclusive
+            return self._hist_data_dict[symbol].loc[timestamp, 'Close']
+        elif symbol[:-5] in self._hist_data_dict.keys():       # FUT root symbol e.g. CL, -5 assumes CLZ2020
+            return self._hist_data_dict[symbol[:-5]].loc[timestamp, symbol]      # column series up to timestamp inclusive
         else:
             return None
 
@@ -55,8 +63,8 @@ class DataBoard(object):
     def get_hist_price(self, symbol, timestamp):
         if symbol in self._hist_data_dict.keys():
             return self._hist_data_dict[symbol][:timestamp]  # up to timestamp inclusive
-        elif symbol[:2] in self._hist_data_dict.keys():       # FUT root symbol e.g. CL
-            return self._hist_data_dict[symbol[:2]][symbol][:timestamp]      # column series up to timestamp inclusive
+        elif symbol[:-5] in self._hist_data_dict.keys():       # FUT root symbol e.g. CL
+            return self._hist_data_dict[symbol[:-5]][symbol][:timestamp]      # column series up to timestamp inclusive
         else:
             return None
 
@@ -67,8 +75,8 @@ class DataBoard(object):
         """
         if symbol in self._hist_data_dict.keys():
             return self._hist_data_dict[symbol].index
-        elif symbol[:2] in self._hist_data_dict.keys():       # FUT root symbol e.g. CL
-            return self._hist_data_dict[symbol[:2]].index
+        elif symbol[:-5] in self._hist_data_dict.keys():       # FUT root symbol e.g. CL
+            return self._hist_data_dict[symbol[:-5]].index
         else:
             return None
 
