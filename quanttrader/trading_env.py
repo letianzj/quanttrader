@@ -81,11 +81,7 @@ class TradingEnv(gym.Env):
         self._warmup = 50                           # observation ramp-up due to e.g. 10 periods are required to cacl MA(10)
         self._maxsteps = 252                        # max steps in one episode
 
-        self._max_price_scaler = 1.0
-        self._max_volume_scaler = 1.0
         self._max_nav_scaler = 1.0
-        self._max_position_scaler = 1.0
-        
         self._init_step = 0
         self._current_step = 0
 
@@ -109,11 +105,8 @@ class TradingEnv(gym.Env):
         self._warmup = n_warmup
         self._maxsteps = n_maxsteps
 
-    def set_feature_scaling(self, max_price_scaler : np.float32=1.0, max_volume_scaler : np.float32=1.0, max_nav_scaler : np.float32=1.0, max_position_scaler : np.float32=1.0):
-        self._max_price_scaler = max_price_scaler
-        self._max_volume_scaler = max_volume_scaler
+    def set_feature_scaling(self, max_nav_scaler : np.float32=1.0):
         self._max_nav_scaler = max_nav_scaler
-        self._max_position_scaler = max_position_scaler
 
     def _get_observation(self):
         """
@@ -122,7 +115,7 @@ class TradingEnv(gym.Env):
         Row is in time ascending order. That is, last row is self._current_step.
         """
         obs = self._df_obs_scaled.iloc[self._current_step-self._look_back+1:self._current_step+1].values
-        obs = np.append(obs, self._df_positions.iloc[self._current_step-self._look_back+1:self._current_step+1][['NAV']].values, axis=1)
+        obs = np.append(obs, self._df_positions.iloc[self._current_step-self._look_back+1:self._current_step+1][['NAV']].values / self._max_nav_scaler, axis=1)
 
         return obs
 
@@ -147,9 +140,8 @@ class TradingEnv(gym.Env):
         """
         done = False
 
-        # de-scale
-        current_size = (self._df_positions.iloc[self._current_step][self._asset_syms] * self._max_position_scaler).astype(np.int32)
-        current_cash = self._df_positions.iloc[self._current_step]['Cash'] * self._max_nav_scaler
+        current_size = (self._df_positions.iloc[self._current_step][self._asset_syms]).astype(np.int32)
+        current_cash = self._df_positions.iloc[self._current_step]['Cash']
         current_price = self._df_exch.iloc[self._current_step]
 
         # rebalance
@@ -169,11 +161,10 @@ class TradingEnv(gym.Env):
                 'price': new_price.to_dict(), 'position': new_size.to_dict(), 'cash': new_cash, 'nav': new_nav,
                 'transaction': delta_size.to_dict(), 'commission': current_commission, 'nav_diff': new_nav-current_nav}     # reward = new_nav - current_nav
 
-        # scale back
         reward = reward / self._max_nav_scaler
-        self._df_positions.loc[self._df_positions.index[self._current_step], self._asset_syms] = new_size / self._max_position_scaler
-        self._df_positions['Cash'][self._current_step] = new_cash / self._max_nav_scaler
-        self._df_positions['NAV'][self._current_step] = new_nav / self._max_nav_scaler
+        self._df_positions.loc[self._df_positions.index[self._current_step], self._asset_syms] = new_size
+        self._df_positions['Cash'][self._current_step] = new_cash
+        self._df_positions['NAV'][self._current_step] = new_nav
 
         if self._current_step - self._init_step >= self._maxsteps:      # e.g. init=3, current=7, _maxsteps=4
             done = True
@@ -189,7 +180,7 @@ class TradingEnv(gym.Env):
         """
         random start time
         """
-        self._cash = self._inital_cash / self._max_nav_scaler
+        self._cash = self._inital_cash
         self._df_positions = df_exch * 0.0
         self._df_positions['Cash'] = 0.0
         self._df_positions['NAV'] = 0.0
@@ -214,13 +205,15 @@ class TradingEnv(gym.Env):
         pass
 
 
-def load_data(max_price_scaler: np.float32=1.0, max_volume_scaler: np.float32=1.0):
+def load_data():
     from datetime import timedelta
     import ta
 
     sd = '2015'
     ed = '2020'
     syms = ['SPY', 'AAPL']
+    max_price_scaler = 5_000.0
+    max_volume_scaler = 1.5e10
     df_obs = pd.DataFrame()             # observation
     df_exch = pd.DataFrame()            # exchange; for order match
 
@@ -235,7 +228,7 @@ def load_data(max_price_scaler: np.float32=1.0, max_volume_scaler: np.float32=1.
         df['High'] = df['Adj Close'] / df['Close'] * df['High'] / max_price_scaler
         df['Low'] = df['Adj Close'] / df['Close'] * df['Low'] / max_price_scaler
         df['Volume'] = df['Adj Close'] / df['Close'] * df['Volume'] / max_volume_scaler
-        df['Close'] = df['Adj Close'] / max_volume_scaler
+        df['Close'] = df['Adj Close'] / max_price_scaler
         df = df[['Open', 'High', 'Low', 'Close', 'Volume']]
         df.columns = [f'{sym}:{c.lower()}' for c in df.columns]
 
@@ -263,18 +256,15 @@ def load_data(max_price_scaler: np.float32=1.0, max_volume_scaler: np.float32=1.
 if __name__ == '__main__':
     look_back = 10
     cash = 100_000.0
-    max_price_scaler = 5_000.0
-    max_volume_scaler = 1.5e10
-    max_nav_scaler = 5.0 * cash
-    max_position_scaler = max_nav_scaler / 1_000.0
+    max_nav_scaler = cash
 
-    df_obs, df_exch = load_data(max_price_scaler, max_volume_scaler)
+    df_obs, df_exch = load_data()
 
     trading_env = TradingEnv(df_obs, df_exch)
     trading_env.set_cash(cash)
     trading_env.set_commission(0.0001)
     trading_env.set_steps(n_lookback=10, n_warmup=50, n_maxsteps=250)
-    trading_env.set_feature_scaling(max_price_scaler, max_volume_scaler, max_nav_scaler, max_position_scaler)
+    trading_env.set_feature_scaling(max_nav_scaler)
     o1 = trading_env.reset()
 
     # trading_env._current_step = look_back-1        # ignore randomness
