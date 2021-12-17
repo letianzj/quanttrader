@@ -19,7 +19,28 @@ import matplotlib.pyplot as plt
 import gym
 
 
-class TradingEnv(gym.Env):
+class PortfolioWeightsBox(gym.spaces.Box):
+    """
+    gym Box with constraints on weights across cash+n_assets
+    w >= 0, sum(w) = 1, no short sell allowed
+    """
+    def __init__(self, low, high, shape : np.int32=1, dtype=np.float32, seed=None) -> None:
+        assert shape >= 1
+        self.n_assets = shape+1     # add cash
+        super().__init__(low, high, (self.n_assets,), dtype, seed)
+    
+    def sample(self) -> np.array:
+        return np.random.dirichlet(alpha=self.n_assets * [1])
+    
+    def contains(self, x) -> bool:
+        if len(x) != self.n_assets:
+            return False
+        if not np.testing.assert_allclose(sum(x), 1.0):
+            return False
+        return True
+
+
+class PortfolioEnv(gym.Env):
     """
     Description:
         backtest gym engine
@@ -40,8 +61,8 @@ class TradingEnv(gym.Env):
         after predefined window
         If broke, no orders will send
     """
-    def __init__(self, n: np.int32, df_obs_scaled : pd.DataFrame, df_exch : pd.DataFrame):
-        assert n >= 2
+    def __init__(self, df_obs_scaled : pd.DataFrame, df_exch : pd.DataFrame):
+        assert df_obs_scaled.shape[0] == df_exch.shape[0]
 
         self._df_obs_scaled = df_obs_scaled     # observation; scaled outside along with TA indicators
         self._df_exch = df_exch                 # exch
@@ -64,10 +85,8 @@ class TradingEnv(gym.Env):
         self._init_step = 0
         self._current_step = 0
 
-        self._n = n             # n=2: buy/sell 100% or [0, 100%]; n=3: [0, 50%, 100%]; n=4: [0, 33.3%, 66.7%, 100%]
-        self._pcts = [pct / (self._n-1) for pct in range(self._n)]
-
-        self.action_space = gym.spaces.Discrete(n=self._n)
+        # action_space = 0 ~ 100%; buy or sell up to TARGET percentage of nav
+        self.action_space = PortfolioWeightsBox(low=0.0, high=1.0, shape=self._n_assets, dtype=np.float32)
         # first col is open, second col is high, ..., last col is nav
         self.observation_space = gym.spaces.Box(low=-np.inf, high=np.inf, shape=(self._look_back, df_obs_scaled.shape[1]+1), dtype=np.float32)
                     
@@ -121,26 +140,26 @@ class TradingEnv(gym.Env):
         """
         done = False
 
-        current_size = int(self._df_positions.iloc[self._current_step][self._asset_syms].item())
+        current_size = (self._df_positions.iloc[self._current_step][self._asset_syms]).astype(np.int32)
         current_cash = self._df_positions.iloc[self._current_step]['Cash']
-        current_price = self._df_exch.iloc[self._current_step].item()
+        current_price = self._df_exch.iloc[self._current_step]
 
         # rebalance
-        current_nav = current_cash + current_price * current_size       # should equal to the nav column
-        new_size = int(np.floor(current_nav * self._pcts[action] / current_price))       # odd size allowed; action[-1] is cash
+        current_nav = current_cash + (current_price * current_size).sum()       # should equal to the nav column
+        new_size = (np.floor(current_nav * action[:-1] / current_price)).astype(np.int32)       # odd size allowed; action[-1] is cash
         delta_size = new_size - current_size
-        current_commission = np.abs(delta_size) * current_price * self._commission_rate
-        new_cash = current_cash - delta_size * current_price - current_commission
+        current_commission = (np.abs(delta_size) * current_price * self._commission_rate).sum()
+        new_cash = current_cash - (delta_size * current_price).sum() - current_commission
 
         # move to next timestep
         self._current_step += 1
-        new_price = self._df_exch.iloc[self._current_step].item()
-        new_nav = new_cash + new_price * new_size
-        reward = (new_price - current_price) * new_size - current_commission     # commission is penalty
+        new_price = self._df_exch.iloc[self._current_step]
+        new_nav = new_cash + (new_price * new_size).sum()
+        reward = ((new_price - current_price) * new_size).sum() - current_commission     # commission is penalty
         info = {'step': self._current_step, 'time': self._df_obs_scaled.index[self._current_step],
-                'old_price': current_price, 'old position': current_size, 'old_cash': current_cash, 'old_nav': current_nav,
-                'price': new_price, 'position': new_size, 'cash': new_cash, 'nav': new_nav,
-                'transaction': delta_size, 'commission': current_commission, 'nav_diff': new_nav-current_nav}     # reward = new_nav - current_nav
+                'old_price': current_price.to_dict(), 'old position': current_size.to_dict(), 'old_cash': current_cash, 'old_nav': current_nav,
+                'price': new_price.to_dict(), 'position': new_size.to_dict(), 'cash': new_cash, 'nav': new_nav,
+                'transaction': delta_size.to_dict(), 'commission': current_commission, 'nav_diff': new_nav-current_nav}     # reward = new_nav - current_nav
 
         reward = reward / self._max_nav_scaler
         self._df_positions.loc[self._df_positions.index[self._current_step], self._asset_syms] = new_size
@@ -173,32 +192,9 @@ class TradingEnv(gym.Env):
 
     def render(self, mode='human'):
       if mode == "human":
-        #plt.rcParams.update({'font.size': 6})
-        fig, ax = plt.subplots(2, 1, gridspec_kw={'height_ratios': [3, 1]})      # figsize=(15, 8)
-        fig.tight_layout()
-        x_left = self._init_step
-        x_right = self._current_step+1
-        x_end = min(self._df_exch.shape[0], self._init_step+self._maxsteps+1)
-        df_price = self._df_exch[x_left:x_right]
-        df_nav = self._df_positions['NAV'][x_left:x_right]
-
-        ax[0].tick_params(
-          axis='x',          # changes apply to the x-axis
-          which='both',      # both major and minor ticks are affected
-          bottom=False,      # ticks along the bottom edge are off
-          top=False,         # ticks along the top edge are off
-          labelbottom=False) # labels along the bottom edge are off
-        ax[0].set_xlim([self._df_exch.index[x_left], self._df_exch.index[x_end]])
-        ax[1].set_xlim([self._df_exch.index[x_left], self._df_exch.index[x_end]])
-        ax[0].set_ylim([max(self._df_exch[x_left:x_end].min().item()-5,0), self._df_exch[x_left:x_end].max().item()+5])
-        df_position = self._df_positions['SPY'][x_left:x_right]
-        df_position_diff = df_position - df_position.shift(1)
-        df_buy = df_price[df_position_diff > 0]
-        df_sell = df_price[df_position_diff < 0]
-        ax[0].plot(df_price, color='black', label='Price')
-        ax[0].plot(df_buy, '^', markersize=5, color='r')
-        ax[0].plot(df_sell, 'v', markersize=5, color='g')
-        ax[1].plot(df_nav, color='black', label='NAV')
+        fig, ax = plt.subplots()                # figsize=(15, 8)
+        ax.set_xlim([self._df_exch.index[self._init_step], self._df_exch.index[self._init_step+self._maxsteps+1]])
+        ax.plot(self._df_exch[self._init_step:self._current_step+1], color='blue', label='Price')
         #plt.pause(0.001)
         
         # https://stackoverflow.com/questions/7821518/matplotlib-save-plot-to-numpy-array
@@ -218,7 +214,7 @@ def load_data():
 
     sd = '2015'
     ed = '2020'
-    syms = ['SPY']
+    syms = ['SPY', 'AAPL']
     max_price_scaler = 5_000.0
     max_volume_scaler = 1.5e10
     df_obs = pd.DataFrame()             # observation
@@ -267,7 +263,7 @@ if __name__ == '__main__':
 
     df_obs, df_exch = load_data()
 
-    trading_env = TradingEnv(2, df_obs, df_exch)
+    trading_env = PortfolioEnv(df_obs, df_exch)
     trading_env.set_cash(cash)
     trading_env.set_commission(0.0001)
     trading_env.set_steps(n_lookback=10, n_warmup=50, n_maxsteps=250)
