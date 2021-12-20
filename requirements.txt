@@ -11,4 +11,4 @@ PyQt5>=5.10.1
 QDarkStyle>=2.8
 PyYAML>=5.3.1
 ibapi>=9.76.1
-gym>=0.17.0
+gym>=0.21.0

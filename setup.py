@@ -13,7 +13,7 @@ setup(
     description='quanttrader backtest and live trading library',
     long_description=readme,
     long_description_content_type='text/markdown',
-    version='0.5.4',
+    version='0.5.5',
     author='Letian Wang',
     author_email='letian.zj@gmail.com',
     url='https://github.com/letianzj/quanttrader',
@@ -41,7 +41,7 @@ setup(
         'QDarkStyle>=2.8',
         'PyYAML>=5.3.1',
         'ibapi>=9.76.1',
-        'gym>=0.17.0'
+        'gym>=0.21.0'
     ],
     keywords='quanttrader strategy backtest live trading'
 )

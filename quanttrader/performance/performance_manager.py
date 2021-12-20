@@ -2,8 +2,6 @@
 # -*- coding: utf-8 -*-
 import numpy as np
 import pandas as pd
-import re
-import matplotlib.pyplot as plt
 import logging
 
 _logger = logging.getLogger(__name__)
