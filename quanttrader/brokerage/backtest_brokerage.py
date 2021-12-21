@@ -123,9 +123,9 @@ class BacktestBrokerage(BrokerageBase):
                     else:
                         order_event.stop_price = max(current_price - order_event.limit_price, order_event.stop_price)
 
-                _remaining_active_orders_id.append(order_event)
+                _remaining_active_orders_id.append(order_event.order_id)
 
-        self._active_orders = {k : v for k, v in self._active_orders if k in _remaining_active_orders_id}
+        self._active_orders = {k : v for k, v in self._active_orders.items ()  if k in _remaining_active_orders_id}
 
 
     def place_order(self, order_event):
