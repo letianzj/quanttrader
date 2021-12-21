@@ -94,7 +94,7 @@ class StrategyBase(metaclass=ABCMeta):
         """
         o.source = self.id         # identify source
         if o.create_time is None:
-            o.create_time = datetime.now().strftime('%H:%M:%S.%f')
+            o.create_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')
         if (self.active):
             self.strategy_manager.place_order(o)
 
@@ -113,13 +113,11 @@ class StrategyBase(metaclass=ABCMeta):
         o.full_symbol = sym
         o.order_type = OrderType.MARKET
         o.order_size = size_to - size_from
-        o.source = self.id  # identify source
-        if timestamp is None:
-            o.create_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')
-        else:
+        if timestamp is not None:
             o.create_time = timestamp
-        if (self.active):
-            self.strategy_manager.place_order(o)
+
+        self.place_order (o)
+
 
     def cancel_order(self, oid):
         if oid in self._order_manager.standing_order_set:
