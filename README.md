@@ -12,6 +12,8 @@ In most cases, a backtest strategy can be directly used for live trade by simply
 
 [Backtests examples](https://github.com/letianzj/QuantResearch/tree/master/backtest)
 
+[Reinforcement trader](https://github.com/letianzj/QuantResearch/blob/master/ml/reinforcement_trader.ipynb)
+
 ### Live trading
 
 [Live Trading demo video](https://youtu.be/CrsrTxqiXNY)

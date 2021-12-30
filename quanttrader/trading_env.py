@@ -197,8 +197,8 @@ class TradingEnv(gym.Env):
           bottom=False,      # ticks along the bottom edge are off
           top=False,         # ticks along the top edge are off
           labelbottom=False) # labels along the bottom edge are off
-        ax[0].set_xlim([self._df_exch.index[x_left], self._df_exch.index[x_end]])
-        ax[1].set_xlim([self._df_exch.index[x_left], self._df_exch.index[x_end]])
+        ax[0].set_xlim([self._df_exch.index[x_left], self._df_exch.index[x_end-1]])
+        ax[1].set_xlim([self._df_exch.index[x_left], self._df_exch.index[x_end-1]])
         ax[0].set_ylim([max(self._df_exch[x_left:x_end].min().item()-5,0), self._df_exch[x_left:x_end].max().item()+5])
         df_position = self._df_positions['SPY'][x_left:x_right]
         df_position_diff = df_position - df_position.shift(1)

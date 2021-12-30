@@ -82,6 +82,7 @@ class PortfolioEnv(gym.Env):
         self._maxsteps = 252                        # max steps in one episode
 
         self._max_nav_scaler = 1.0
+        self._lock_init_step = False
         self._init_step = 0
         self._current_step = 0
 
@@ -100,10 +101,14 @@ class PortfolioEnv(gym.Env):
         """
         self._commission_rate = comm
 
-    def set_steps(self, n_lookback : np.int32=10, n_warmup : np.int32=50, n_maxsteps: np.int32=252):
+    def set_steps(self, n_lookback : np.int32=10, n_warmup : np.int32=50, n_maxsteps: np.int32=252, n_init_step: np.int32=0):
         self._lookback = n_lookback
         self._warmup = n_warmup
         self._maxsteps = n_maxsteps
+        self._init_step = n_init_step
+        if n_init_step > 0:
+            assert n_init_step >= n_warmup
+            self._lock_init_step = True
 
     def set_feature_scaling(self, max_nav_scaler : np.float32=1.0):
         self._max_nav_scaler = max_nav_scaler
@@ -182,8 +187,11 @@ class PortfolioEnv(gym.Env):
         self._df_positions = self._df_exch * 0.0
         self._df_positions['Cash'] = 0.0
         self._df_positions['NAV'] = 0.0
-        self._current_step = np.random.randint(low=self._warmup-1, high=self._df_obs_scaled.shape[0]-self._maxsteps)    # low (inclusive) to high (exclusive)
-        self._init_step = self._current_step
+
+        if not self._lock_init_step:
+            self._init_step = np.random.randint(low=self._warmup-1, high=self._df_obs_scaled.shape[0]-self._maxsteps)    # low (inclusive) to high (exclusive)
+        self._current_step = self._init_step
+
         self._df_positions['Cash'][:self._current_step+1] = self._cash
         self._df_positions['NAV'][:self._current_step+1] = self._cash
 
