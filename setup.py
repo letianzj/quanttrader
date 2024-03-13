@@ -19,7 +19,7 @@ setup(
     url='https://github.com/letianzj/quanttrader',
     packages=find_packages(exclude=("tests",)),
     include_package_data=True,
-    python_requires=">=3.7.*",
+    python_requires=">=3.7",
     license='Apache 2.0',
     zip_safe=False,
     classifiers=[
