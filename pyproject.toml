@@ -1,0 +1,94 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "quanttrader"
+version = "0.1.0"
+description = "quant trader python"
+readme = "README.md"
+authors = [
+  {name = "Letian Wang", email = "letian.zj@gmail.com"}
+]
+maintainers = [
+  {name = "Letian Wang", email = "letian.zj@gmail.com"}
+]
+classifiers = [
+
+]
+license = "Apache-2.0"
+dependencies = [
+  
+]
+
+[project.optional-dependencies]
+dev = [
+    "coverage",  # testing
+    "mypy",  # linting
+    "pytest",  # testing
+    "ruff"  # linting
+]
+
+[project.urls]
+
+bugs = "https://github.com/letianzj/quanttrader/issues"
+changelog = "https://github.com/letianzj/quanttrader/blob/master/changelog.md"
+homepage = "https://github.com/letianzj/quanttrader"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.package-data]
+"*" = ["*.*"]
+
+[tool.poetry]
+name = "quanttrader"
+version = "0.1.0"
+description = "quant trader python"
+authors = ["Letian Wang <letian.zj@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.12"
+matplotlib = "^3.8.4"
+numpy = "^1.26.4"
+pandas = "^2.2.2"
+psutil = "^5.9.0"
+pytz = "^2024.1"
+scikit-learn = "^1.5.0"
+scipy = "^1.13.1"
+seaborn = "^0.12.2"
+# PyQt5 = ">=5.10.1"
+# QDarkStyle = ">=2.8"
+PyYAML = "^6.0.1"
+ibapi = "^9.81.1"
+ta = "^0.11.0"
+gym = "^0.26.2"
+
+[tool.poetry.dev-dependencies]
+black = "^24.4.2"
+isort = "^5.13.2"
+pylint = "^3.2.3"
+pytest = "^7.4.4"
+
+[tool.pylint]
+disable = ["missing-docstring", "W1203"]
+max-line-length = 300
+
+# Mypy
+# ----
+
+[tool.mypy]
+files = "."
+ignore_missing_imports = true
+
+# Use strict defaults
+strict = true
+warn_unreachable = true
+warn_no_return = true
+
+[[tool.mypy.overrides]]
+# Don't require test functions to include types
+module = "tests.*"
+allow_untyped_defs = true
+disable_error_code = "attr-defined"
+

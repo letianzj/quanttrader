@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from abc import ABCMeta, abstractmethod
+from ..event.event import Event
 
 
 class DataFeedBase(metaclass=ABCMeta):
@@ -9,13 +10,13 @@ class DataFeedBase(metaclass=ABCMeta):
     """
 
     @abstractmethod
-    def subscribe_market_data(self, symbols):
+    def subscribe_market_data(self, symbols: str | list[str]) -> None:
         """subscribe to market data"""
 
     @abstractmethod
-    def unsubscribe_market_data(self, symbols):
+    def unsubscribe_market_data(self, symbols: str | list[str]) -> None:
         """unsubscribe market data"""
 
     @abstractmethod
-    def stream_next(self):
+    def stream_next(self) -> Event:
         """stream next data event"""

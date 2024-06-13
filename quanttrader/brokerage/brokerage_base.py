@@ -1,28 +1,37 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from abc import ABCMeta, abstractmethod
+from abc import abstractmethod
+
+from ..order.order_event import OrderEvent
 
 
 class BrokerageBase(object):
     """
     Brokerage base class
     """
+
+    def __init__(self) -> None:
+        self.orderid: int = 0  # next/available orderid
+        self.market_data_subscription_reverse_dict: dict[str, int] = {}  # sym ==> reqId
+
     @abstractmethod
-    def place_order(self, order_event):
+    def place_order(self, order_event: OrderEvent) -> None:
         """"""
         raise NotImplementedError("Implement this in your derived class")
 
     @abstractmethod
-    def cancel_order(self, order_id):
+    def cancel_order(self, order_id: int) -> None:
         """"""
         raise NotImplementedError("Implement this in your derived class")
 
     @abstractmethod
-    def next_order_id(self):
+    def next_order_id(self) -> int:
         """"""
         raise NotImplementedError("Implement this in your derived class")
 
     @abstractmethod
-    def _calculate_commission(self, full_symbol, fill_price, fill_size):
+    def _calculate_commission(
+        self, full_symbol: str, fill_price: float, fill_size: int
+    ) -> float:
         """"""
         raise NotImplementedError("Implement this in your derived class")

@@ -3,6 +3,9 @@
 from queue import Queue, Empty
 from threading import Thread
 from collections import defaultdict
+from typing import Any, Callable
+
+from ..event.event import Event, EventType
 import logging
 
 _logger = logging.getLogger(__name__)
@@ -12,7 +15,8 @@ class LiveEventEngine(object):
     """
     Event queue + a thread to dispatch events
     """
-    def __init__(self):
+
+    def __init__(self) -> None:
         """
         Initialize dispatcher thread and handler function list
         """
@@ -20,16 +24,18 @@ class LiveEventEngine(object):
         self._active = False
 
         # event queue
-        self._queue = Queue()
+        self._queue = Queue()  # type: ignore
 
         # dispatcher thread
         self._thread = Thread(target=self._run)
 
-        # event handlers list, specific event --> handler dict
-        self._handlers = defaultdict(list)
+        # event handlers list, dict: specific event key --> Callable[Event]
+        self._handlers: defaultdict[EventType, list[Callable[[Any], None]]] = (
+            defaultdict(list)
+        )
 
-    #------------------------------- private functions ---------------------------#
-    def _run(self):
+    # ------------------------------- private functions ---------------------------#
+    def _run(self) -> None:
         """
         run dispatcher
         """
@@ -44,30 +50,32 @@ class LiveEventEngine(object):
             except Exception as e:
                 _logger.error(f"Event {event.event_type}, Error {str(e)}")
 
-    #----------------------------- end of private functions ---------------------------#
+    # ----------------------------- end of private functions ---------------------------#
 
-    #------------------------------------ public functions -----------------------------#
-    def start(self, timer=True):
+    # ------------------------------------ public functions -----------------------------#
+    def start(self, timer: bool = True) -> None:
         """
         start the dispatcher thread
         """
         self.__active = True
         self._thread.start()
 
-    def stop(self):
+    def stop(self) -> None:
         """
         stop the dispatcher thread
         """
         self.__active = False
         self._thread.join()
 
-    def put(self, event):
+    def put(self, event: Event) -> None:
         """
         put event in the queue; call from outside
         """
         self._queue.put(event)
 
-    def register_handler(self, type_, handler):
+    def register_handler(
+        self, type_: EventType, handler: Callable[[Any], None]
+    ) -> None:
         """
         register handler/subscriber
         """
@@ -76,7 +84,9 @@ class LiveEventEngine(object):
         if handler not in handlerList:
             handlerList.append(handler)
 
-    def unregister_handler(self, type_, handler):
+    def unregister_handler(
+        self, type_: EventType, handler: Callable[[Any], None]
+    ) -> None:
         """
         unregister handler/subscriber
         """

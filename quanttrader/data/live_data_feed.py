@@ -1,7 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import pandas as pd
+import queue
 from datetime import datetime, timedelta
+from typing import Any
 
 from .data_feed_base import DataFeedBase
 from ..data.bar_event import BarEvent
@@ -13,22 +15,26 @@ _logger = logging.getLogger(__name__)
 class LiveDataFeed(DataFeedBase):
     """
     Live DataFeed class
+    gets data from online sources instead of from IB
     """
+
     def __init__(
-        self, events_queue,
-        init_tickers=None,
-        start_date=None, end_date=None,
-        calc_adj_returns=False
-    ):
+        self,
+        events_queue: queue.Queue,
+        init_tickers: list[str] = [],
+        start_date: datetime = datetime.today() - timedelta(days=365),
+        end_date: datetime = datetime.today(),
+        calc_adj_returns: bool = False,
+    ) -> None:
         """
         Takes the CSV directory, the events queue and a possible
         list of initial ticker symbols then creates an (optional)
         list of ticker subscriptions and associated prices.
         """
         self.events_queue = events_queue
-        self.continue_backtest = True
-        self.tickers = {}
-        self.tickers_data = {}
+        self.continue_backtest: bool = True
+        self.tickers: dict[str, dict[str, float]] = {}
+        self.tickers_data: dict[str, Any] = {}
         self.start_date = start_date
         self.end_date = end_date
 
@@ -39,26 +45,22 @@ class LiveDataFeed(DataFeedBase):
         self.bar_stream = self._merge_sort_ticker_data()
         self.calc_adj_returns = calc_adj_returns
         if self.calc_adj_returns:
-            self.adj_close_returns = []
+            self.adj_close_returns: list[float] = []
 
-    def _open_ticker_price_online(self, ticker):
+    def _open_ticker_price_online(self, ticker: str) -> None:
         """
         Opens the CSV online from yahoo finance, then store in a dictionary.
         """
-        if self.end_date is not None:
-            ed = self.end_date
-        else:
-            ed = datetime.today()
-        if self.start_date is not None:
-            sd = self.start_date
-        else:
-            sd = ed- timedelta(days = 365)
-
-        data = quandl.get('wiki/'+ticker, start_date=sd, end_date=ed, authtoken='your_token')
+        data = quandl.get(
+            "wiki/" + ticker,
+            start_date=self.start_date,
+            end_date=self.end_date,
+            authtoken="your_token",
+        )
         self.tickers_data[ticker] = data
         self.tickers_data[ticker]["Ticker"] = ticker
 
-    def _merge_sort_ticker_data(self):
+    def _merge_sort_ticker_data(self) -> pd.DataFrame:
         """
         Concatenates all of the separate equities DataFrames
         into a single DataFrame that is time ordered, allowing tick
@@ -84,7 +86,7 @@ class LiveDataFeed(DataFeedBase):
         else:
             return df.ix[start:end].iterrows()
 
-    def subscribe_ticker(self, ticker):
+    def subscribe_ticker(self, ticker: str) -> None:
         """
         Subscribes the price handler to a new ticker symbol.
         """
@@ -100,15 +102,21 @@ class LiveDataFeed(DataFeedBase):
                 ticker_prices = {
                     "close": close,
                     "adj_close": adj_close,
-                    "timestamp": dft.index[0]
+                    "timestamp": dft.index[0],
                 }
                 self.tickers[ticker] = ticker_prices
             except OSError:
-                _logger.error(f'Could not subscribe ticker {ticker} as no data CSV found for pricing.')
+                _logger.error(
+                    f"Could not subscribe ticker {ticker} as no data CSV found for pricing."
+                )
         else:
-            _logger.error(f"Could not subscribe ticker {ticker} as is already subscribed.")
+            _logger.error(
+                f"Could not subscribe ticker {ticker} as is already subscribed."
+            )
 
-    def _create_event(self, index, period, ticker, row):
+    def _create_event(
+        self, index: int, period: int, ticker: str, row: dict[str, int | float]
+    ) -> BarEvent:
         """
         Obtain all elements of the bar from a row of dataframe
         and return a BarEvent
@@ -119,36 +127,37 @@ class LiveDataFeed(DataFeedBase):
         close_price = row["Close"]
         adj_close_price = row["Adj. Close"]
         volume = int(row["Volume"])
-        bev = BarEvent(
-            ticker, index, period, open_price,
-            high_price, low_price, close_price,
-            volume, adj_close_price
-        )
+        bev = BarEvent()
+        # bev.bar_start_time = index
+        bev.full_symbol = ticker
+        bev.interval = period
+        bev.open_price = open_price
+        bev.high_price = high_price
+        bev.low_price = low_price
+        bev.close_price = close_price
+        bev.adj_close_price = adj_close_price
+        bev.volume = volume
         return bev
 
-    def _store_event(self, event):
+    def _store_event(self, event: BarEvent) -> None:
         """
         Store price event for closing price and adjusted closing price
         """
-        ticker = event.ticker
+        ticker = event.full_symbol
         # If the calc_adj_returns flag is True, then calculate
         # and store the full list of adjusted closing price
         # percentage returns in a list
         # TODO: Make this faster
         if self.calc_adj_returns:
-            prev_adj_close = self.tickers[ticker][
-                "adj_close"
-            ]
+            prev_adj_close = self.tickers[ticker]["adj_close"]
             cur_adj_close = event.adj_close_price
-            self.tickers[ticker][
-                "adj_close_ret"
-            ] = cur_adj_close / prev_adj_close - 1.0
+            self.tickers[ticker]["adj_close_ret"] = cur_adj_close / prev_adj_close - 1.0
             self.adj_close_returns.append(self.tickers[ticker]["adj_close_ret"])
         self.tickers[ticker]["close"] = event.close_price
         self.tickers[ticker]["adj_close"] = event.adj_close_price
-        self.tickers[ticker]["timestamp"] = event.time
+        self.tickers[ticker]["timestamp"] = event.bar_start_time
 
-    def stream_next(self):
+    def stream_next(self) -> BarEvent:
         """
         Place the next BarEvent onto the event queue.
         """
@@ -156,7 +165,7 @@ class LiveDataFeed(DataFeedBase):
             index, row = next(self.bar_stream)
         except StopIteration:
             self.continue_backtest = False
-            return
+            return None
         # Obtain all elements of the bar from the dataframe
         ticker = row["Ticker"]
         period = 86400  # Seconds in a day
@@ -166,3 +175,4 @@ class LiveDataFeed(DataFeedBase):
         self._store_event(bev)
         # Send event to queue
         self.events_queue.put(bev)
+        return bev

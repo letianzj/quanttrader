@@ -3,6 +3,11 @@
 import numpy as np
 import pandas as pd
 import logging
+from typing import Any
+
+from ..order.fill_event import FillEvent
+from ..data.data_board import DataBoard
+from ..position.position_manager import PositionManager
 
 _logger = logging.getLogger(__name__)
 
@@ -13,43 +18,76 @@ class PerformanceManager(object):
     Record equity, positions, and trades in accordance to pyfolio format
     First date will be the first data start date
     """
-    def __init__(self, instrument_meta):
-        self._symbols = []
-        self.instrument_meta = instrument_meta          # sym ==> meta
 
-        self._equity = None
-        self._df_positions = None
-        self._df_trades = None
+    def __init__(self, instrument_meta: dict[str, dict[str, Any]]) -> None:
+        self._symbols: list[str] = []
+        self.instrument_meta: dict[str, dict[str, Any]] = (
+            instrument_meta  # sym ==> meta
+        )
 
-    def add_watch(self, data_key, data):
-        if 'Close' in data.columns:             # OHLCV
+        self._realized_pnl: float = 0.0
+        self._unrealized_pnl: float = 0.0
+        self._equity: pd.Series = None
+        self._df_positions: pd.DataFrame = None
+        self._df_trades: pd.DataFrame = None
+
+    def add_watch(self, data_key: str, data: pd.DataFrame) -> None:
+        """
+        track the symbols
+        """
+        if "Close" in data.columns:  # OHLCV
             self._symbols.append(data_key)
-        else:           # CLZ20, CLZ21
+        else:  # CLZ20, CLZ21
             self._symbols.extend(data.columns)
 
     #  or each sid
-    def reset(self):
+    def reset(self) -> None:
         self._realized_pnl = 0.0
         self._unrealized_pnl = 0.0
 
-        self._equity = pd.Series(dtype=np.float64)      # equity line
-        self._equity.name = 'total'
+        self._equity = pd.Series(dtype=np.float64)  # equity line
+        self._equity.name = "total"
 
-        self._df_positions = pd.DataFrame(columns=self._symbols + ['cash'], dtype=np.float64)
-        self._df_trades = pd.DataFrame(np.empty(0, dtype=np.dtype([('amount', np.int64), ('price', np.float64), ('symbol', np.str)])))
+        self._df_positions = pd.DataFrame(
+            columns=self._symbols + ["cash"], dtype=np.float64
+        )
+        self._df_trades = pd.DataFrame(
+            np.empty(
+                0,
+                dtype=np.dtype(
+                    [
+                        ("amount", np.int64),
+                        ("price", np.float64),
+                        ("symbol", np.str_),
+                    ]
+                ),
+            )
+        )
         # self._df_trades.amount = self._df_trades.amount.astype(int)     # pyfolio transactions
 
-    def on_fill(self, fill_event):
+    def on_fill(self, fill_event: FillEvent) -> None:
         # self._df_trades.loc[fill_event.timestamp] = [fill_event.fill_size, fill_event.fill_price, fill_event.full_symbol]
-        self._df_trades = self._df_trades.append(pd.DataFrame(
-            {'amount': [int(fill_event.fill_size)], 'price': [fill_event.fill_price], 'symbol': [fill_event.full_symbol]},
-            index=[fill_event.fill_time]))
+        self._df_trades = self._df_trades.append(
+            pd.DataFrame(
+                {
+                    "amount": [int(fill_event.fill_size)],
+                    "price": [fill_event.fill_price],
+                    "symbol": [fill_event.full_symbol],
+                },
+                index=[fill_event.fill_time],
+            )
+        )
 
-    def update_performance(self, current_time, position_manager, data_board):
+    def update_performance(
+        self,
+        current_time: pd.Timestamp,
+        position_manager: PositionManager,
+        data_board: DataBoard,
+    ) -> None:
         """
         update previous time/date
         """
-        if self._equity.empty:         # no previous day
+        if self._equity.empty:  # no previous day
             self._equity[current_time] = 0.0
 
         # on a new time/date, calculate the performances for previous time/date
@@ -65,21 +103,25 @@ class PerformanceManager(object):
         self._df_positions.loc[performance_time] = [0] * len(self._df_positions.columns)
         for sym, pos in position_manager.positions.items():
             if sym in self.instrument_meta.keys():
-                multiplier = self.instrument_meta[sym]['Multiplier']
+                multiplier = self.instrument_meta[sym]["Multiplier"]
             else:
                 multiplier = 1
 
             # data_board (timestamp) hasn't been updated yet
-            if pos.size == 0:    # skip empty size
+            if pos.size == 0:  # skip empty size
                 continue
             equity += pos.size * data_board.get_last_price(sym) * multiplier
-            self._df_positions.loc[performance_time, sym] = pos.size * data_board.get_last_price(sym) * multiplier
+            self._df_positions.loc[performance_time, sym] = (
+                pos.size * data_board.get_last_price(sym) * multiplier
+            )
 
-        self._df_positions.loc[performance_time, 'cash'] = position_manager.cash
+        self._df_positions.loc[performance_time, "cash"] = position_manager.cash
         self._equity[performance_time] = equity + position_manager.cash
-        self._df_positions.loc[performance_time, 'total'] = self._equity[performance_time]
+        self._df_positions.loc[performance_time, "total"] = self._equity[
+            performance_time
+        ]
 
-        if performance_time != current_time:     # not final day
-            self._equity[current_time] = 0.0            # add new date
+        if performance_time != current_time:  # not final day
+            self._equity[current_time] = 0.0  # add new date
         else:  # final day, re-arrange column order
-            self._df_positions = self._df_positions[self._symbols + ['cash']]
+            self._df_positions = self._df_positions[self._symbols + ["cash"]]

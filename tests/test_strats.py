@@ -1,11 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import os
-import pytest
+from datetime import datetime
+import pytz
 
-from quanttrader.util import read_ohlcv_csv
-from quanttrader.strategy import StrategyBase
-from quanttrader import BacktestEngine
+from quanttrader.util.util_func import read_ohlcv_csv
+from quanttrader.strategy.strategy_base import StrategyBase
+from quanttrader.backtest_engine import BacktestEngine
 
 
 class BuyAndHoldStrategy(StrategyBase):
@@ -13,35 +14,46 @@ class BuyAndHoldStrategy(StrategyBase):
     buy on the first tick then hold to the end
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         super(BuyAndHoldStrategy, self).__init__()
         self.invested = False
 
-    def on_tick(self, event):
-        print(event.timestamp)
+    def on_tick(self, tick_event):
+        print(tick_event.timestamp)
         symbol = self.symbols[0]
         if not self.invested:
-            df_hist = self._data_board.get_hist_price(symbol, event.timestamp)
-            close = df_hist.iloc[-1].Close
-            target_size = int(self.cash / close)
-            self.adjust_position(symbol, size_from=0, size_to=target_size)
+            df_hist = self._data_board.get_hist_price(symbol, tick_event.timestamp)
+            close = df_hist.iloc[-1]["Close"]
+            timestamp = df_hist.index[-1]
+            target_size = int(self._position_manager.initial_capital / close)
+            self.adjust_position(
+                symbol, size_from=0, size_to=target_size, timestamp=timestamp
+            )
             self.invested = True
+
 
 class TestBuyHold:
     def test_buyhold(self):
-        df = read_ohlcv_csv('test_data/TEST.csv')
+        df = read_ohlcv_csv(
+            os.path.join(os.path.dirname(__file__), "test_data/TEST.csv")
+        )
         init_capital = 100_000.0
+        test_start_date = datetime(
+            2008, 1, 1, 8, 30, 0, 0, pytz.timezone("America/New_York")
+        )
+        test_end_date = datetime(
+            2008, 12, 31, 6, 0, 0, 0, pytz.timezone("America/New_York")
+        )
         strategy = BuyAndHoldStrategy()
         strategy.set_capital(init_capital)
-        strategy.set_symbols(['TTT'])
-        strategy.set_params(None)
+        strategy.set_symbols(["TTT"])
+        # strategy.set_params(None)
 
-        backtest_engine = BacktestEngine()
-        backtest_engine.set_capital(init_capital)        # capital or portfolio >= capital for one strategy
-        backtest_engine.add_data('TTT', df)
+        backtest_engine = BacktestEngine(test_start_date, test_end_date)
+        backtest_engine.set_capital(
+            init_capital
+        )  # capital or portfolio >= capital for one strategy
+        backtest_engine.add_data("TTT", df)
         backtest_engine.set_strategy(strategy)
         equity, df_positions, df_trades = backtest_engine.run()
-        if df_trades is None:
-            print('Empty Strategy')
-        else:
-            print(equity)
+        assert df_trades.shape[0] > 0

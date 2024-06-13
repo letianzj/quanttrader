@@ -1,15 +1,16 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from ..event.event import *
+from ..event.event import Event, EventType
 
 
 class ContractEvent(Event):
     """
     also serve as contract
     """
-    def __init__(self):
-        self.event_type = EventType.CONTRACT
-        self.full_symbol = ''
-        self.local_name = ''
-        self.mininum_tick = ''
+
+    def __init__(self) -> None:
+        self.event_type: EventType = EventType.CONTRACT
+        self.full_symbol: str = ""
+        self.local_name: str = ""
+        self.mininum_tick: int = 0

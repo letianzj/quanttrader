@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 from enum import Enum
 
+
 # OrderType.MKT.name == 'MKT'  OderType.MKT.value == 1
 class OrderType(Enum):
     UNKNOWN = 0

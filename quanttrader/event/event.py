@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 from pandas import Timestamp
 from enum import Enum
+from typing import Any
 
 
 class EventType(Enum):
@@ -23,9 +24,10 @@ class Event(object):
     """
     Base Event class for event-driven system
     """
+
     @property
-    def typename(self):
-        return self.type.name
+    def typename(self) -> str:
+        return self.__class__.__name__
 
 
 class LogEvent(Event):
@@ -33,7 +35,8 @@ class LogEvent(Event):
     Log event:
     TODO seperate ErrorEvent
     """
-    def __init__(self):
-        self.event_type = EventType.LOG
-        self.timestamp = ""
-        self.content = ""
+
+    def __init__(self) -> None:
+        self.event_type: EventType = EventType.LOG
+        self.timestamp: str = ""
+        self.content: str = ""

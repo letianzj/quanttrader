@@ -38,13 +38,16 @@ class ExampleTradeRecorder(AbstractTradeRecorder):
 
         # Write new file header
         fieldnames = [
-            "timestamp", "ticker",
-            "action", "quantity",
-            "exchange", "price",
-            "commission"
+            "timestamp",
+            "ticker",
+            "action",
+            "quantity",
+            "exchange",
+            "price",
+            "commission",
         ]
         fname = os.path.expanduser(os.path.join(self.output_dir, self.csv_filename))
-        with open(fname, 'a') as csvfile:
+        with open(fname, "a") as csvfile:
             writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
             writer.writeheader()
 
@@ -53,11 +56,16 @@ class ExampleTradeRecorder(AbstractTradeRecorder):
         Append all details about the FillEvent to the CSV trade log.
         """
         fname = os.path.expanduser(os.path.join(self.output_dir, self.csv_filename))
-        with open(fname, 'a') as csvfile:
+        with open(fname, "a") as csvfile:
             writer = csv.writer(csvfile)
-            writer.writerow([
-                fill.timestamp, fill.ticker,
-                fill.action, fill.quantity,
-                fill.exchange, round(fill.price, 4),
-                round(fill.commission, 4)
-            ])
+            writer.writerow(
+                [
+                    fill.timestamp,
+                    fill.ticker,
+                    fill.action,
+                    fill.quantity,
+                    fill.exchange,
+                    round(fill.price, 4),
+                    round(fill.commission, 4),
+                ]
+            )
