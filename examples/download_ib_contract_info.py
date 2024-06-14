@@ -1,17 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-import os
 import argparse
-import time
-from datetime import datetime, timedelta
-import pandas as pd
-import numpy as np
-from ibapi.contract import Contract
-from signal import signal, SIGINT, SIG_DFL
 import logging
-from quanttrader.event.event import EventType
-from quanttrader.event.live_event_engine import LiveEventEngine
+import time
+from signal import SIG_DFL, SIGINT, signal
+
+from ibapi.contract import Contract
+
 from quanttrader.brokerage.ib_brokerage import InteractiveBrokers
+from quanttrader.event.live_event_engine import LiveEventEngine
 
 signal(SIGINT, SIG_DFL)
 
@@ -20,7 +17,7 @@ def log_event_handler(log_event):
     print(f"{log_event.timestamp}: {log_event.content}")
 
 
-def run(args):
+def run(conid):
     _logger = logging.getLogger("quanttrader")
     _logger.setLevel(logging.DEBUG)
     handler1 = logging.StreamHandler()
@@ -42,7 +39,7 @@ def run(args):
     time.sleep(5)  # 5 seconds
 
     contract = Contract()
-    contract.conId = args.conid
+    contract.conId = conid
 
     broker.api.reqContractDetails(broker.reqid, contract)
 
@@ -56,4 +53,4 @@ if __name__ == "__main__":
     parser.add_argument("--conid", help="conid e.g. 383974324", required=True)
 
     args = parser.parse_args()
-    run(args)
+    run(args.conid)

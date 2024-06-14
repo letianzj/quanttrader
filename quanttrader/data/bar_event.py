@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import pandas as pd
-from ..event.event import *
+
+from ..event.event import Event, EventType
 
 
 class BarEvent(Event):

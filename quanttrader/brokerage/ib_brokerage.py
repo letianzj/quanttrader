@@ -1,40 +1,39 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from datetime import datetime
-from copy import copy
-import pandas as pd
-from threading import Thread
 import logging
+from copy import copy
+from datetime import datetime
+from threading import Thread
 
-from ibapi.wrapper import EWrapper
-from ibapi.client import EClient
+import pandas as pd
 from ibapi import utils
+from ibapi.account_summary_tags import *
+from ibapi.client import EClient
+from ibapi.commission_report import CommissionReport
 
 # types
 from ibapi.common import *  # @UnusedWildImport
-from ibapi.order_condition import *  # @UnusedWildImport
 from ibapi.contract import *  # @UnusedWildImport
+from ibapi.execution import Execution, ExecutionFilter
 from ibapi.order import *  # @UnusedWildImport
+from ibapi.order_condition import *  # @UnusedWildImport
 from ibapi.order_state import *  # @UnusedWildImport
-from ibapi.execution import Execution
-from ibapi.execution import ExecutionFilter
-from ibapi.commission_report import CommissionReport
-from ibapi.ticktype import TickType, TickTypeEnum
 from ibapi.tag_value import TagValue
+from ibapi.ticktype import TickType, TickTypeEnum
+from ibapi.wrapper import EWrapper
 
-from ibapi.account_summary_tags import *
-
-from .brokerage_base import BrokerageBase
+from ..account.account_event import AccountEvent
+from ..data.bar_event import BarEvent
+from ..data.tick_event import TickEvent
+from ..data.tick_event import TickType as QtTickType
 from ..event.event import LogEvent
 from ..event.live_event_engine import LiveEventEngine
-from ..account.account_event import AccountEvent
-from ..data.tick_event import TickEvent, TickType as QtTickType
-from ..data.bar_event import BarEvent
-from ..order.order_type import OrderType
 from ..order.fill_event import FillEvent
 from ..order.order_event import OrderEvent
 from ..order.order_status import OrderStatus
+from ..order.order_type import OrderType
 from ..position.position_event import PositionEvent
+from .brokerage_base import BrokerageBase
 
 _logger = logging.getLogger(__name__)
 

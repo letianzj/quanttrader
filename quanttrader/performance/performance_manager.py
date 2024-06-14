@@ -1,12 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-import numpy as np
-import pandas as pd
 import logging
 from typing import Any
 
-from ..order.fill_event import FillEvent
+import numpy as np
+import pandas as pd
+
 from ..data.data_board import DataBoard
+from ..order.fill_event import FillEvent
 from ..position.position_manager import PositionManager
 
 _logger = logging.getLogger(__name__)
@@ -51,6 +52,7 @@ class PerformanceManager(object):
         self._df_positions = pd.DataFrame(
             columns=self._symbols + ["cash"], dtype=np.float64
         )
+
         self._df_trades = pd.DataFrame(
             np.empty(
                 0,
@@ -67,15 +69,29 @@ class PerformanceManager(object):
 
     def on_fill(self, fill_event: FillEvent) -> None:
         # self._df_trades.loc[fill_event.timestamp] = [fill_event.fill_size, fill_event.fill_price, fill_event.full_symbol]
-        self._df_trades = self._df_trades.append(
-            pd.DataFrame(
-                {
-                    "amount": [int(fill_event.fill_size)],
-                    "price": [fill_event.fill_price],
-                    "symbol": [fill_event.full_symbol],
-                },
-                index=[fill_event.fill_time],
+        df_fill = (
+            (
+                pd.DataFrame(
+                    {
+                        "amount": [int(fill_event.fill_size)],
+                        "price": [fill_event.fill_price],
+                        "symbol": [fill_event.full_symbol],
+                    },
+                    index=[fill_event.fill_time],
+                )
+            ),
+        )
+
+        self._df_trades = (
+            pd.concat(
+                [
+                    self._df_trades,
+                    df_fill,
+                ],
+                ignore_index=False,
             )
+            if not self._df_trades.empty
+            else df_fill
         )
 
     def update_performance(
@@ -100,7 +116,9 @@ class PerformanceManager(object):
             performance_time = current_time
 
         equity = 0.0
-        self._df_positions.loc[performance_time] = [0] * len(self._df_positions.columns)
+        self._df_positions.loc[performance_time] = [0.0] * len(
+            self._df_positions.columns
+        )
         for sym, pos in position_manager.positions.items():
             if sym in self.instrument_meta.keys():
                 multiplier = self.instrument_meta[sym]["Multiplier"]

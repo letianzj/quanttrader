@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import pandas as pd
+
 from ..event.event import Event, EventType
 
 

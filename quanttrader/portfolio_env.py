@@ -13,10 +13,10 @@ The sequence is
     3.b fill orders        # portfolio rotates into new holdings
 repeat 2, and 3 to interact between agent and env
 """
+import gym
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
-import gym
 
 
 class PortfolioWeightsBox(gym.spaces.Box):

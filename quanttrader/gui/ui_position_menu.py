@@ -1,15 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from datetime import datetime
-from PyQt5 import QtCore, QtWidgets, QtGui
-from typing import Any
 import logging
+from typing import Any
 
-from ..order.order_type import OrderType
-from ..order.order_event import OrderEvent
-from ..event.event import LogEvent
+from PyQt5 import QtCore, QtGui, QtWidgets
+
 from ..strategy.strategy_manager import StrategyManager
-
 
 _logger = logging.getLogger(__name__)
 
@@ -35,7 +31,7 @@ class PositionMenuBottom(QtWidgets.QTableWidget):
         if sid == 0:
             pos_manager = self.strategy_manager._position_manager
         else:
-            pos_manager = self.strategy_manager._strategy_dict[sid]._position_manager
+            pos_manager = self.strategy_manager.strategy_dict[sid]._position_manager
 
         for sym, pos in pos_manager.positions.items():
             try:
@@ -102,7 +98,7 @@ class PositionMenu(QtWidgets.QWidget):
         control_layout = QtWidgets.QHBoxLayout()
         self.strategy_List = QtWidgets.QComboBox()
         self.strategy_List.addItems(
-            [str(i) for i in range(len(self.strategy_manager._strategy_dict) + 1)]
+            [str(i) for i in range(len(self.strategy_manager.strategy_dict) + 1)]
         )
         control_layout.addWidget(self.strategy_List)
         self.btn_refresh = QtWidgets.QPushButton("Refresh")

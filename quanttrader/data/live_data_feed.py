@@ -1,13 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-import pandas as pd
+import logging
 import queue
 from datetime import datetime, timedelta
 from typing import Any
 
-from .data_feed_base import DataFeedBase
+import pandas as pd
+
 from ..data.bar_event import BarEvent
-import logging
+from .data_feed_base import DataFeedBase
 
 _logger = logging.getLogger(__name__)
 
@@ -51,14 +52,15 @@ class LiveDataFeed(DataFeedBase):
         """
         Opens the CSV online from yahoo finance, then store in a dictionary.
         """
-        data = quandl.get(
-            "wiki/" + ticker,
-            start_date=self.start_date,
-            end_date=self.end_date,
-            authtoken="your_token",
-        )
-        self.tickers_data[ticker] = data
-        self.tickers_data[ticker]["Ticker"] = ticker
+        # data = quandl.get(
+        #     "wiki/" + ticker,
+        #     start_date=self.start_date,
+        #     end_date=self.end_date,
+        #     authtoken="your_token",
+        # )
+        # self.tickers_data[ticker] = data
+        # self.tickers_data[ticker]["Ticker"] = ticker
+        pass
 
     def _merge_sort_ticker_data(self) -> pd.DataFrame:
         """
@@ -165,7 +167,7 @@ class LiveDataFeed(DataFeedBase):
             index, row = next(self.bar_stream)
         except StopIteration:
             self.continue_backtest = False
-            return None
+            return BarEvent()
         # Obtain all elements of the bar from the dataframe
         ticker = row["Ticker"]
         period = 86400  # Seconds in a day

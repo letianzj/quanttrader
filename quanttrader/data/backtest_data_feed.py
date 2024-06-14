@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-import os
+from typing import Iterator
+
 import pandas as pd
-from datetime import datetime, date, time, timedelta
-from typing import Iterable, Iterator
+
 from .data_feed_base import DataFeedBase
 from .tick_event import TickEvent
 

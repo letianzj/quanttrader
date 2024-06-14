@@ -1,9 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import os
-import pandas as pd
 import pickle
 from datetime import datetime
+
+import pandas as pd
 
 
 def read_ohlcv_csv(
@@ -97,7 +98,7 @@ def save_one_run_results(
     equity: pd.DataFrame,
     df_positions: pd.DataFrame,
     df_trades: pd.DataFrame,
-    batch_tag: bool = None,
+    batch_tag: bool = False,
 ) -> None:
 
     df_positions.to_csv(

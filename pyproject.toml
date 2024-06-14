@@ -71,8 +71,11 @@ pylint = "^3.2.3"
 pytest = "^7.4.4"
 
 [tool.pylint]
-disable = ["missing-docstring", "W1203"]
+disable = ["missing-docstring", "W1203", "fixme"]
 max-line-length = 300
+
+[tool.isort]
+profile = "black"
 
 # Mypy
 # ----

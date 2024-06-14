@@ -1,18 +1,19 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+import logging
 from abc import ABCMeta
 from datetime import datetime
-import pandas as pd
 from typing import Any
+
+import pandas as pd
 
 from ..data.data_board import DataBoard
 from ..data.tick_event import TickEvent
-from ..order.order_event import OrderEvent
-from ..order.order_type import OrderType
 from ..order.fill_event import FillEvent
+from ..order.order_event import OrderEvent
 from ..order.order_manager import OrderManager
+from ..order.order_type import OrderType
 from ..position.position_manager import PositionManager
-import logging
 
 _logger = logging.getLogger(__name__)
 

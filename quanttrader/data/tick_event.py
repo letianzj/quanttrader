@@ -1,9 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-import pandas as pd
-from enum import Enum
 from datetime import datetime
-from ..event.event import *
+from enum import Enum
+
+import pandas as pd
+
+from ..event.event import Event, EventType
 
 
 class TickType(Enum):

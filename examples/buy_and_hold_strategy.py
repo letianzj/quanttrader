@@ -4,11 +4,13 @@ buy and hold strategy example
 
 import os
 from datetime import datetime
+
 import pytz
-from quanttrader.util.util_func import read_ohlcv_csv
-from quanttrader.strategy.strategy_base import StrategyBase
+
 from quanttrader.backtest_engine import BacktestEngine
 from quanttrader.data.tick_event import TickEvent
+from quanttrader.strategy.strategy_base import StrategyBase
+from quanttrader.util.util_func import read_ohlcv_csv
 
 
 class BuyAndHoldStrategy(StrategyBase):

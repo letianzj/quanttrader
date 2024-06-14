@@ -2,10 +2,10 @@
 # -*- coding: utf-8 -*-
 import pandas as pd
 
-from .order_status import OrderStatus
-from .order_flag import OrderFlag
-from .order_type import OrderType
 from ..event.event import Event, EventType
+from .order_flag import OrderFlag
+from .order_status import OrderStatus
+from .order_type import OrderType
 
 
 class OrderEvent(Event):

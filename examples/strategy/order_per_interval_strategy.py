@@ -1,10 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from quanttrader.strategy.strategy_base import StrategyBase
+import logging
+
+from quanttrader.data.tick_event import TickType
 from quanttrader.order.order_event import OrderEvent
 from quanttrader.order.order_type import OrderType
-from quanttrader.data.tick_event import TickType
-import logging
+from quanttrader.strategy.strategy_base import StrategyBase
 
 _logger = logging.getLogger("qtlive")
 
@@ -21,7 +22,8 @@ class OrderPerIntervalStrategy(StrategyBase):
         self.direction = 1
         _logger.info("OrderPerIntervalStrategy initiated")
 
-    def on_tick(self, k):
+    def on_tick(self, tick_event):
+        k = tick_event
         super().on_tick(k)  # extra mtm calc
 
         if k.tick_type != TickType.TRADE:

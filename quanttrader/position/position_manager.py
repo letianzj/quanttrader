@@ -1,13 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-import pandas as pd
-from ..position.position import Position
 import logging
 from typing import Any
 
+import pandas as pd
+
+from ..data.data_board import DataBoard
+from ..position.position import Position
 from .contract_event import ContractEvent
 from .position_event import PositionEvent
-from ..data.data_board import DataBoard
 
 _logger = logging.getLogger(__name__)
 
@@ -41,7 +42,7 @@ class PositionManager(object):
 
     def get_holdings_count(self) -> int:
         n = 0
-        for s, p in self.positions.items():
+        for _, p in self.positions.items():
             if p.size != 0:
                 n += 1
         return n
@@ -57,7 +58,7 @@ class PositionManager(object):
 
     def get_total_pnl(self) -> float:
         total_pnl: float = 0
-        for s, pos in self.positions.items():
+        for _, pos in self.positions.items():
             cp, op = pos.get_current_pnl()
             total_pnl = total_pnl + cp + op
         return total_pnl

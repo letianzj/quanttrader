@@ -1,10 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from queue import Empty, Queue
-
 # from multiprocessing import Queue
 import logging
 from collections import defaultdict
+from queue import Empty, Queue
 from typing import Any, Callable
 
 from ..data.backtest_data_feed import BacktestDataFeed
@@ -79,10 +78,10 @@ class BacktestEventEngine(object):
         """
         register handler/subscriber
         """
-        handlerList = self._handlers[type_]
+        handler_list = self._handlers[type_]
 
-        if handler not in handlerList:
-            handlerList.append(handler)
+        if handler not in handler_list:
+            handler_list.append(handler)
 
     def unregister_handler(
         self, type_: EventType, handler: Callable[[Any], None]
@@ -90,12 +89,12 @@ class BacktestEventEngine(object):
         """
         unregister handler/subscriber
         """
-        handlerList = self._handlers[type_]
+        handler_list = self._handlers[type_]
 
-        if handler in handlerList:
-            handlerList.remove(handler)
+        if handler in handler_list:
+            handler_list.remove(handler)
 
-        if not handlerList:
+        if not handler_list:
             del self._handlers[type_]
 
     # -------------------------------- end of public functions -----------------------------#

@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from PyQt5 import QtCore, QtWidgets, QtGui
 from typing import Any
+
+from PyQt5 import QtWidgets
 
 from ..order.fill_event import FillEvent
 from ..order.order_event import OrderEvent
@@ -42,7 +43,7 @@ class StrategyWindow(QtWidgets.QTableWidget):
         self.setAlternatingRowColors(True)
         self.setSortingEnabled(False)
 
-        for key, value in self._strategy_manager._strategy_dict.items():
+        for key, value in self._strategy_manager.strategy_dict.items():
             try:
                 self.insertRow(self.rowCount())
                 self.setItem(
@@ -65,13 +66,13 @@ class StrategyWindow(QtWidgets.QTableWidget):
 
     def update_order(self, order_event: OrderEvent) -> None:
         sid = order_event.source
-        if sid in self._strategy_manager._strategy_dict.keys():
+        if sid in self._strategy_manager.strategy_dict.keys():
             row = sid - 1  # sid starts from 1
             norders = len(
-                self._strategy_manager._strategy_dict[sid]._order_manager.order_dict
+                self._strategy_manager.strategy_dict[sid]._order_manager.order_dict
             )
             nfilled = len(
-                self._strategy_manager._strategy_dict[sid]._order_manager.fill_dict
+                self._strategy_manager.strategy_dict[sid]._order_manager.fill_dict
             )
             self.setItem(row, 3, QtWidgets.QTableWidgetItem(str(norders)))
             self.setItem(row, 4, QtWidgets.QTableWidgetItem(str(nfilled)))
@@ -83,19 +84,19 @@ class StrategyWindow(QtWidgets.QTableWidget):
             ].order_id
             if oid in self._strategy_manager._order_manager.order_dict.keys():
                 sid = self._strategy_manager._order_manager.order_dict[oid].source
-                if sid in self._strategy_manager._strategy_dict.keys():
+                if sid in self._strategy_manager.strategy_dict.keys():
                     row = sid - 1  # sid starts from 1
                     norders = len(
-                        self._strategy_manager._strategy_dict[
+                        self._strategy_manager.strategy_dict[
                             sid
                         ]._order_manager.order_dict
                     )
                     nfilled = len(
-                        self._strategy_manager._strategy_dict[
+                        self._strategy_manager.strategy_dict[
                             sid
                         ]._order_manager.fill_dict
                     )
-                    nholdings = self._strategy_manager._strategy_dict[
+                    nholdings = self._strategy_manager.strategy_dict[
                         sid
                     ]._position_manager.get_holdings_count()
                     self.setItem(row, 2, QtWidgets.QTableWidgetItem(str(nholdings)))
@@ -103,10 +104,10 @@ class StrategyWindow(QtWidgets.QTableWidget):
                     self.setItem(row, 4, QtWidgets.QTableWidgetItem(str(nfilled)))
 
     def update_pnl(self) -> None:
-        for sid, s in self._strategy_manager._strategy_dict.items():
+        for sid, s in self._strategy_manager.strategy_dict.items():
             closed_pnl: float = 0
             open_pnl: float = 0
-            for sym, pos in s._position_manager.positions.items():
+            for _, pos in s._position_manager.positions.items():
                 p1, p2 = pos.get_current_pnl()
                 closed_pnl += p1
                 open_pnl += p2
@@ -117,7 +118,7 @@ class StrategyWindow(QtWidgets.QTableWidget):
         _itm = self.item(row, 0)
         if _itm:
             sid = int(_itm.text())
-            self._strategy_manager._strategy_dict[sid].active = active
+            self._strategy_manager.strategy_dict[sid].active = active
             self.setItem(
                 row,
                 7,

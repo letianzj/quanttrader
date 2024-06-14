@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from PyQt5 import QtCore, QtWidgets, QtGui
-from typing import Any
 import logging
+from typing import Any
+
+from PyQt5 import QtCore, QtWidgets
 
 from ..account.account_event import AccountEvent
 from ..account.account_manager import AccountManager

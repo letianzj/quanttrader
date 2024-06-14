@@ -1,21 +1,22 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from datetime import datetime
-import pandas as pd
-from typing import Any, Tuple
 import logging
+from datetime import datetime
+from typing import Any, Tuple
 
-from .event.event import EventType
-from .event.backtest_event_engine import BacktestEventEngine
-from .data.tick_event import TickEvent
+import pandas as pd
+
+from .brokerage.backtest_brokerage import BacktestBrokerage
 from .data.backtest_data_feed import BacktestDataFeed
 from .data.data_board import DataBoard
-from .brokerage.backtest_brokerage import BacktestBrokerage
-from .position.position_manager import PositionManager
-from .order.order_manager import OrderManager
-from .order.order_event import OrderEvent
+from .data.tick_event import TickEvent
+from .event.backtest_event_engine import BacktestEventEngine
+from .event.event import EventType
 from .order.fill_event import FillEvent
+from .order.order_event import OrderEvent
+from .order.order_manager import OrderManager
 from .performance.performance_manager import PerformanceManager
+from .position.position_manager import PositionManager
 from .risk.risk_manager import PassThroughRiskManager
 from .risk.risk_manager_base import RiskManagerBase
 from .strategy.strategy_base import StrategyBase
@@ -162,7 +163,6 @@ class BacktestEngine(object):
         # self._backtest_brokerage.place_order(order_event)
         self._order_manager.on_order_status(order_event)
         self._strategy.on_order_status(order_event)
-        pass
 
     def _fill_event_handler(self, fill_event: FillEvent) -> None:
         self._order_manager.on_fill(fill_event)

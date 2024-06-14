@@ -1,18 +1,18 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-import sys
-import os
 import argparse
 import importlib
-from datetime import datetime
-import yaml
-from PyQt5 import QtCore, QtWidgets, QtGui
-from quanttrader.gui.ui_main_window import MainWindow
-import atexit
-from signal import signal, SIGINT, SIG_DFL
-from os import kill
-from multiprocessing import Process
 import logging
+import os
+import sys
+from datetime import datetime
+from signal import SIG_DFL, SIGINT, signal
+
+import qdarkstyle
+import yaml
+from PyQt5 import QtGui, QtWidgets
+
+from quanttrader.gui.ui_main_window import MainWindow
 
 # https://stackoverflow.com/questions/4938723/what-is-the-correct-way-to-make-my-pyqt-application-quit-when-killed-from-the-co
 signal(SIGINT, SIG_DFL)
@@ -72,32 +72,32 @@ def main(config_file, instrument_meta_file):
             if "strategy" in name and ".pyc" not in name:
                 s = name.replace(".py", "")
                 try:
-                    moduleName = f"strategy.{s}"
+                    module_name = f"strategy.{s}"
                     # import module
-                    module = importlib.import_module(moduleName)
+                    module = importlib.import_module(module_name)
                     for k in dir(module):
                         if (
                             ("Strategy" in k)
                             and ("Abstract" not in k)
                             and (k in config["strategy"])
                         ):
-                            v = module.__getattribute__(k)
+                            v = getattr(module, k)
                             _strategy = v()
                             _strategy.set_name(k)
                             strategy_dict[k] = _strategy
-                except Exception as e:
+                except Exception as e:  # pylint: disable=broad-except
                     _logger2.error(f"Unable to load strategy {s}: {str(e)}")
 
-    app = QtWidgets.QApplication(sys.argv)
-    app.setWindowIcon(QtGui.QIcon("gui/image/logo.ico"))
-    mainWindow = MainWindow(config, instrument_meta, strategy_dict)
+    app = QtWidgets.QApplication(sys.argv)  # pylint: disable=c-extension-no-member
+    app.setWindowIcon(
+        QtGui.QIcon("gui/image/logo.ico")
+    )  # pylint: disable=c-extension-no-member
+    main_window = MainWindow(config, instrument_meta, strategy_dict)
 
     if config["theme"] == "dark":
-        import qdarkstyle
-
         app.setStyleSheet(qdarkstyle.load_stylesheet_pyqt5())
 
-    mainWindow.show()  # .showMaximized()
+    main_window.show()  # .showMaximized()
     sys.exit(app.exec_())
 
 

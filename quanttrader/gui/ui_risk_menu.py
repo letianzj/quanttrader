@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from PyQt5 import QtCore, QtWidgets, QtGui
-from typing import Any
 import logging
+
+from PyQt5 import QtCore, QtGui, QtWidgets
 
 from ..strategy.strategy_manager import StrategyManager
 
@@ -27,7 +27,7 @@ class RiskMenu(QtWidgets.QWidget):
         control_layout = QtWidgets.QHBoxLayout()
         self.strategy_List = QtWidgets.QComboBox()
         self.strategy_List.addItems(
-            [str(i) for i in range(len(self.strategy_manager._strategy_dict) + 1)]
+            [str(i) for i in range(len(self.strategy_manager.strategy_dict) + 1)]
         )
         control_layout.addWidget(self.strategy_List)
         self.btn_load = QtWidgets.QPushButton("Load")
@@ -71,40 +71,40 @@ class RiskMenu(QtWidgets.QWidget):
             self.order_start_time.setText("")
             self.order_end_time.setText("")
             self.single_trade_limit.setText("")
-            if "total_trade_limit" in self.strategy_manager._config.keys():
-                if self.strategy_manager._config["total_trade_limit"] is not None:
+            if "total_trade_limit" in self.strategy_manager.config.keys():
+                if self.strategy_manager.config["total_trade_limit"] is not None:
                     self.total_trade_limit.setText(
-                        str(self.strategy_manager._config["total_trade_limit"])
+                        str(self.strategy_manager.config["total_trade_limit"])
                     )
                 else:
                     self.total_trade_limit.setText("")
             else:
                 self.total_trade_limit.setText("")
 
-            if "total_cancel_limit" in self.strategy_manager._config.keys():
-                if self.strategy_manager._config["total_cancel_limit"] is not None:
+            if "total_cancel_limit" in self.strategy_manager.config.keys():
+                if self.strategy_manager.config["total_cancel_limit"] is not None:
                     self.total_cancel_limit.setText(
-                        str(self.strategy_manager._config["total_cancel_limit"])
+                        str(self.strategy_manager.config["total_cancel_limit"])
                     )
                 else:
                     self.total_cancel_limit.setText("")
             else:
                 self.total_cancel_limit.setText("")
 
-            if "total_active_limit" in self.strategy_manager._config.keys():
-                if self.strategy_manager._config["total_active_limit"] is not None:
+            if "total_active_limit" in self.strategy_manager.config.keys():
+                if self.strategy_manager.config["total_active_limit"] is not None:
                     self.total_active_limit.setText(
-                        str(self.strategy_manager._config["total_active_limit"])
+                        str(self.strategy_manager.config["total_active_limit"])
                     )
                 else:
                     self.total_active_limit.setText("")
             else:
                 self.total_active_limit.setText("")
 
-            if "total_loss_limit" in self.strategy_manager._config.keys():
-                if self.strategy_manager._config["total_loss_limit"] is not None:
+            if "total_loss_limit" in self.strategy_manager.config.keys():
+                if self.strategy_manager.config["total_loss_limit"] is not None:
                     self.total_loss_limit.setText(
-                        str(self.strategy_manager._config["total_loss_limit"])
+                        str(self.strategy_manager.config["total_loss_limit"])
                     )
                 else:
                     self.total_loss_limit.setText("")
@@ -113,19 +113,19 @@ class RiskMenu(QtWidgets.QWidget):
         else:
             if (
                 "order_start_time"
-                in self.strategy_manager._config["strategy"][
-                    self.strategy_manager._strategy_dict[sid].name
+                in self.strategy_manager.config["strategy"][
+                    self.strategy_manager.strategy_dict[sid].name
                 ].keys()
             ):
                 if (
-                    self.strategy_manager._config["strategy"][
-                        self.strategy_manager._strategy_dict[sid].name
+                    self.strategy_manager.config["strategy"][
+                        self.strategy_manager.strategy_dict[sid].name
                     ]["order_start_time"]
                     is not None
                 ):
                     self.order_start_time.setText(
-                        self.strategy_manager._config["strategy"][
-                            self.strategy_manager._strategy_dict[sid].name
+                        self.strategy_manager.config["strategy"][
+                            self.strategy_manager.strategy_dict[sid].name
                         ]["order_start_time"]
                     )
                 else:
@@ -135,19 +135,19 @@ class RiskMenu(QtWidgets.QWidget):
 
             if (
                 "order_end_time"
-                in self.strategy_manager._config["strategy"][
-                    self.strategy_manager._strategy_dict[sid].name
+                in self.strategy_manager.config["strategy"][
+                    self.strategy_manager.strategy_dict[sid].name
                 ].keys()
             ):
                 if (
-                    self.strategy_manager._config["strategy"][
-                        self.strategy_manager._strategy_dict[sid].name
+                    self.strategy_manager.config["strategy"][
+                        self.strategy_manager.strategy_dict[sid].name
                     ]["order_end_time"]
                     is not None
                 ):
                     self.order_end_time.setText(
-                        self.strategy_manager._config["strategy"][
-                            self.strategy_manager._strategy_dict[sid].name
+                        self.strategy_manager.config["strategy"][
+                            self.strategy_manager.strategy_dict[sid].name
                         ]["order_end_time"]
                     )
                 else:
@@ -157,20 +157,20 @@ class RiskMenu(QtWidgets.QWidget):
 
             if (
                 "single_trade_limit"
-                in self.strategy_manager._config["strategy"][
-                    self.strategy_manager._strategy_dict[sid].name
+                in self.strategy_manager.config["strategy"][
+                    self.strategy_manager.strategy_dict[sid].name
                 ].keys()
             ):
                 if (
-                    self.strategy_manager._config["strategy"][
-                        self.strategy_manager._strategy_dict[sid].name
+                    self.strategy_manager.config["strategy"][
+                        self.strategy_manager.strategy_dict[sid].name
                     ]["single_trade_limit"]
                     is not None
                 ):
                     self.single_trade_limit.setText(
                         str(
-                            self.strategy_manager._config["strategy"][
-                                self.strategy_manager._strategy_dict[sid].name
+                            self.strategy_manager.config["strategy"][
+                                self.strategy_manager.strategy_dict[sid].name
                             ]["single_trade_limit"]
                         )
                     )
@@ -181,20 +181,20 @@ class RiskMenu(QtWidgets.QWidget):
 
             if (
                 "total_trade_limit"
-                in self.strategy_manager._config["strategy"][
-                    self.strategy_manager._strategy_dict[sid].name
+                in self.strategy_manager.config["strategy"][
+                    self.strategy_manager.strategy_dict[sid].name
                 ].keys()
             ):
                 if (
-                    self.strategy_manager._config["strategy"][
-                        self.strategy_manager._strategy_dict[sid].name
+                    self.strategy_manager.config["strategy"][
+                        self.strategy_manager.strategy_dict[sid].name
                     ]["total_trade_limit"]
                     is not None
                 ):
                     self.total_trade_limit.setText(
                         str(
-                            self.strategy_manager._config["strategy"][
-                                self.strategy_manager._strategy_dict[sid].name
+                            self.strategy_manager.config["strategy"][
+                                self.strategy_manager.strategy_dict[sid].name
                             ]["total_trade_limit"]
                         )
                     )
@@ -205,20 +205,20 @@ class RiskMenu(QtWidgets.QWidget):
 
             if (
                 "total_cancel_limit"
-                in self.strategy_manager._config["strategy"][
-                    self.strategy_manager._strategy_dict[sid].name
+                in self.strategy_manager.config["strategy"][
+                    self.strategy_manager.strategy_dict[sid].name
                 ].keys()
             ):
                 if (
-                    self.strategy_manager._config["strategy"][
-                        self.strategy_manager._strategy_dict[sid].name
+                    self.strategy_manager.config["strategy"][
+                        self.strategy_manager.strategy_dict[sid].name
                     ]["total_cancel_limit"]
                     is not None
                 ):
                     self.total_cancel_limit.setText(
                         str(
-                            self.strategy_manager._config["strategy"][
-                                self.strategy_manager._strategy_dict[sid].name
+                            self.strategy_manager.config["strategy"][
+                                self.strategy_manager.strategy_dict[sid].name
                             ]["total_cancel_limit"]
                         )
                     )
@@ -229,20 +229,20 @@ class RiskMenu(QtWidgets.QWidget):
 
             if (
                 "total_active_limit"
-                in self.strategy_manager._config["strategy"][
-                    self.strategy_manager._strategy_dict[sid].name
+                in self.strategy_manager.config["strategy"][
+                    self.strategy_manager.strategy_dict[sid].name
                 ].keys()
             ):
                 if (
-                    self.strategy_manager._config["strategy"][
-                        self.strategy_manager._strategy_dict[sid].name
+                    self.strategy_manager.config["strategy"][
+                        self.strategy_manager.strategy_dict[sid].name
                     ]["total_active_limit"]
                     is not None
                 ):
                     self.total_active_limit.setText(
                         str(
-                            self.strategy_manager._config["strategy"][
-                                self.strategy_manager._strategy_dict[sid].name
+                            self.strategy_manager.config["strategy"][
+                                self.strategy_manager.strategy_dict[sid].name
                             ]["total_active_limit"]
                         )
                     )
@@ -253,20 +253,20 @@ class RiskMenu(QtWidgets.QWidget):
 
             if (
                 "total_loss_limit"
-                in self.strategy_manager._config["strategy"][
-                    self.strategy_manager._strategy_dict[sid].name
+                in self.strategy_manager.config["strategy"][
+                    self.strategy_manager.strategy_dict[sid].name
                 ].keys()
             ):
                 if (
-                    self.strategy_manager._config["strategy"][
-                        self.strategy_manager._strategy_dict[sid].name
+                    self.strategy_manager.config["strategy"][
+                        self.strategy_manager.strategy_dict[sid].name
                     ]["total_loss_limit"]
                     is not None
                 ):
                     self.total_loss_limit.setText(
                         str(
-                            self.strategy_manager._config["strategy"][
-                                self.strategy_manager._strategy_dict[sid].name
+                            self.strategy_manager.config["strategy"][
+                                self.strategy_manager.strategy_dict[sid].name
                             ]["total_loss_limit"]
                         )
                     )
@@ -280,92 +280,92 @@ class RiskMenu(QtWidgets.QWidget):
 
         if sid == 0:
             if not self.total_trade_limit.text():
-                self.strategy_manager._config["total_trade_limit"] = None
+                self.strategy_manager.config["total_trade_limit"] = None
             else:
-                self.strategy_manager._config["total_trade_limit"] = int(
+                self.strategy_manager.config["total_trade_limit"] = int(
                     self.total_trade_limit.text()
                 )
 
             if not self.total_cancel_limit.text():
-                self.strategy_manager._config["total_cancel_limit"] = None
+                self.strategy_manager.config["total_cancel_limit"] = None
             else:
-                self.strategy_manager._config["total_cancel_limit"] = int(
+                self.strategy_manager.config["total_cancel_limit"] = int(
                     self.total_cancel_limit.text()
                 )
 
             if not self.total_active_limit.text():
-                self.strategy_manager._config["total_active_limit"] = None
+                self.strategy_manager.config["total_active_limit"] = None
             else:
-                self.strategy_manager._config["total_active_limit"] = int(
+                self.strategy_manager.config["total_active_limit"] = int(
                     self.total_active_limit.text()
                 )
 
             if not self.total_loss_limit.text():
-                self.strategy_manager._config["total_loss_limit"] = None
+                self.strategy_manager.config["total_loss_limit"] = None
             else:
-                self.strategy_manager._config["total_loss_limit"] = float(
+                self.strategy_manager.config["total_loss_limit"] = float(
                     self.total_loss_limit.text()
                 )
         else:
             if not self.order_start_time.text():
-                self.strategy_manager._config["strategy"][
-                    self.strategy_manager._strategy_dict[sid].name
+                self.strategy_manager.config["strategy"][
+                    self.strategy_manager.strategy_dict[sid].name
                 ]["order_start_time"] = None
             else:
-                self.strategy_manager._config["strategy"][
-                    self.strategy_manager._strategy_dict[sid].name
+                self.strategy_manager.config["strategy"][
+                    self.strategy_manager.strategy_dict[sid].name
                 ]["order_start_time"] = self.order_start_time.text()
 
             if not self.order_end_time.text():
-                self.strategy_manager._config["strategy"][
-                    self.strategy_manager._strategy_dict[sid].name
+                self.strategy_manager.config["strategy"][
+                    self.strategy_manager.strategy_dict[sid].name
                 ]["order_end_time"] = None
             else:
-                self.strategy_manager._config["strategy"][
-                    self.strategy_manager._strategy_dict[sid].name
+                self.strategy_manager.config["strategy"][
+                    self.strategy_manager.strategy_dict[sid].name
                 ]["order_end_time"] = self.order_end_time.text()
 
             if not self.single_trade_limit.text():
-                self.strategy_manager._config["strategy"][
-                    self.strategy_manager._strategy_dict[sid].name
+                self.strategy_manager.config["strategy"][
+                    self.strategy_manager.strategy_dict[sid].name
                 ]["single_trade_limit"] = None
             else:
-                self.strategy_manager._config["strategy"][
-                    self.strategy_manager._strategy_dict[sid].name
+                self.strategy_manager.config["strategy"][
+                    self.strategy_manager.strategy_dict[sid].name
                 ]["single_trade_limit"] = int(self.single_trade_limit.text())
 
             if not self.total_trade_limit.text():
-                self.strategy_manager._config["strategy"][
-                    self.strategy_manager._strategy_dict[sid].name
+                self.strategy_manager.config["strategy"][
+                    self.strategy_manager.strategy_dict[sid].name
                 ]["total_trade_limit"] = None
             else:
-                self.strategy_manager._config["strategy"][
-                    self.strategy_manager._strategy_dict[sid].name
+                self.strategy_manager.config["strategy"][
+                    self.strategy_manager.strategy_dict[sid].name
                 ]["total_trade_limit"] = int(self.total_trade_limit.text())
 
             if not self.total_cancel_limit.text():
-                self.strategy_manager._config["strategy"][
-                    self.strategy_manager._strategy_dict[sid].name
+                self.strategy_manager.config["strategy"][
+                    self.strategy_manager.strategy_dict[sid].name
                 ]["total_cancel_limit"] = None
             else:
-                self.strategy_manager._config["strategy"][
-                    self.strategy_manager._strategy_dict[sid].name
+                self.strategy_manager.config["strategy"][
+                    self.strategy_manager.strategy_dict[sid].name
                 ]["total_cancel_limit"] = int(self.total_cancel_limit.text())
 
             if not self.total_active_limit.text():
-                self.strategy_manager._config["strategy"][
-                    self.strategy_manager._strategy_dict[sid].name
+                self.strategy_manager.config["strategy"][
+                    self.strategy_manager.strategy_dict[sid].name
                 ]["total_active_limit"] = None
             else:
-                self.strategy_manager._config["strategy"][
-                    self.strategy_manager._strategy_dict[sid].name
+                self.strategy_manager.config["strategy"][
+                    self.strategy_manager.strategy_dict[sid].name
                 ]["total_active_limit"] = int(self.total_active_limit.text())
 
             if not self.total_loss_limit.text():
-                self.strategy_manager._config["strategy"][
-                    self.strategy_manager._strategy_dict[sid].name
+                self.strategy_manager.config["strategy"][
+                    self.strategy_manager.strategy_dict[sid].name
                 ]["total_loss_limit"] = None
             else:
-                self.strategy_manager._config["strategy"][
-                    self.strategy_manager._strategy_dict[sid].name
+                self.strategy_manager.config["strategy"][
+                    self.strategy_manager.strategy_dict[sid].name
                 ]["total_loss_limit"] = float(self.total_loss_limit.text())

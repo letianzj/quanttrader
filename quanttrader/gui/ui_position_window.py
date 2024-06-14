@@ -1,11 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from PyQt5 import QtCore, QtWidgets, QtGui
-from typing import Any
 import logging
+from typing import Any
 
-from ..position.position_event import PositionEvent
+from PyQt5 import QtCore, QtWidgets
+
 from ..order.fill_event import FillEvent
+from ..position.position_event import PositionEvent
 
 _logger = logging.getLogger(__name__)
 

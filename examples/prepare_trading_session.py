@@ -1,18 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-import os
 import argparse
-import time
-from datetime import datetime, timedelta
+
 import pandas as pd
 import yaml
-import numpy as np
-import logging
 
 
-def run(args):
-    target_path = args.path
-    with open(args.config_file, encoding="utf8") as fd:
+def run(target_path, config_file):
+    with open(config_file, encoding="utf8") as fd:
         config = yaml.safe_load(fd)
 
     # DualThrustStrategy
@@ -30,7 +25,7 @@ def run(args):
     df.to_csv(f"{target_path}{sname}.csv", header=True, index=True)
 
     # save config
-    with open(args.config_file, "w") as file:
+    with open(config_file, "w", encoding="utf-8") as file:
         yaml.dump(config, file)
 
 
@@ -49,6 +44,6 @@ if __name__ == "__main__":
     )
 
     args = parser.parse_args()
-    run(args)
+    run(args.path, args.config_file)
 
     print("Dene session preparation. Ready to trade")

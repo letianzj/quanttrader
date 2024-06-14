@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from copy import copy
 import logging
+from copy import copy
 from typing import Set
 
 from ..data.tick_event import TickEvent
@@ -35,7 +35,6 @@ class OrderManager(object):
         self.canceled_order_set.clear()
 
     def on_tick(self, tick_event: TickEvent) -> None:
-        """ """
         pass
 
     def on_order_status(self, order_event: OrderEvent) -> bool:

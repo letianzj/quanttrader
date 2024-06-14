@@ -1,14 +1,15 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from quanttrader.strategy.strategy_base import StrategyBase
-from quanttrader.data.tick_event import TickType
-from quanttrader.order.order_event import OrderEvent
-from quanttrader.order.order_status import OrderStatus
-from quanttrader.order.order_type import OrderType
+import logging
 from datetime import datetime, timedelta
+
 import numpy as np
 import pandas as pd
-import logging
+
+from quanttrader.data.tick_event import TickType
+from quanttrader.order.order_event import OrderEvent
+from quanttrader.order.order_type import OrderType
+from quanttrader.strategy.strategy_base import StrategyBase
 
 _logger = logging.getLogger("qtlive")
 
@@ -42,6 +43,11 @@ class DualTimeFrameStrategy(StrategyBase):
         self.sidx_15sec: int = 0  # df start idx
         self.eidx_15sec: int = 0  # df end idx
         self.nbars_15sec: int = 0  # current bars
+
+        self.df_5sec_bar = pd.DataFrame()
+        self.df_15sec_bar = pd.DataFrame()
+        self.midx_5sec = 0
+        self.midx_15sec = 0
 
         _logger.info("DualTimeFrameStrategy initiated")
 
@@ -109,7 +115,7 @@ class DualTimeFrameStrategy(StrategyBase):
         self.midx_5sec = len(idx_5sec) - 1  # max idx
         self.midx_15sec = len(idx_15sec) - 1  # max idx
 
-    def on_tick(self, k):
+    def on_tick(self, tick_event):
         """
         Essentially it does two things:
         1. Aggregate 5sec and 15 sec bars. This is more efficient than subscribing to IB real time bars
@@ -119,6 +125,7 @@ class DualTimeFrameStrategy(StrategyBase):
             * avoid dropna empty bars for less traded symbols.
             * avoid averaging loop
         """
+        k = tick_event
         super().on_tick(k)  # extra mtm calc
 
         if k.tick_type != TickType.TRADE:  # only trace trade bars

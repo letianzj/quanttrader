@@ -16,22 +16,30 @@ class BrokerageBase(object):
 
     @abstractmethod
     def place_order(self, order_event: OrderEvent) -> None:
-        """"""
+        """
+        place order
+        """
         raise NotImplementedError("Implement this in your derived class")
 
     @abstractmethod
     def cancel_order(self, order_id: int) -> None:
-        """"""
+        """
+        cancel order
+        """
         raise NotImplementedError("Implement this in your derived class")
 
     @abstractmethod
     def next_order_id(self) -> int:
-        """"""
+        """
+        request next order id
+        """
         raise NotImplementedError("Implement this in your derived class")
 
     @abstractmethod
     def _calculate_commission(
         self, full_symbol: str, fill_price: float, fill_size: int
     ) -> float:
-        """"""
+        """
+        calc commission
+        """
         raise NotImplementedError("Implement this in your derived class")

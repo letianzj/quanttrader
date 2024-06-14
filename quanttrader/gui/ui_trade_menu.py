@@ -1,18 +1,18 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from PyQt5 import QtCore, QtWidgets, QtGui
+import logging
 from datetime import datetime
 from typing import Any
-import logging
+
+from PyQt5 import QtGui, QtWidgets
 
 from ..brokerage.brokerage_base import BrokerageBase
+from ..event.event import LogEvent
 from ..event.live_event_engine import LiveEventEngine
-from ..order.order_type import OrderType
-from ..order.order_status import OrderStatus
 from ..order.order_event import OrderEvent
 from ..order.order_manager import OrderManager
-from ..event.event import LogEvent
-
+from ..order.order_status import OrderStatus
+from ..order.order_type import OrderType
 
 _logger = logging.getLogger(__name__)
 

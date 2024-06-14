@@ -1,14 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from quanttrader.strategy.strategy_base import StrategyBase
-from quanttrader.data.tick_event import TickType
-from quanttrader.order.order_event import OrderEvent
-from quanttrader.order.order_status import OrderStatus
-from quanttrader.order.order_type import OrderType
-from datetime import datetime
-import numpy as np
-import pandas as pd
 import logging
+
+import pandas as pd
+
+from quanttrader.data.tick_event import TickType
+from quanttrader.strategy.strategy_base import StrategyBase
 
 _logger = logging.getLogger("qtlive")
 
@@ -26,7 +23,7 @@ class DualThrustStrategy(StrategyBase):
         df.index = pd.to_datetime(df.index)
         df1 = df.resample("5T").agg({"price": "ohlc", "volume": "sum"})
         df1.columns = df1.columns.get_level_values(1)
-        df2 = df1.resample("10T").agg(
+        _ = df1.resample("10T").agg(
             {
                 "open": "first",
                 "high": "max",
@@ -38,7 +35,8 @@ class DualThrustStrategy(StrategyBase):
 
         _logger.info("DualThrustStrategy initiated")
 
-    def on_tick(self, k):
+    def on_tick(self, tick_event):
+        k = tick_event
         super().on_tick(k)  # extra mtm calc
 
         if k.tick_type != TickType.TRADE:

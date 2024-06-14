@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from pandas import Timestamp
 from enum import Enum
-from typing import Any
 
 
 class EventType(Enum):

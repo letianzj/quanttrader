@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from queue import Queue, Empty
-from threading import Thread
+import logging
 from collections import defaultdict
+from queue import Empty, Queue
+from threading import Thread
 from typing import Any, Callable
 
 from ..event.event import Event, EventType
-import logging
 
 _logger = logging.getLogger(__name__)
 
@@ -39,7 +39,7 @@ class LiveEventEngine(object):
         """
         run dispatcher
         """
-        while self.__active == True:
+        while self._active:
             try:
                 event = self._queue.get(block=True, timeout=1)
                 # call event handlers
@@ -57,14 +57,14 @@ class LiveEventEngine(object):
         """
         start the dispatcher thread
         """
-        self.__active = True
+        self._active = True
         self._thread.start()
 
     def stop(self) -> None:
         """
         stop the dispatcher thread
         """
-        self.__active = False
+        self._active = False
         self._thread.join()
 
     def put(self, event: Event) -> None:
@@ -79,10 +79,10 @@ class LiveEventEngine(object):
         """
         register handler/subscriber
         """
-        handlerList = self._handlers[type_]
+        handler_list = self._handlers[type_]
 
-        if handler not in handlerList:
-            handlerList.append(handler)
+        if handler not in handler_list:
+            handler_list.append(handler)
 
     def unregister_handler(
         self, type_: EventType, handler: Callable[[Any], None]
@@ -90,12 +90,12 @@ class LiveEventEngine(object):
         """
         unregister handler/subscriber
         """
-        handlerList = self._handlers[type_]
+        handler_list = self._handlers[type_]
 
-        if handler in handlerList:
-            handlerList.remove(handler)
+        if handler in handler_list:
+            handler_list.remove(handler)
 
-        if not handlerList:
+        if not handler_list:
             del self._handlers[type_]
 
     # -------------------------------- end of public functions -----------------------------#

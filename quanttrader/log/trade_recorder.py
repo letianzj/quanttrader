@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-import datetime
-import os
 import csv
+import datetime
 import logging
+import os
 
 _logger = logging.getLogger(__name__)
 

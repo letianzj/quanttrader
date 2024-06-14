@@ -1,15 +1,17 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from quanttrader.strategy.strategy_base import StrategyBase
+import logging
+from datetime import datetime
+
+import numpy as np
+import pandas as pd
+import ta
+import ta.momentum
+
 from quanttrader.data.tick_event import TickType
 from quanttrader.order.order_event import OrderEvent
-from quanttrader.order.order_status import OrderStatus
 from quanttrader.order.order_type import OrderType
-from datetime import datetime
-import numpy as np
-import talib
-import pandas as pd
-import logging
+from quanttrader.strategy.strategy_base import StrategyBase
 
 _logger = logging.getLogger("qtlive")
 
@@ -22,7 +24,7 @@ class ActiveBuySellStrengthStrategy(StrategyBase):
     def __init__(self):
         super(ActiveBuySellStrengthStrategy, self).__init__()
         today = datetime.today()
-        midnight = today.replace(hour=0, minute=0, second=0, microsecond=0)
+        # midnight = today.replace(hour=0, minute=0, second=0, microsecond=0)
         self.start_time = today.replace(
             hour=9, minute=0, second=0, microsecond=0
         )  # 9:00 to start initiation
@@ -48,9 +50,10 @@ class ActiveBuySellStrengthStrategy(StrategyBase):
         self.stength_threshold2 = 0.10
         _logger.info("ActiveBuySellStrengthStrategy initiated")
 
-    def on_tick(self, k):
-        super().on_tick(k)  # extra mtm calc
+    def on_tick(self, tick_event):
+        super().on_tick(tick_event)  # extra mtm calc
 
+        k = tick_event
         if k.tick_type == TickType.BID:
             self.last_bid_price = k.bid_price_L1
             return
@@ -116,7 +119,7 @@ class ActiveBuySellStrengthStrategy(StrategyBase):
             )
             return
 
-        rsi = talib.RSI(df1, self.n_rsi).iloc[
+        rsi = ta.momentum.rsi(df1, self.n_rsi).iloc[
             -1
         ]  # talib actually calculates rolling SMA; not as efficient
         ratio = self.active_buy_size / self.active_sell_size

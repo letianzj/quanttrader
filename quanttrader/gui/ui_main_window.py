@@ -1,45 +1,40 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # http://stackoverflow.com/questions/9957195/updating-gui-elements-in-multithreaded-pyqt
-import sys
-import os
-import webbrowser
-import pandas as pd
-import psutil
-from queue import Queue, Empty
-from copy import copy
 import logging
-from PyQt5 import QtCore, QtWidgets, QtGui
+import os
 from datetime import datetime
 from typing import Any
 
-from ..brokerage.ib_brokerage import InteractiveBrokers
-from ..event.event import Event, EventType
+import pandas as pd
+import psutil
+from PyQt5 import QtCore, QtGui, QtWidgets
+
 from ..account.account_event import AccountEvent
-from ..order.order_flag import OrderFlag
-from ..order.order_event import OrderEvent
-from ..order.fill_event import FillEvent
+from ..account.account_manager import AccountManager
+from ..brokerage.ib_brokerage import InteractiveBrokers
 from ..data.data_board import DataBoard
 from ..data.tick_event import TickEvent
+from ..event.event import Event, EventType
+from ..event.live_event_engine import LiveEventEngine
+from ..order.fill_event import FillEvent
+from ..order.order_event import OrderEvent
 from ..order.order_manager import OrderManager
+from ..position.contract_event import ContractEvent
+from ..position.position_event import PositionEvent
+from ..position.position_manager import PositionManager
+from ..risk.risk_manager import RiskManager
 from ..strategy.strategy_base import StrategyBase
 from ..strategy.strategy_manager import StrategyManager
-from ..position.position_manager import PositionManager
-from ..position.position_event import PositionEvent
-from ..position.contract_event import ContractEvent
-from ..risk.risk_manager import RiskManager
-from ..account.account_manager import AccountManager
-from ..event.live_event_engine import LiveEventEngine
-from ..order.order_type import OrderType
-from .ui_order_window import OrderWindow
-from .ui_fill_window import FillWindow
-from .ui_position_window import PositionWindow
 from .ui_account_window import AccountWindow
-from .ui_strategy_window import StrategyWindow
+from .ui_fill_window import FillWindow
 from .ui_log_window import LogWindow
-from .ui_trade_menu import TradeMenu
+from .ui_order_window import OrderWindow
 from .ui_position_menu import PositionMenu
+from .ui_position_window import PositionWindow
 from .ui_risk_menu import RiskMenu
+from .ui_strategy_window import StrategyWindow
+from .ui_trade_menu import TradeMenu
 
 _logger = logging.getLogger(__name__)
 _logger_tick = logging.getLogger("tick_recorder")
@@ -552,11 +547,11 @@ class StatusThread(QtCore.QThread):
 
     def run(self) -> None:
         while True:
-            cpuPercent = psutil.cpu_percent()
+            cpu_percent = psutil.cpu_percent()
             memoryPercent = psutil.virtual_memory().percent
             self.status_update.emit(
                 "CPU Usage: "
-                + str(cpuPercent)
+                + str(cpu_percent)
                 + "% Memory Usage: "
                 + str(memoryPercent)
                 + "%"

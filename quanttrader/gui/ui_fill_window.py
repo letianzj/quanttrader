@@ -1,9 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from PyQt5 import QtCore, QtWidgets, QtGui
-from ..order.fill_event import FillEvent
-from typing import Any
 import logging
+from typing import Any
+
+from PyQt5 import QtCore, QtWidgets
+
+from ..order.fill_event import FillEvent
 
 _logger = logging.getLogger(__name__)
 

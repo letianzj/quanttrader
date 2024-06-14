@@ -1,12 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from quanttrader.strategy.strategy_base import StrategyBase
+import logging
+
+import numpy as np
+
 from quanttrader.data.tick_event import TickType
 from quanttrader.order.order_event import OrderEvent
-from quanttrader.order.order_status import OrderStatus
 from quanttrader.order.order_type import OrderType
-import numpy as np
-import logging
+from quanttrader.strategy.strategy_base import StrategyBase
 
 _logger = logging.getLogger("qtlive")
 
@@ -23,7 +24,7 @@ class MovingAverageCrossStrategy(StrategyBase):
         self.last_trade = -1
         self.ema = -1
         self.last_time = -1
-        self.G = 20
+        self.g = 20
         _logger.info("MovingAverageCrossStrategy initiated")
 
     def on_fill(self, fill_event):
@@ -33,7 +34,8 @@ class MovingAverageCrossStrategy(StrategyBase):
             f"MovingAverageCrossStrategy order filled. oid {fill_event.order_id}, filled price {fill_event.fill_price} size {fill_event.fill_size}"
         )
 
-    def on_tick(self, k):
+    def on_tick(self, tick_event):
+        k = tick_event
         super().on_tick(k)  # extra mtm calc
 
         symbol = self.symbols[0]
@@ -51,7 +53,7 @@ class MovingAverageCrossStrategy(StrategyBase):
                 self.last_time = k.timestamp
             else:
                 time_elapsed = (k.timestamp - self.last_time).total_seconds()
-                alpha = 1 - np.exp(-time_elapsed / self.G)
+                alpha = 1 - np.exp(-time_elapsed / self.g)
                 self.ema += alpha * (self.last_trade - self.ema)
                 self.last_time = k.timestamp
 

@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from .brokerage_base import BrokerageBase
 from ..data.data_board import DataBoard
 from ..data.tick_event import TickEvent
 from ..event.backtest_event_engine import BacktestEventEngine
 from ..order.fill_event import FillEvent
 from ..order.order_event import OrderEvent
-from ..order.order_type import OrderType
 from ..order.order_status import OrderStatus
+from ..order.order_type import OrderType
+from .brokerage_base import BrokerageBase
 
 
 class BacktestBrokerage(BrokerageBase):

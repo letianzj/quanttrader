@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from __future__ import annotations  # Only needed if you are using Python < 3.10
+
 from enum import Enum
 from functools import total_ordering
 
