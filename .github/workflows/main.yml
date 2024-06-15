@@ -32,12 +32,14 @@ jobs:
         pip install PyQt5 >= 5.15.10
         pip install QDarkStyle >= 2.8
 
+    - name: Check code formatting with black
+      run: |
+        poetry run isort --check .
+        poetry run black --check .
+
     - name: Analysing the code with pylint
       run: |
         poetry run pylint $(git ls-files '*.py')
-
-    - name: Check code formatting with black
-      run: poetry run black --check .
 
     - name: Run tests
       run: poetry run pytest

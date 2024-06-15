@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "quanttrader"
-version = "0.1.0"
-description = "quant trader python"
+version = "0.6.0"
+description = "quanttrader backtest and live trading library"
 readme = "README.md"
 authors = [
   {name = "Letian Wang", email = "letian.zj@gmail.com"}
@@ -43,7 +43,7 @@ package-dir = {"" = "src"}
 
 [tool.poetry]
 name = "quanttrader"
-version = "0.1.0"
+version = "0.6.0"
 description = "quant trader python"
 authors = ["Letian Wang <letian.zj@gmail.com>"]
 

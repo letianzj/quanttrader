@@ -62,7 +62,7 @@ class HistoricalDataDownloader:
         # RTH stock 9:30~16:00; FUT 9:30~17:00, ES halt 16:15~16:30
         # 7.5h x 2 = 15 requests = 15*15 ~ 4min
         symbols = [
-            "ESU0 FUT GLOBEX",  # 9:30 a.m. ET on the 3rd Friday of the contract month; 15:14:30 – 15:15:00 CT; final 9:30am opening prices
+            # "ESU4 FUT GLOBEX",  # 9:30 a.m. ET on the 3rd Friday of the contract month; 15:14:30 – 15:15:00 CT; final 9:30am opening prices
             # 'NQU0 FUT GLOBEX',          # 9:30 a.m. ET on the 3rd Friday of the contract month
             # 'CLU0 FUT NYNEX',           # 3 business day prior to the 25th calendar day of the month prior to the contract month, if not business day; active -2D; 4:28:00 to 14:30:00 ET; 14:00:00 and 14:30:00 ET
             # 'CLV0 FUT NYNEX',
@@ -72,7 +72,7 @@ class HistoricalDataDownloader:
             # 'RBV0 FUT NYMEX',
             # 'NGU0 FUT NYMEX',         # 3rd last business days of the month prior to the contract month; active -2D. 14:28:00 to 14:30:00 ET; 14:00:00 and 14:30:00 ET
             # 'NGV0 FUT NYMEX',
-            # # 'SPY STK SMART',
+            "SPY STK SMART",
             # 'QQQ STK SMART',
             # 'XLE STK SMART',
             # 'XLF STK SMART',
@@ -103,9 +103,7 @@ class HistoricalDataDownloader:
                 # daily combine and remove duplicates
                 dfd = self.df.combine_first(dfd)
                 # ready for the next 30min
-                self.df = pd.DataFrame(
-                    columns=["Open", "High", "Low", "Close", "Volume"]
-                )
+                self.df = pd.DataFrame(columns=["Open", "High", "Low", "Close", "Volume"])
 
             dfd.sort_index(inplace=True)
             dict_all[sym] = dfd
@@ -129,10 +127,10 @@ class HistoricalDataDownloader:
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Historical Downloader")
-    parser.add_argument("--date", help="yyyymmdd")
+    parser.add_argument("--date", help="yyyymmdd", required=True)
     parser.add_argument(
         "--path",
-        default="d:/workspace/quantresearch/data/tick/",
+        default="c::/workspace/data/tick/",
         help="hist data folder",
     )
 

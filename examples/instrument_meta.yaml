@@ -1,5 +1,6 @@
 # default:  multiplier: 1
 #           margin: 100%
+
 ES:
   Type: FUT
   Root: ES

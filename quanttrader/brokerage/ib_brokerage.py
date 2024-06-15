@@ -18,7 +18,6 @@ from ibapi.execution import Execution, ExecutionFilter
 from ibapi.order import *  # @UnusedWildImport
 from ibapi.order_condition import *  # @UnusedWildImport
 from ibapi.order_state import *  # @UnusedWildImport
-from ibapi.tag_value import TagValue
 from ibapi.ticktype import TickType, TickTypeEnum
 from ibapi.wrapper import EWrapper
 
@@ -64,9 +63,7 @@ class InteractiveBrokers(BrokerageBase):
         self.contract_detail_request_contract_dict: dict[int, Contract] = (  # type: ignore
             {}
         )  # reqid ==> contract
-        self.contract_detail_request_symbol_dict: dict[int, str] = (
-            {}
-        )  # reqid ==> symbol
+        self.contract_detail_request_symbol_dict: dict[int, str] = {}  # reqid ==> symbol
         self.sym_contract_dict: dict[str, Contract] = {}  # type: ignore
         self.contract_symbol_dict: dict[int, str] = {}  # conId ==> symbol
         self.market_data_subscription_dict: dict[int, str] = {}  # reqId ==> sym
@@ -75,9 +72,7 @@ class InteractiveBrokers(BrokerageBase):
         )  # reqid ==> tick_event; to combine tickprice and ticksize
         self.market_depth_subscription_dict: dict[int, str] = {}
         self.market_depth_subscription_reverse_dict: dict[str, int] = {}
-        self.market_depth_tick_dict: dict[int, TickEvent] = (
-            {}
-        )  # to combine tickprice and ticksize
+        self.market_depth_tick_dict: dict[int, TickEvent] = {}  # to combine tickprice and ticksize
         self.hist_data_request_dict: dict[int, str] = {}
         self.order_dict: dict[int, OrderEvent] = {}  # order id ==> order_event
         self.account_summary_reqid = -1
@@ -86,9 +81,7 @@ class InteractiveBrokers(BrokerageBase):
         self.clientid = 0
         self.reqid = 0  # next/available reqid
 
-    def connect(
-        self, host: str = "127.0.0.1", port: int = 7497, clientId: int = 0
-    ) -> None:
+    def connect(self, host: str = "127.0.0.1", port: int = 7497, clientId: int = 0) -> None:
         """
         Connect to IB. Request open orders under clientid upon successful connection.
 
@@ -106,6 +99,7 @@ class InteractiveBrokers(BrokerageBase):
 
         if clientId == 0:
             # associate TWS with the client
+            _logger.info(f"connected {self.api.isConnected()}... request open orders")
             self.api.reqAutoOpenOrders(True)
 
     def disconnect(self) -> None:
@@ -119,11 +113,9 @@ class InteractiveBrokers(BrokerageBase):
         # self.api.conn.disconnect()
         self.api.conn.socket = None
         self.api.disconnect()
-        _logger.info(f"connected {self.api.isConnected()}")
+        _logger.info(f"disconnected {self.api.isConnected()}")
 
-    def _calculate_commission(
-        self, full_symbol: str, fill_price: float, fill_size: int
-    ) -> float:
+    def _calculate_commission(self, full_symbol: str, fill_price: float, fill_size: int) -> float:
         """"""
         raise NotImplementedError("Implement this in your derived class")
 
@@ -147,9 +139,7 @@ class InteractiveBrokers(BrokerageBase):
 
         ib_contract = InteractiveBrokers.symbol_to_contract(order_event.full_symbol)
         if not ib_contract:
-            _logger.error(
-                f"Failed to find contract to place order {order_event.full_symbol}"
-            )
+            _logger.error(f"Failed to find contract to place order {order_event.full_symbol}")
             return
 
         ib_order = InteractiveBrokers.order_to_ib_order(order_event)
@@ -166,9 +156,7 @@ class InteractiveBrokers(BrokerageBase):
         order_event.timestamp = datetime.now().strftime("%H:%M:%S.%f")
         order_event.order_status = OrderStatus.ACKNOWLEDGED  # acknowledged
         self.order_dict[order_event.order_id] = order_event
-        _logger.info(
-            f"Order acknowledged {order_event.order_id}, {order_event.full_symbol}"
-        )
+        _logger.info(f"Order acknowledged {order_event.order_id}, {order_event.full_symbol}")
         self.event_engine.put(copy(order_event))
         self.api.placeOrder(order_event.order_id, ib_contract, ib_order)
 
@@ -466,9 +454,7 @@ class InteractiveBrokers(BrokerageBase):
             ib_contract.secType = symbol_fields[1]  # OPT
             ib_contract.lastTradeDateOrContractMonth = symbol_fields[2]  # 20201016
             ib_contract.strike = (
-                float(symbol_fields[3])
-                if "." in symbol_fields[3]
-                else int(symbol_fields[3])
+                float(symbol_fields[3]) if "." in symbol_fields[3] else int(symbol_fields[3])
             )  # 128.75
             ib_contract.right = symbol_fields[4]  # C
             ib_contract.exchange = symbol_fields[5]  # SMART
@@ -479,9 +465,7 @@ class InteractiveBrokers(BrokerageBase):
             ib_contract.secType = symbol_fields[1]  # FOP
             ib_contract.lastTradeDateOrContractMonth = symbol_fields[2]  # 20200911
             ib_contract.strike = (
-                float(symbol_fields[3])
-                if "." in symbol_fields[3]
-                else int(symbol_fields[3])
+                float(symbol_fields[3]) if "." in symbol_fields[3] else int(symbol_fields[3])
             )  # 128.75
             ib_contract.right = symbol_fields[4]  # C
             ib_contract.multiplier = symbol_fields[5]  # 50
@@ -761,6 +745,7 @@ class IBApi(EWrapper, EClient):  # type: ignore
         whyHeld: str,
         mktCapPrice: float,
     ) -> None:
+
         super().orderStatus(
             orderId,
             status,
@@ -792,8 +777,8 @@ class IBApi(EWrapper, EClient):  # type: ignore
             order_event.account = self.broker.account
             order_event.order_size = int(filled + remaining)
             order_event.fill_size = int(filled)
-            self.order_type = OrderType.UNKNOWN
-            self.order_status = OrderStatus.UNKNOWN
+            order_event.order_type = OrderType.UNKNOWN
+            order_event.order_status = OrderStatus.UNKNOWN
             # order_event.order_time = datetime.now().strftime("%H:%M:%S.%f")
             order_event.create_time = pd.Timestamp(datetime.now())
             order_event.source = -1  # unrecognized source
@@ -826,9 +811,7 @@ class IBApi(EWrapper, EClient):  # type: ignore
         self.broker.account = accountsList.split(",")[0]
         self.reqAccountUpdates(True, self.broker.account)
 
-    def accountSummary(
-        self, reqId: int, account: str, tag: str, value: str, currency: str
-    ) -> None:
+    def accountSummary(self, reqId: int, account: str, tag: str, value: str, currency: str) -> None:
         super().accountSummary(reqId, account, tag, value, currency)
         msg = f"AccountSummary. ReqId: {reqId}, Account: {account}, Tag: {tag}, Value: {value}, Currency: {currency}"
         _logger.info(msg)
@@ -838,9 +821,7 @@ class IBApi(EWrapper, EClient):  # type: ignore
         super().accountSummaryEnd(reqId)
         _logger.info(f"AccountSummaryEnd. ReqId: {reqId}")
 
-    def updateAccountValue(
-        self, key: str, val: str, currency: str, accountName: str
-    ) -> None:
+    def updateAccountValue(self, key: str, val: str, currency: str, accountName: str) -> None:
         """
         Just as with the TWS' Account Window, unless there is a position change this information is updated at a fixed interval of three minutes.
         """
@@ -863,9 +844,7 @@ class IBApi(EWrapper, EClient):  # type: ignore
             self.broker.account_summary.closed_pnl = float(val)
         elif key == "UnrealizedPnL" and currency == "USD":
             self.broker.account_summary.open_pnl = float(val)
-            self.broker.event_engine.put(
-                self.broker.account_summary
-            )  # assume alphabatic order
+            self.broker.event_engine.put(self.broker.account_summary)  # assume alphabatic order
 
     def updatePortfolio(
         self,
@@ -1086,9 +1065,10 @@ class IBApi(EWrapper, EClient):  # type: ignore
             msg = f"Price Increment. {priceIncrement}"
             _logger.info(msg)
 
-    def orderBound(self, orderId: int, apiClientId: int, apiOrderId: int) -> None:
-        super().orderBound(orderId, apiClientId, apiOrderId)
-        msg = f"OrderBound. OrderId: {orderId}, ApiClientId: {apiClientId}, ApiOrderId: {apiOrderId}"
+    def orderBound(self, reqId: int, apiClientId: int, apiOrderId: int) -> None:
+
+        super().orderBound(reqId, apiClientId, apiOrderId)
+        msg = f"OrderBound. OrderId: {reqId}, ApiClientId: {apiClientId}, ApiOrderId: {apiOrderId}"
         _logger.info(msg)
 
     def tickByTickAllLast(
@@ -1098,28 +1078,29 @@ class IBApi(EWrapper, EClient):  # type: ignore
         time: int,
         price: float,
         size: int,
-        tickAtrribLast: TickAttribLast,  # type: ignore
+        tickAttribLast: TickAttribLast,  # type: ignore
         exchange: str,
         specialConditions: str,
     ) -> None:
+
         super().tickByTickAllLast(
             reqId,
             tickType,
             time,
             price,
             size,
-            tickAtrribLast,
+            tickAttribLast,
             exchange,
             specialConditions,
         )
         if tickType == 1:
-            _logger.info(f"Last.")
+            _logger.info("Last.")
         else:
             _logger.info("AllLast.")
         msg = (
             f'ReqId: {reqId}, Time: {datetime.fromtimestamp(time).strftime("%Y%m%d %H:%M:%S")}, '
             f"Price: {price}, Size: {size}, Exch: {exchange}, Spec Cond: {specialConditions}, "
-            f"PastLimit: {tickAtrribLast.pastLimit}, Unreported: {tickAtrribLast.unreported}"
+            f"PastLimit: {tickAttribLast.pastLimit}, Unreported: {tickAttribLast.unreported}"
         )
         _logger.info(msg)
 
@@ -1256,7 +1237,7 @@ class IBApi(EWrapper, EClient):  # type: ignore
         self, reqId: int, ticks: ListOfHistoricalTickLast, done: bool  # type: ignore
     ) -> None:
         for tick in ticks:
-            _logger.info("HistoricalTickLast. ReqId: {reqId}, {tick}")
+            _logger.info(f"HistoricalTickLast. ReqId: {reqId}, {tick}")
 
     def securityDefinitionOptionParameter(
         self,
@@ -1338,28 +1319,28 @@ class IBApi(EWrapper, EClient):  # type: ignore
 
     def historicalNews(
         self,
-        reqId: int,
+        requestId: int,
         time: str,
         providerCode: str,
         articleId: str,
         headline: str,
     ) -> None:
         msg = (
-            f"HistoricalNews. ReqId: {reqId}, Time: {time}, ProviderCode: {providerCode}, "
+            f"HistoricalNews. ReqId: {requestId}, Time: {time}, ProviderCode: {providerCode}, "
             f"ArticleId: {articleId}, Headline: {headline}"
         )
         _logger.info(msg)
 
-    def historicalNewsEnd(self, reqId: int, hasMore: bool) -> None:
-        _logger.info(f"HistoricalNewsEnd. ReqId: {reqId}, HasMore: {hasMore}")
+    def historicalNewsEnd(self, requestId: int, hasMore: bool) -> None:
+        _logger.info(f"HistoricalNewsEnd. ReqId: {requestId}, HasMore: {hasMore}")
 
     def newsProviders(self, newsProviders: ListOfNewsProviders) -> None:  # type: ignore
         _logger.info("NewsProviders: ")
         for provider in newsProviders:
             _logger.info(f"NewsProvider. {provider}")
 
-    def newsArticle(self, reqId: int, articleType: int, articleText: str) -> None:
-        msg = f"NewsArticle. ReqId: {reqId}, ArticleType: {articleType}, ArticleText: {articleText}"
+    def newsArticle(self, requestId: int, articleType: int, articleText: str) -> None:
+        msg = f"NewsArticle. ReqId: {requestId}, ArticleType: {articleType}, ArticleText: {articleText}"
         _logger.info(msg)
 
     def contractDetails(self, reqId: int, contractDetails: ContractDetails) -> None:  # type: ignore
@@ -1368,9 +1349,7 @@ class IBApi(EWrapper, EClient):  # type: ignore
             f"Contract Detail: {contractDetails.contract.symbol}, {contractDetails.contract.localSymbol}, {contractDetails.contract.primaryExchange}, {contractDetails.contract.exchange}, {contractDetails.contract.multiplier}"
         )
         if reqId in self.broker.contract_detail_request_contract_dict.keys():
-            self.broker.contract_detail_request_contract_dict[reqId] = (
-                contractDetails.contract
-            )
+            self.broker.contract_detail_request_contract_dict[reqId] = contractDetails.contract
             self.broker.sym_contract_dict[
                 self.broker.contract_detail_request_symbol_dict[reqId]
             ] = contractDetails.contract
@@ -1428,6 +1407,7 @@ class IBApi(EWrapper, EClient):  # type: ignore
         projection: str,
         legsStr: str,
     ) -> None:
+
         super().scannerData(
             reqId,
             rank,
@@ -1437,7 +1417,6 @@ class IBApi(EWrapper, EClient):  # type: ignore
             projection,
             legsStr,
         )
-        pass
 
     def scannerDataEnd(self, reqId: int) -> None:
         super().scannerDataEnd(reqId)
@@ -1509,23 +1488,17 @@ class IBApi(EWrapper, EClient):  # type: ignore
         fill_event.order_id = execution.orderId
         fill_event.fill_id = execution.execId
         fill_event.fill_price = execution.price
-        fill_event.fill_size = execution.shares * (
-            1 if execution.side == "BOT" else -1
-        )  # BOT SLD
-        fill_event.fill_time = datetime.strptime(
-            execution.time, "%Y%m%d  %H:%M:%S"
-        ).strftime("%H:%M:%S.%f")
+        fill_event.fill_size = execution.shares * (1 if execution.side == "BOT" else -1)  # BOT SLD
+        fill_event.fill_time = datetime.strptime(execution.time, "%Y%m%d  %H:%M:%S").strftime(
+            "%H:%M:%S.%f"
+        )
         fill_event.exchange = (
-            contract.exchange
-            if contract.primaryExchange == ""
-            else contract.primaryExchange
+            contract.exchange if contract.primaryExchange == "" else contract.primaryExchange
         )
         fill_event.account = self.broker.account
 
         if execution.orderId in self.broker.order_dict.keys():
-            fill_event.full_symbol = self.broker.order_dict[
-                execution.orderId
-            ].full_symbol
+            fill_event.full_symbol = self.broker.order_dict[execution.orderId].full_symbol
             fill_event.source = self.broker.order_dict[execution.orderId].source
         else:  # not placed by algo
             fill_event.full_symbol = InteractiveBrokers.contract_to_symbol(contract)
@@ -1542,9 +1515,7 @@ class IBApi(EWrapper, EClient):  # type: ignore
 
     def displayGroupUpdated(self, reqId: int, contractInfo: str) -> None:
         super().displayGroupUpdated(reqId, contractInfo)
-        _logger.info(
-            f"DisplayGroupUpdated. ReqId: {reqId}, ContractInfo: {contractInfo}"
-        )
+        _logger.info(f"DisplayGroupUpdated. ReqId: {reqId}, ContractInfo: {contractInfo}")
 
     def commissionReport(self, commissionReport: CommissionReport) -> None:
         super().commissionReport(commissionReport)
