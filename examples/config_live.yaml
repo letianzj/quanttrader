@@ -25,7 +25,7 @@ strategy:
       lookback_5sec: 50
       lookback_15sec: 20
     symbols:
-    - ESM1 FUT GLOBEX
+    - EUM4 FUT GLOBEX
   #---------- Strategy and params control -----------#
   # DualThrustStrategy:
   #   active: false
@@ -60,7 +60,7 @@ strategy:
       tick_trigger_threshold: 6000
     single_trade_limit: 3
     symbols:
-    - ESM1 FUT GLOBEX
+    - SPY STK SMART
     total_active_limit: 2
     total_cancel_limit: 5
     total_loss_limit: 5000
