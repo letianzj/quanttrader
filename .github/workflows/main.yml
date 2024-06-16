@@ -29,8 +29,6 @@ jobs:
         python -m pip install --upgrade pip
         python -m pip install poetry
         poetry install
-        pip install PyQt5 >= 5.15.10
-        pip install QDarkStyle >= 2.8
 
     - name: Check code formatting with black
       run: |
