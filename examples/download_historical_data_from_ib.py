@@ -103,7 +103,9 @@ class HistoricalDataDownloader:
                 # daily combine and remove duplicates
                 dfd = self.df.combine_first(dfd)
                 # ready for the next 30min
-                self.df = pd.DataFrame(columns=["Open", "High", "Low", "Close", "Volume"])
+                self.df = pd.DataFrame(
+                    columns=["Open", "High", "Low", "Close", "Volume"]
+                )
 
             dfd.sort_index(inplace=True)
             dict_all[sym] = dfd
