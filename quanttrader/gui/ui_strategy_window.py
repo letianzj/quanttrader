@@ -8,6 +8,8 @@ from ..order.fill_event import FillEvent
 from ..order.order_event import OrderEvent
 from ..strategy.strategy_manager import StrategyManager
 
+__all__ = ["StrategyWindow"]
+
 
 class StrategyWindow(QtWidgets.QTableWidget):
     """

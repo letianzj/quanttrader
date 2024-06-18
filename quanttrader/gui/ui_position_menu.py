@@ -9,6 +9,8 @@ from ..strategy.strategy_manager import StrategyManager
 
 _logger = logging.getLogger(__name__)
 
+__all__ = ["PositionMenuBottom", "PositionMenu"]
+
 
 class PositionMenuBottom(QtWidgets.QTableWidget):
     def __init__(self, strategy_manager: StrategyManager, parent: Any = None) -> None:

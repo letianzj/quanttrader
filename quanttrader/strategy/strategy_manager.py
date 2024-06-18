@@ -19,6 +19,9 @@ from ..strategy.strategy_base import StrategyBase
 _logger = logging.getLogger(__name__)
 
 
+__all__ = ["StrategyManager"]
+
+
 class StrategyManager(object):
     def __init__(
         self,

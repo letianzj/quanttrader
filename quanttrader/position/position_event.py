@@ -5,6 +5,8 @@ import pandas as pd
 from ..event.event import Event, EventType
 from .position import Position
 
+__all__ = ["PositionEvent"]
+
 
 class PositionEvent(Event):
     """

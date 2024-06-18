@@ -6,6 +6,13 @@ from datetime import datetime
 
 import pandas as pd
 
+__all__ = [
+    "read_ohlcv_csv",
+    "read_intraday_bar_pickle",
+    "read_tick_data_txt",
+    "save_one_run_results",
+]
+
 
 def read_ohlcv_csv(
     filepath: str, adjust: bool = True, tz: str = "America/New_York"
@@ -40,8 +47,8 @@ def read_intraday_bar_pickle(
             df = dict_hist_data[sym]
             df.index = df.index.tz_localize(tz)  # # US/Eastern, UTC
             dict_ret[sym] = df
-        except:
-            pass
+        except Exception as e:
+            print(f"An error occurred: {e}")
     return dict_ret
 
 

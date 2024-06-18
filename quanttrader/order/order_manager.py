@@ -12,6 +12,9 @@ from .order_status import OrderStatus
 _logger = logging.getLogger(__name__)
 
 
+__all__ = ["OrderManager"]
+
+
 class OrderManager(object):
     """
     Manage/track all the orders

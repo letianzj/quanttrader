@@ -9,6 +9,8 @@ from ..order.fill_event import FillEvent
 
 _logger = logging.getLogger(__name__)
 
+__all__ = ["FillWindow"]
+
 
 class FillWindow(QtWidgets.QTableWidget):
     """

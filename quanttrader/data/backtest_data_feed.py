@@ -7,6 +7,8 @@ import pandas as pd
 from .data_feed_base import DataFeedBase
 from .tick_event import TickEvent
 
+__all__ = ["BacktestDataFeed"]
+
 
 class BacktestDataFeed(DataFeedBase):
     """

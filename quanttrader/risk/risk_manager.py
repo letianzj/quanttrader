@@ -8,6 +8,9 @@ from .risk_manager_base import RiskManagerBase
 _logger = logging.getLogger(__name__)
 
 
+__all__ = ["PassThroughRiskManager", "RiskManager"]
+
+
 class PassThroughRiskManager(RiskManagerBase):
     def order_in_compliance(self, o: OrderEvent, strategy_manager=None) -> bool:  # type: ignore
         """

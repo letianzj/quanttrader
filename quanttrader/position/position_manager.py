@@ -13,6 +13,9 @@ from .position_event import PositionEvent
 _logger = logging.getLogger(__name__)
 
 
+__all__ = ["PositionManager"]
+
+
 class PositionManager(object):
     def __init__(self, name: str) -> None:
         """ """

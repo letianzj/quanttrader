@@ -11,6 +11,9 @@ from ..position.position_event import PositionEvent
 _logger = logging.getLogger(__name__)
 
 
+__all__ = ["PositionWindow"]
+
+
 class PositionWindow(QtWidgets.QTableWidget):
     position_signal = QtCore.pyqtSignal(type(PositionEvent()))
 

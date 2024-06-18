@@ -9,6 +9,8 @@ _logger = logging.getLogger(__name__)
 
 from .trade_recorder_base import AbstractTradeRecorder
 
+__all__ = ["ExampleTradeRecorder"]
+
 
 class ExampleTradeRecorder(AbstractTradeRecorder):
     """

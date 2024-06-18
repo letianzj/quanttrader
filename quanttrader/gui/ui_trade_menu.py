@@ -17,6 +17,9 @@ from ..order.order_type import OrderType
 _logger = logging.getLogger(__name__)
 
 
+__all__ = ["TradeMenu"]
+
+
 class TradeMenu(QtWidgets.QWidget):
     def __init__(
         self,

@@ -18,6 +18,9 @@ from ..position.position_manager import PositionManager
 _logger = logging.getLogger(__name__)
 
 
+__all__ = ["StrategyBase"]
+
+
 class StrategyBase(metaclass=ABCMeta):
     """
     Base strategy class

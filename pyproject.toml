@@ -16,7 +16,7 @@ maintainers = [
 classifiers = [
 
 ]
-license = "Apache-2.0"
+license = { file = "LICENSE" }
 dependencies = [
   
 ]
@@ -36,7 +36,7 @@ changelog = "https://github.com/letianzj/quanttrader/blob/master/changelog.md"
 homepage = "https://github.com/letianzj/quanttrader"
 
 [tool.setuptools]
-package-dir = {"" = "src"}
+package-dir = {"" = "."}
 
 [tool.setuptools.package-data]
 "*" = ["*.*"]
@@ -57,8 +57,6 @@ pytz = "^2024.1"
 scikit-learn = "^1.5.0"
 scipy = "^1.13.1"
 seaborn = "^0.12.2"
-# PyQt5 = ">=5.10.1"
-# QDarkStyle = ">=2.8"
 PyYAML = "^6.0.1"
 pyqt5 = "=5.15.10"   
 pyqt5-qt5 = "=5.15.2"

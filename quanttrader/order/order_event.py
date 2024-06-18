@@ -7,6 +7,8 @@ from .order_flag import OrderFlag
 from .order_status import OrderStatus
 from .order_type import OrderType
 
+__all__ = ["OrderEvent"]
+
 
 class OrderEvent(Event):
     """

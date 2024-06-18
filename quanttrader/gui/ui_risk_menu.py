@@ -9,6 +9,9 @@ from ..strategy.strategy_manager import StrategyManager
 _logger = logging.getLogger(__name__)
 
 
+__all__ = ["RiskMenu"]
+
+
 class RiskMenu(QtWidgets.QWidget):
     def __init__(self, strategy_manager: StrategyManager) -> None:
         super(RiskMenu, self).__init__()

@@ -11,6 +11,9 @@ from ..event.event import Event, EventType
 _logger = logging.getLogger(__name__)
 
 
+__all__ = ["LiveEventEngine"]
+
+
 class LiveEventEngine(object):
     """
     Event queue + a thread to dispatch events

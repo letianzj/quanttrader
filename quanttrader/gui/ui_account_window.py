@@ -10,6 +10,8 @@ from ..account.account_manager import AccountManager
 
 _logger = logging.getLogger(__name__)
 
+__all__ = ["AccountWindow"]
+
 
 class AccountWindow(QtWidgets.QTableWidget):
     account_signal = QtCore.pyqtSignal(type(AccountEvent()))

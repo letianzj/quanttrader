@@ -8,6 +8,8 @@ from ..brokerage.brokerage_base import BrokerageBase
 from ..order.order_event import OrderEvent
 from ..order.order_manager import OrderManager
 
+__all__ = ["OrderWindow"]
+
 
 class OrderWindow(QtWidgets.QTableWidget):
     """

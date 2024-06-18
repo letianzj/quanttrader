@@ -4,6 +4,8 @@ import pandas as pd
 
 from ..event.event import Event, EventType
 
+__all__ = ["BarEvent"]
+
 
 class BarEvent(Event):
     """

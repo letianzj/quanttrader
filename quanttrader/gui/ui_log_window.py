@@ -6,6 +6,8 @@ from PyQt5 import QtCore, QtWidgets
 
 from ..event.event import LogEvent
 
+__all__ = ["LogWindow"]
+
 
 class LogWindow(QtWidgets.QTableWidget):
     msg_signal = QtCore.pyqtSignal(type(LogEvent()))

@@ -39,6 +39,8 @@ from .ui_trade_menu import TradeMenu
 _logger = logging.getLogger(__name__)
 _logger_tick = logging.getLogger("tick_recorder")
 
+__all__ = ["MainWindow", "StatusThread"]
+
 
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(

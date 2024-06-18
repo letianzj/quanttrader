@@ -13,6 +13,9 @@ from ..position.position_manager import PositionManager
 _logger = logging.getLogger(__name__)
 
 
+__all__ = ["PerformanceManager"]
+
+
 class PerformanceManager(object):
     """
     https://www.quantopian.com/docs/api-reference/pyfolio-api-reference
@@ -22,9 +25,7 @@ class PerformanceManager(object):
 
     def __init__(self, instrument_meta: dict[str, dict[str, Any]]) -> None:
         self._symbols: list[str] = []
-        self.instrument_meta: dict[str, dict[str, Any]] = (
-            instrument_meta  # sym ==> meta
-        )
+        self.instrument_meta: dict[str, dict[str, Any]] = instrument_meta  # sym ==> meta
 
         self._realized_pnl: float = 0.0
         self._unrealized_pnl: float = 0.0
@@ -49,9 +50,7 @@ class PerformanceManager(object):
         self._equity = pd.Series(dtype=np.float64)  # equity line
         self._equity.name = "total"
 
-        self._df_positions = pd.DataFrame(
-            columns=self._symbols + ["cash"], dtype=np.float64
-        )
+        self._df_positions = pd.DataFrame(columns=self._symbols + ["cash"], dtype=np.float64)
 
         self._df_trades = pd.DataFrame(
             np.empty(
@@ -69,17 +68,13 @@ class PerformanceManager(object):
 
     def on_fill(self, fill_event: FillEvent) -> None:
         # self._df_trades.loc[fill_event.timestamp] = [fill_event.fill_size, fill_event.fill_price, fill_event.full_symbol]
-        df_fill = (
-            (
-                pd.DataFrame(
-                    {
-                        "amount": [int(fill_event.fill_size)],
-                        "price": [fill_event.fill_price],
-                        "symbol": [fill_event.full_symbol],
-                    },
-                    index=[fill_event.fill_time],
-                )
-            ),
+        df_fill = pd.DataFrame(
+            {
+                "amount": [int(fill_event.fill_size)],
+                "price": [fill_event.fill_price],
+                "symbol": [fill_event.full_symbol],
+            },
+            index=[fill_event.fill_time],
         )
 
         self._df_trades = (
@@ -116,9 +111,7 @@ class PerformanceManager(object):
             performance_time = current_time
 
         equity = 0.0
-        self._df_positions.loc[performance_time] = [0.0] * len(
-            self._df_positions.columns
-        )
+        self._df_positions.loc[performance_time] = [0.0] * len(self._df_positions.columns)
         for sym, pos in position_manager.positions.items():
             if sym in self.instrument_meta.keys():
                 multiplier = self.instrument_meta[sym]["Multiplier"]
@@ -135,9 +128,7 @@ class PerformanceManager(object):
 
         self._df_positions.loc[performance_time, "cash"] = position_manager.cash
         self._equity[performance_time] = equity + position_manager.cash
-        self._df_positions.loc[performance_time, "total"] = self._equity[
-            performance_time
-        ]
+        self._df_positions.loc[performance_time, "total"] = self._equity[performance_time]
 
         if performance_time != current_time:  # not final day
             self._equity[current_time] = 0.0  # add new date

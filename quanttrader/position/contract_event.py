@@ -3,6 +3,8 @@
 
 from ..event.event import Event, EventType
 
+__all__ = ["ContractEvent"]
+
 
 class ContractEvent(Event):
     """

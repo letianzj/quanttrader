@@ -13,6 +13,9 @@ from .data_feed_base import DataFeedBase
 _logger = logging.getLogger(__name__)
 
 
+__all__ = ["LiveDataFeed"]
+
+
 class LiveDataFeed(DataFeedBase):
     """
     Live DataFeed class

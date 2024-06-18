@@ -2,6 +2,8 @@
 # -*- coding: utf-8 -*-
 from enum import Enum
 
+__all__ = ["OrderType"]
+
 
 # OrderType.MKT.name == 'MKT'  OderType.MKT.value == 1
 class OrderType(Enum):

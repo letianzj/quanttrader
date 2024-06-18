@@ -46,7 +46,7 @@ class HistoricalDataDownloader:
 
     def run(self) -> None:
         dfd = pd.DataFrame()
-        dict_all = dict()
+        dict_all = {}
         events_engine = LiveEventEngine()
         tick_event_engine = LiveEventEngine()
         broker = InteractiveBrokers(events_engine, tick_event_engine, "DU0001")

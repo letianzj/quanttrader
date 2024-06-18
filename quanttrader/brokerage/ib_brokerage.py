@@ -37,6 +37,9 @@ from .brokerage_base import BrokerageBase
 _logger = logging.getLogger(__name__)
 
 
+__all__ = ["InteractiveBrokers"]
+
+
 class InteractiveBrokers(BrokerageBase):
     def __init__(
         self,

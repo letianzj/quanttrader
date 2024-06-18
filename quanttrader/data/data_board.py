@@ -4,6 +4,8 @@ import pandas as pd
 
 from .tick_event import TickEvent
 
+__all__ = ["DataBoard"]
+
 
 class DataBoard(object):
     """

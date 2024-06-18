@@ -12,6 +12,9 @@ from .event import Event, EventType
 _logger = logging.getLogger(__name__)
 
 
+__all__ = ["BacktestEventEngine"]
+
+
 class BacktestEventEngine(object):
     """
     Event queue + a while loop to dispatch events

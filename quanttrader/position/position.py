@@ -5,6 +5,9 @@ import logging
 _logger = logging.getLogger(__name__)
 
 
+__all__ = ["Position"]
+
+
 class Position(object):
     def __init__(
         self,
