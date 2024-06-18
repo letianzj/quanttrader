@@ -25,7 +25,9 @@ class PerformanceManager(object):
 
     def __init__(self, instrument_meta: dict[str, dict[str, Any]]) -> None:
         self._symbols: list[str] = []
-        self.instrument_meta: dict[str, dict[str, Any]] = instrument_meta  # sym ==> meta
+        self.instrument_meta: dict[str, dict[str, Any]] = (
+            instrument_meta  # sym ==> meta
+        )
 
         self._realized_pnl: float = 0.0
         self._unrealized_pnl: float = 0.0
@@ -50,7 +52,9 @@ class PerformanceManager(object):
         self._equity = pd.Series(dtype=np.float64)  # equity line
         self._equity.name = "total"
 
-        self._df_positions = pd.DataFrame(columns=self._symbols + ["cash"], dtype=np.float64)
+        self._df_positions = pd.DataFrame(
+            columns=self._symbols + ["cash"], dtype=np.float64
+        )
 
         self._df_trades = pd.DataFrame(
             np.empty(
@@ -111,7 +115,9 @@ class PerformanceManager(object):
             performance_time = current_time
 
         equity = 0.0
-        self._df_positions.loc[performance_time] = [0.0] * len(self._df_positions.columns)
+        self._df_positions.loc[performance_time] = [0.0] * len(
+            self._df_positions.columns
+        )
         for sym, pos in position_manager.positions.items():
             if sym in self.instrument_meta.keys():
                 multiplier = self.instrument_meta[sym]["Multiplier"]
@@ -128,7 +134,9 @@ class PerformanceManager(object):
 
         self._df_positions.loc[performance_time, "cash"] = position_manager.cash
         self._equity[performance_time] = equity + position_manager.cash
-        self._df_positions.loc[performance_time, "total"] = self._equity[performance_time]
+        self._df_positions.loc[performance_time, "total"] = self._equity[
+            performance_time
+        ]
 
         if performance_time != current_time:  # not final day
             self._equity[current_time] = 0.0  # add new date

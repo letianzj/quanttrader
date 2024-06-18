@@ -44,7 +44,9 @@ class BacktestEngine(object):
         self.instrument_meta: dict[str, dict[str, Any]] = (
             {}
         )  # one copy of meta dict shared across program
-        self._data_feed: BacktestDataFeed = BacktestDataFeed(self._start_date, self._end_date)
+        self._data_feed: BacktestDataFeed = BacktestDataFeed(
+            self._start_date, self._end_date
+        )
         self._data_board: DataBoard = DataBoard()
         self._performance_manager: PerformanceManager = PerformanceManager(
             self.instrument_meta
@@ -80,7 +82,9 @@ class BacktestEngine(object):
     def set_strategy(self, strategy: StrategyBase) -> None:
         self._strategy = strategy
 
-    def add_data(self, data_key: str, data_source: pd.DataFrame, watch: bool = True) -> None:
+    def add_data(
+        self, data_key: str, data_source: pd.DataFrame, watch: bool = True
+    ) -> None:
         """
         Add data for backtest
         :param data_key: AAPL or CL
@@ -144,7 +148,9 @@ class BacktestEngine(object):
             tick_event.price,
             self._data_board,
         )
-        self._strategy.on_tick(tick_event)  # plus strategy.position_manager market to marekt
+        self._strategy.on_tick(
+            tick_event
+        )  # plus strategy.position_manager market to marekt
         # data_baord update after strategy, so it still holds price of last tick; for position MtM
         # strategy uses tick.price for current price; and use data_board.last_price for previous price
         # for backtest, this is PLACEHOLDER based on timestamp.
