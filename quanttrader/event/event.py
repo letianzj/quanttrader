@@ -2,6 +2,8 @@
 # -*- coding: utf-8 -*-
 from enum import Enum
 
+import pandas as pd
+
 __all__ = ["EventType", "Event", "LogEvent"]
 
 
@@ -38,5 +40,5 @@ class LogEvent(Event):
 
     def __init__(self) -> None:
         self.event_type: EventType = EventType.LOG
-        self.timestamp: str = ""
+        self.timestamp: pd.Timestamp = None
         self.content: str = ""

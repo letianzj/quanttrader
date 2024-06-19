@@ -27,18 +27,18 @@ class OrderWindow(QtWidgets.QTableWidget):
         super(OrderWindow, self).__init__(parent)
 
         self.header = [
-            "OrderID",
-            "SID",
-            "Symbol",
-            "Type",
-            "Limit",
-            "Stop",
-            "Quantity",
-            "Filled",
-            "Status",
-            "Order_Time",
-            "Cancel_Time",
-            "Account",
+            "OrderID",  # 0
+            "SID",  # 1
+            "Symbol",  # 2
+            "Type",  # 3
+            "Limit",  # 4
+            "Stop",  # 5
+            "Quantity",  # 6
+            "Filled",  # 7
+            "Status",  # 8
+            "Order_Time",  # 9
+            "Cancel_Time",  # 10
+            "Account",  # 11
         ]
 
         self.init_table()
@@ -68,7 +68,6 @@ class OrderWindow(QtWidgets.QTableWidget):
         else append one row
         """
         update = self._order_manager.on_order_status(order_event)
-
         if update:
             if order_event.order_id in self._orderids:
                 row = self._orderids.index(order_event.order_id)
@@ -92,7 +91,11 @@ class OrderWindow(QtWidgets.QTableWidget):
 
                 _itm = self.item(row, 10)
                 if _itm:
-                    _itm.setText(order_event.cancel_time)
+                    _itm.setText(
+                        order_event.cancel_time.strftime("%H:%M:%S.%f")
+                        if order_event.cancel_time
+                        else ""
+                    )
             else:  # including empty
                 self._orderids.insert(0, order_event.order_id)
                 self.insertRow(0)
@@ -169,14 +172,26 @@ class OrderWindow(QtWidgets.QTableWidget):
                     0,
                     9,
                     QtWidgets.QTableWidgetItem(
-                        self._order_manager.order_dict[order_event.order_id].create_time
+                        self._order_manager.order_dict[
+                            order_event.order_id
+                        ].create_time.strftime("%H:%M:%S.%f")
+                        if self._order_manager.order_dict[
+                            order_event.order_id
+                        ].create_time
+                        else ""
                     ),
                 )
                 self.setItem(
                     0,
                     10,
                     QtWidgets.QTableWidgetItem(
-                        self._order_manager.order_dict[order_event.order_id].cancel_time
+                        self._order_manager.order_dict[
+                            order_event.order_id
+                        ].cancel_time.strftime("%H:%M:%S.%f")
+                        if self._order_manager.order_dict[
+                            order_event.order_id
+                        ].cancel_time
+                        else ""
                     ),
                 )
                 self.setItem(
@@ -191,7 +206,6 @@ class OrderWindow(QtWidgets.QTableWidget):
         """
         This is called by fill handler to update order status
         """
-
         if order_id in self._orderids:
             row = self._orderids.index(order_id)
             _itm = self.item(row, 7)
@@ -204,7 +218,13 @@ class OrderWindow(QtWidgets.QTableWidget):
 
             _itm = self.item(row, 10)
             if _itm:
-                _itm.setText(self._order_manager.order_dict[order_id].create_time)
+                _itm.setText(
+                    self._order_manager.order_dict[order_id].create_time.strftime(
+                        "%H:%M:%S.%f"
+                    )
+                    if self._order_manager.order_dict[order_id].create_time
+                    else ""
+                )
 
     def cancel_order(self, mi: QtWidgets.QTableWidgetItem) -> None:
         row = mi.row()

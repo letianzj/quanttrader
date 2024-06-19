@@ -35,11 +35,10 @@ class OrderEvent(Event):
         self.cancel_time: pd.Timestamp = None
         self.account: str = ""
         self.source: int = -1  # sid, -1: unknown, 0: discretionary
-        self.timestamp: pd.Timestamp = None
 
     def __str__(self) -> str:
         return "Time: %s, Source: %s, Type: %s, LMT: %s, STP %s Size %s" % (
-            self.timestamp,
+            self.create_time,
             str(self.source),
             str(self.order_type),
             str(self.limit_price),

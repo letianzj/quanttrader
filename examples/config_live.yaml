@@ -14,18 +14,18 @@ strategy:
   #   symbols:
   #   - NGZ0 FUT NYMEX
   #---------- Strategy and params control -----------#
-  DualTimeFrameStrategy:
-    active: false
-    capital: 10000
-    params:
-      start_time: '09:30:00'
-      end_time: '16:14:58'
-      bar_start_time: '09:00:00'
-      bar_end_time: '16:15:00'
-      lookback_5sec: 50
-      lookback_15sec: 20
-    symbols:
-    - EUM4 FUT GLOBEX
+  # DualTimeFrameStrategy:
+  #   active: false
+  #   capital: 10000
+  #   params:
+  #     start_time: '09:30:00'
+  #     end_time: '16:14:58'
+  #     bar_start_time: '09:00:00'
+  #     bar_end_time: '16:15:00'
+  #     lookback_5sec: 50
+  #     lookback_15sec: 20
+  #   symbols:
+  #   - EUM4 FUT GLOBEX
   #---------- Strategy and params control -----------#
   # DualThrustStrategy:
   #   active: false
@@ -55,18 +55,19 @@ strategy:
     active: false
     capital: 50000
     order_start_time: '10:00:00'
-    order_end_time: '16:15:00'
+    order_end_time: '23:15:00'
     params:
-      tick_trigger_threshold: 6000
+      tick_trigger_threshold: 100
     single_trade_limit: 3
     symbols:
-    - SPY STK SMART
+    - ESU4 FUT CME
+    - VXU4 FUT CFE
     total_active_limit: 2
     total_cancel_limit: 5
-    total_loss_limit: 5000
-    total_trade_limit: 15
+    total_loss_limit: 100000
+    total_trade_limit: 1500
 #---------- global risk control -----------#
-total_active_limit: 3
+total_active_limit: 10
 total_cancel_limit: 10
 total_loss_limit: 10000
-total_trade_limit: 20
+total_trade_limit: 200

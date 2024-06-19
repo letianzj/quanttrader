@@ -4,6 +4,8 @@ import logging
 from datetime import datetime, timedelta
 from typing import Any
 
+import pandas as pd
+
 from ..brokerage.brokerage_base import BrokerageBase
 from ..data.data_board import DataBoard
 from ..data.tick_event import TickEvent
@@ -208,7 +210,7 @@ class StrategyManager(object):
                 o.full_symbol = sym
                 o.order_size = -pos.size
                 o.source = 0  # mannual flat
-                o.create_time = datetime.now().strftime("%H:%M:%S.%f")
+                o.create_time = pd.Timestamp.now()
                 self.place_order(
                     o, check_risk=False
                 )  # flat strategy doesnot cehck risk
@@ -225,7 +227,7 @@ class StrategyManager(object):
                 o.full_symbol = sym
                 o.order_size = -pos.size
                 o.source = 0
-                o.create_time = datetime.now().strftime("%H:%M:%S.%f")
+                o.create_time = pd.Timestamp.now()
                 self.place_order(
                     o, check_risk=False
                 )  # flat strategy doesnot cehck risk

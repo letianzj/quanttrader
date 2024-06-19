@@ -43,6 +43,7 @@ def run(conid):
 
     broker.api.reqContractDetails(broker.reqid, contract)
 
+    time.sleep(5)  # 5 seconds
     broker.disconnect()
     events_engine.stop()
     tick_event_engine.stop()

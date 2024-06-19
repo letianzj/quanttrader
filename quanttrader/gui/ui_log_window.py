@@ -37,5 +37,13 @@ class LogWindow(QtWidgets.QTableWidget):
         Only add row
         """
         self.insertRow(0)
-        self.setItem(0, 0, QtWidgets.QTableWidgetItem(geneal_event.timestamp))
+        self.setItem(
+            0,
+            0,
+            QtWidgets.QTableWidgetItem(
+                geneal_event.timestamp.strftime("%H:%M:%S.%f")
+                if geneal_event.timestamp
+                else ""
+            ),
+        )
         self.setItem(0, 1, QtWidgets.QTableWidgetItem(geneal_event.content))

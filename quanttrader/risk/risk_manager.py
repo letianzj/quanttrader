@@ -47,7 +47,7 @@ class RiskManager(RiskManagerBase):
                 is not None
             ):
                 if (
-                    o.create_time
+                    o.create_time.strftime("%H:%M:%S")
                     < strategy_manager.config["strategy"][
                         strategy_manager.strategy_dict[o.source].name
                     ]["order_start_time"]
@@ -69,7 +69,7 @@ class RiskManager(RiskManagerBase):
                 is None
             ):
                 if (
-                    o.create_time
+                    o.create_time.strftime("%H:%M:%S")
                     > strategy_manager.config["strategy"][
                         strategy_manager.strategy_dict[o.source].name
                     ]["order_end_time"]

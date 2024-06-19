@@ -6,6 +6,7 @@ Making six or more historical data requests for the same Contract, Exchange and 
 Making more than 60 requests within any ten minute period.
 """
 import argparse
+import logging
 import pickle
 import time
 from datetime import datetime, timedelta
@@ -20,6 +21,13 @@ from quanttrader.event.live_event_engine import LiveEventEngine
 
 signal(SIGINT, SIG_DFL)
 
+_logger = logging.getLogger("quanttrader")
+_logger.setLevel(logging.DEBUG)
+handler1 = logging.StreamHandler()
+formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+handler1.setFormatter(formatter)
+_logger.addHandler(handler1)
+
 
 class HistoricalDataDownloader:
     """
@@ -32,7 +40,7 @@ class HistoricalDataDownloader:
         self.df = pd.DataFrame(columns=["Open", "High", "Low", "Close", "Volume"])
 
     def log_event_handler(self, log_event: LogEvent) -> None:
-        print(f"{log_event.timestamp}: {log_event.content}")
+        print(f"{log_event.timestamp.strftime("%H:%M:%S.%f")}: {log_event.content}")
 
     def historical_event_handler(self, bar_event: BarEvent) -> None:
         row_dict = {}
@@ -62,8 +70,8 @@ class HistoricalDataDownloader:
         # RTH stock 9:30~16:00; FUT 9:30~17:00, ES halt 16:15~16:30
         # 7.5h x 2 = 15 requests = 15*15 ~ 4min
         symbols = [
-            # "ESU4 FUT GLOBEX",  # 9:30 a.m. ET on the 3rd Friday of the contract month; 15:14:30 – 15:15:00 CT; final 9:30am opening prices
-            # 'NQU0 FUT GLOBEX',          # 9:30 a.m. ET on the 3rd Friday of the contract month
+            "ESU4 FUT CME",  # 9:30 a.m. ET on the 3rd Friday of the contract month; 15:14:30 – 15:15:00 CT; final 9:30am opening prices
+            # 'NQU0 FUT CME',          # 9:30 a.m. ET on the 3rd Friday of the contract month
             # 'CLU0 FUT NYNEX',           # 3 business day prior to the 25th calendar day of the month prior to the contract month, if not business day; active -2D; 4:28:00 to 14:30:00 ET; 14:00:00 and 14:30:00 ET
             # 'CLV0 FUT NYNEX',
             # 'HOU0 FUT NYMEX',           # last business day of the month prior to the contract month; active -2D CL; 14:28:00 to 14:30:00 ET, 14:00:00 and 14:30:00 ET.
@@ -132,7 +140,7 @@ if __name__ == "__main__":
     parser.add_argument("--date", help="yyyymmdd", required=True)
     parser.add_argument(
         "--path",
-        default="c::/workspace/data/tick/",
+        default="c:/workspace/data/tick/",
         help="hist data folder",
     )
 

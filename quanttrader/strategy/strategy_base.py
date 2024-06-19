@@ -121,7 +121,7 @@ class StrategyBase(metaclass=ABCMeta):
         o.source = self.id  # identify source
         if o.create_time is None:
             # .strftime("%Y-%m-%d %H:%M:%S.%f")
-            o.create_time = pd.Timestamp(datetime.now())
+            o.create_time = pd.Timestamp.now()
         if self.active and self.strategy_manager:
             self.strategy_manager.place_order(o)
 
@@ -146,9 +146,8 @@ class StrategyBase(metaclass=ABCMeta):
         o.full_symbol = sym
         o.order_type = OrderType.MARKET
         o.order_size = size_to - size_from
-        if timestamp is not None:
+        if timestamp:
             o.create_time = timestamp
-
         self.place_order(o)
 
     def cancel_order(self, oid: int) -> None:

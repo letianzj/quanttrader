@@ -23,7 +23,6 @@ def main(config_file, instrument_meta_file):
     today = datetime.today().strftime("%Y%m%d")
     try:
         # path = os.path.abspath(os.path.dirname(__file__))
-        # config_file = os.path.join(path, 'config.yaml')
         with open(config_file, encoding="utf8") as fd:
             config = yaml.safe_load(fd)
     except IOError:

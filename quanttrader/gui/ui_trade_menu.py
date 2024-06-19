@@ -4,6 +4,7 @@ import logging
 from datetime import datetime
 from typing import Any
 
+import pandas as pd
 from PyQt5 import QtGui, QtWidgets
 
 from ..brokerage.brokerage_base import BrokerageBase
@@ -102,7 +103,7 @@ class TradeMenu(QtWidgets.QWidget):
             o.order_status = OrderStatus.NEWBORN
             o.full_symbol = s
             o.order_size = int(q) if (n == 0) else -1 * int(q)
-            o.create_time = datetime.now().strftime("%H:%M:%S.%f")
+            o.create_time = pd.Timestamp.now()
             o.source = 0  # discretionary
 
             self.order_manager.on_order_status(o)
@@ -119,6 +120,6 @@ class TradeMenu(QtWidgets.QWidget):
         except:
             _logger.error("discretionary order error")
             msg = LogEvent()
-            msg.timestamp = datetime.now().strftime("%H:%M:%S.%f")
+            msg.timestamp = pd.Timestamp.now()
             msg.content = "discretionary order error"
             self.event_engine.put(msg)

@@ -28,18 +28,21 @@ class OrderPerIntervalStrategy(StrategyBase):
 
         if k.tick_type != TickType.TRADE:
             print(k, f"{self.ticks}/{self.tick_trigger_threshold}")
-        if (k.full_symbol == self.symbols[0]) & (
-            self.ticks > self.tick_trigger_threshold
-        ):
-            o = OrderEvent()
-            o.full_symbol = k.full_symbol
-            o.order_type = OrderType.MARKET
-            o.order_size = self.direction
+        if self.ticks > self.tick_trigger_threshold:
+            o1 = OrderEvent()
+            o1.full_symbol = self.symbols[0]
+            o1.order_type = OrderType.MARKET
+            o1.order_size = self.direction
+
+            o2 = OrderEvent()
+            o2.full_symbol = self.symbols[1]
+            o2.order_type = OrderType.MARKET
+            o2.order_size = self.direction
+
             self.direction = 1 if self.direction == -1 else -1
-            _logger.info(
-                f"OrderPerIntervalStrategy order placed on ticks {self.ticks}, {k.price}"
-            )
-            self.place_order(o)
+            _logger.info(f"OrderPerIntervalStrategy order placed on ticks {self.ticks}")
+            self.place_order(o1)
+            self.place_order(o2)
             self.ticks = 0
         else:
             self.ticks += 1

@@ -166,7 +166,7 @@ class InteractiveBrokers(BrokerageBase):
             order_event.order_id = self.orderid
             self.orderid += 1
         order_event.account = self.account
-        order_event.timestamp = datetime.now().strftime("%H:%M:%S.%f")
+        order_event.timestamp = pd.Timestamp.now()
         order_event.order_status = OrderStatus.ACKNOWLEDGED  # acknowledged
         self.order_dict[order_event.order_id] = order_event
         _logger.info(
@@ -189,7 +189,7 @@ class InteractiveBrokers(BrokerageBase):
             _logger.error(f"Order to cancel not found. order id {order_id}")
             return
 
-        self.order_dict[order_id].cancel_time = datetime.now().strftime("%H:%M:%S.%f")
+        self.order_dict[order_id].cancel_time = pd.Timestamp.now()
 
         self.api.cancelOrder(order_id)
 
@@ -425,9 +425,9 @@ class InteractiveBrokers(BrokerageBase):
         :param msg: message to be broadcast
         :return: no return; log meesage is placed into message queue
         """
-        timestamp = datetime.now().strftime("%H:%M:%S.%f")
+
         log_event = LogEvent()
-        log_event.timestamp = timestamp
+        log_event.timestamp = pd.Timestamp.now()
         log_event.content = msg
         self.event_engine.put(log_event)
 
@@ -799,7 +799,7 @@ class IBApi(EWrapper, EClient):  # type: ignore
             order_event.order_type = OrderType.UNKNOWN
             order_event.order_status = OrderStatus.UNKNOWN
             # order_event.order_time = datetime.now().strftime("%H:%M:%S.%f")
-            order_event.create_time = pd.Timestamp(datetime.now())
+            order_event.create_time = pd.Timestamp.now()
             order_event.source = -1  # unrecognized source
             self.broker.order_dict[orderId] = order_event
 
@@ -812,7 +812,7 @@ class IBApi(EWrapper, EClient):  # type: ignore
         elif status == "Cancelled" or status == "ApiCancelled":
             order_event.order_status = OrderStatus.CANCELED
             order_event.fill_size = int(filled)  # remaining = order_size - fill_size
-            order_event.cancel_time = datetime.now().strftime("%H:%M:%S.%f")
+            order_event.cancel_time = pd.Timestamp.now()
         elif status == "Inactive":  # e.g. exchange closed
             order_event.order_status = OrderStatus.ERROR
         else:
@@ -1518,9 +1518,9 @@ class IBApi(EWrapper, EClient):  # type: ignore
         fill_event.fill_size = execution.shares * (
             1 if execution.side == "BOT" else -1
         )  # BOT SLD
-        fill_event.fill_time = datetime.strptime(
-            execution.time, "%Y%m%d  %H:%M:%S"
-        ).strftime("%H:%M:%S.%f")
+        fill_event.fill_time = pd.Timestamp(
+            datetime.strptime(execution.time, "%Y%m%d  %H:%M:%S")
+        )
         fill_event.exchange = (
             contract.exchange
             if contract.primaryExchange == ""

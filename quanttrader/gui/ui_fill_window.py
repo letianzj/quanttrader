@@ -58,7 +58,11 @@ class FillWindow(QtWidgets.QTableWidget):
             row = self._fillids.index(fill_event.fill_id)
             _itm = self.item(row, 6)
             if _itm:
-                _itm.setText(fill_event.fill_time)
+                _itm.setText(
+                    fill_event.fill_time.strftime("%H:%M:%S.%f")
+                    if fill_event.fill_time
+                    else ""
+                )
             _logger.error("received same fill twice")
         else:  # including empty
             try:
@@ -74,7 +78,15 @@ class FillWindow(QtWidgets.QTableWidget):
                 self.setItem(
                     0, 5, QtWidgets.QTableWidgetItem(str(fill_event.fill_size))
                 )
-                self.setItem(0, 6, QtWidgets.QTableWidgetItem(fill_event.fill_time))
+                self.setItem(
+                    0,
+                    6,
+                    QtWidgets.QTableWidgetItem(
+                        fill_event.fill_time.strftime("%H:%M:%S.%f")
+                        if fill_event.fill_time
+                        else ""
+                    ),
+                )
                 self.setItem(0, 7, QtWidgets.QTableWidgetItem(fill_event.exchange))
                 self.setItem(0, 8, QtWidgets.QTableWidgetItem(fill_event.account))
             except:
