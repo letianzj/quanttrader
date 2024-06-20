@@ -53,7 +53,6 @@ class HistoricalDataDownloader:
         self.df = pd.concat([self.df, df1], axis=0)
 
     def run(self) -> None:
-        dfd = pd.DataFrame()
         dict_all = {}
         events_engine = LiveEventEngine()
         tick_event_engine = LiveEventEngine()
@@ -96,6 +95,8 @@ class HistoricalDataDownloader:
         ]
 
         for sym in symbols:
+            dfd = pd.DataFrame()
+            self.df = pd.DataFrame(columns=["Open", "High", "Low", "Close", "Volume"])
             end_date = datetime.strptime(self.date, "%Y%m%d")
             if "STK" in sym:
                 end_date = end_date + timedelta(hours=16)  # 16:00
@@ -140,7 +141,7 @@ if __name__ == "__main__":
     parser.add_argument("--date", help="yyyymmdd", required=True)
     parser.add_argument(
         "--path",
-        default="c:/workspace/data/tick/",
+        default="c:/workspace/data/ticks/",
         help="hist data folder",
     )
 

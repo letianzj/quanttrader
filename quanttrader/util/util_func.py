@@ -108,18 +108,6 @@ def save_one_run_results(
     batch_tag: bool = False,
 ) -> None:
 
-    df_positions.to_csv(
-        "{}{}{}{}".format(
-            output_dir, "/positions_", batch_tag if batch_tag else "", ".csv"
-        )
-    )
-    df_trades.to_csv(
-        "{}{}{}{}".format(
-            output_dir, "/trades_", batch_tag if batch_tag else "", ".csv"
-        )
-    )
-    equity.to_csv(
-        "{}{}{}{}".format(
-            output_dir, "/equity_", batch_tag if batch_tag else "", ".csv"
-        )
-    )
+    df_positions.to_csv(f"{output_dir}/positions_{batch_tag if batch_tag else ""}.csv")
+    df_trades.to_csv(f"{output_dir}/trades_{batch_tag if batch_tag else ""}.csv")
+    equity.to_csv(f"{output_dir}/equity_{batch_tag if batch_tag else ""}.csv")
